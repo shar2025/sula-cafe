@@ -1,0 +1,535 @@
+---
+const {
+	title = "Sula Chai Café Vancouver | Authentic Indian Chai, Alai Coffee & Indian-Inspired Bakery in East Vancouver",
+	description = "Sula Chai Café on East 5th Avenue, Vancouver. Authentic masala chai from Coorg & Chikmagalur, exclusive Alai Coffee blend, Indian-inspired baked goods, paninis on house-made masala focaccia. Takeout & UberEats available.",
+	canonical = "/",
+	ogImage = "https://sulacafe.com/wp-content/uploads/2026/02/sula-cafe-near-me-vancouver.webp"
+} = Astro.props;
+const fullCanonical = `https://sulacafe.com${canonical}`;
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={description} />
+		<link rel="canonical" href={fullCanonical} />
+		<link rel="icon" type="image/png" href="https://sulacafe.com/wp-content/uploads/2025/09/sula-cafe-logo-2026.webp" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:url" content={fullCanonical} />
+		<meta property="og:site_name" content="Sula Chai Café" />
+		<meta property="og:locale" content="en_CA" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+		<meta name="geo.region" content="CA-BC" />
+		<meta name="geo.placename" content="Vancouver" />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+		<script type="application/ld+json" set:html={JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "CafeOrCoffeeShop",
+			"@id": "https://sulacafe.com/#organization",
+			"name": "Sula Chai Café",
+			"url": "https://sulacafe.com",
+			"telephone": "+1-778-386-1130",
+			"email": "info@sulacafe.com",
+			"priceRange": "$$",
+			"servesCuisine": ["Indian", "Coffee", "Bakery", "Café"],
+			"address": {"@type": "PostalAddress","streetAddress": "260 East 5th Avenue","addressLocality": "Vancouver","addressRegion": "BC","addressCountry": "CA"},
+			"sameAs": ["https://sulaindianrestaurant.com","https://sulacatering.com"],
+			"image": "https://sulacafe.com/wp-content/uploads/2026/02/sula-cafe-near-me-vancouver.webp",
+			"hasMenu": "https://sulacafe.com/menus",
+			"acceptsReservations": false
+		})} />
+		<slot name="schema" />
+	</head>
+	<body>
+		<div class="top-bar">
+			<div class="top-bar-inner">
+				<span class="top-bar-item">260 East 5th Ave · East Vancouver</span>
+				<span class="top-bar-item">Takeout · Order on UberEats</span>
+			</div>
+		</div>
+
+		<header class="site-header">
+			<div class="header-inner">
+				<a href="/" class="logo" aria-label="Sula Chai Café Home">
+					<img src="https://sulacafe.com/wp-content/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Chai Café Vancouver" class="logo-img" />
+				</a>
+				<nav class="main-nav desktop-nav" aria-label="Main navigation">
+					<a href="/">Home</a>
+					<a href="/menu">Menu</a>
+					<a href="/catering">Catering</a>
+					<a href="/wholesale">Wholesale</a>
+					<a href="/contact">Contact</a>
+					<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
+						<span class="cta-badge">
+							<img src="https://sulacafe.com/wp-content/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
+						</span>
+						<span>Order on UberEats</span>
+					</a>
+				</nav>
+				<button class="hamburger" aria-label="Open menu" aria-expanded="false" id="hamburger-btn">
+					<span></span>
+					<span></span>
+					<span></span>
+				</button>
+			</div>
+			<div class="header-bottom-zigzag" aria-hidden="true"></div>
+		</header>
+
+		<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+			<div class="mobile-menu-inner">
+				<div class="mobile-menu-logo">
+					<img src="https://sulacafe.com/wp-content/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Chai Café" />
+				</div>
+				<a href="/" class="mobile-menu-item">Home</a>
+				<a href="/menu" class="mobile-menu-item">Menu</a>
+				<a href="/catering" class="mobile-menu-item">Catering</a>
+				<a href="/wholesale" class="mobile-menu-item">Wholesale</a>
+				<a href="/contact" class="mobile-menu-item">Contact</a>
+				<div class="mobile-menu-divider"></div>
+				<p class="mobile-menu-label">Visit Us</p>
+				<p class="mobile-menu-info">260 East 5th Ave<br/>East Vancouver<br/>778-386-1130</p>
+				<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="mobile-menu-cta" target="_blank" rel="noopener">
+					<span class="cta-badge">
+						<img src="https://sulacafe.com/wp-content/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
+					</span>
+					Order on UberEats
+				</a>
+			</div>
+		</div>
+
+		<main><slot /></main>
+
+		<footer class="site-footer">
+			<div class="footer-divider">
+				<div class="d-thin"></div><div class="d-thick"></div>
+				<img src="https://sulacafe.com/wp-content/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" class="d-logo" />
+				<div class="d-thick"></div><div class="d-thin"></div>
+			</div>
+			<div class="footer-inner">
+				<div class="footer-col footer-brand">
+					<img src="https://sulacafe.com/wp-content/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Chai Café" class="footer-logo-img" />
+					<p class="footer-tag">Brewing moments of warmth, one cup at a time.</p>
+				</div>
+				<div class="footer-col">
+					<h4>Useful Links</h4>
+					<a href="/">Home</a>
+					<a href="/menu">Menu</a>
+					<a href="/catering">Catering</a>
+					<a href="/wholesale">Wholesale</a>
+				</div>
+				<div class="footer-col">
+					<h4>Quick Links</h4>
+					<a href="/contact">Contact Us</a>
+					<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" target="_blank" rel="noopener">Order on UberEats</a>
+					<a href="https://sulaindianrestaurant.com" target="_blank" rel="noopener">Sula Indian Restaurant</a>
+					<a href="https://sulacatering.com" target="_blank" rel="noopener">Sula Catering</a>
+				</div>
+				<div class="footer-col">
+					<h4>Visit Us</h4>
+					<p>260 East 5th Ave<br/>Vancouver, BC</p>
+					<p><a href="tel:7783861130">778-386-1130</a></p>
+					<p><a href="mailto:info@sulacafe.com">info@sulacafe.com</a></p>
+				</div>
+			</div>
+			<div class="footer-bottom">
+				<p>© 2026 Sula Chai Café · All Rights Reserved</p>
+			</div>
+		</footer>
+
+		<style is:global>
+			:root {
+				--cream: #F3E3C3;
+				--cream-soft: #EBD8B0;
+				--cream-deep: #E0CC9F;
+				--tan: #C6A16D;
+				--tan-soft: #D4B383;
+				--cocoa: #8C5A3A;
+				--cocoa-mid: #6F462C;
+				--cocoa-deep: #5C4031;
+				--espresso: #2D1B14;
+				--espresso-deep: #1a0e08;
+				--espresso-mid: #3a2618;
+				--burnt: #C17943;
+				--burnt-light: #D88A50;
+				--burnt-deep: #9a5a30;
+				--text-dark: #2D1B14;
+				--text-soft: #5C4031;
+			}
+			*{box-sizing:border-box;margin:0;padding:0}
+			html,body{overflow-x:hidden;scroll-behavior:smooth}
+			body{font-family:'Inter',-apple-system,sans-serif;font-weight:400;color:var(--text-dark);background:var(--cream);line-height:1.7;letter-spacing:0.2px}
+			body.menu-open{overflow:hidden}
+			img{max-width:100%;height:auto;display:block}
+			a{color:var(--burnt);text-decoration:none}
+
+			h1,h2,h3,h4,h5,h6{
+				font-family:'Playfair Display', Georgia, serif;
+				font-weight:500;
+				color:var(--cocoa);
+				letter-spacing:-0.3px;
+				word-wrap:break-word;
+				overflow-wrap:break-word;
+				line-height:1.2;
+			}
+			h1 em, h2 em, h3 em, h4 em {
+				font-family:'Playfair Display', Georgia, serif;
+				font-style:italic;
+				font-weight:400;
+				color:var(--burnt);
+			}
+
+			@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+			@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+			.reveal{opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s ease}
+			.reveal.visible{opacity:1;transform:translateY(0)}
+			.reveal-left{opacity:0;transform:translateX(-60px);transition:opacity 1s ease,transform 1s ease}
+			.reveal-left.visible{opacity:1;transform:translateX(0)}
+			.reveal-right{opacity:0;transform:translateX(60px);transition:opacity 1s ease,transform 1s ease}
+			.reveal-right.visible{opacity:1;transform:translateX(0)}
+			.reveal-scale{opacity:0;transform:scale(0.95);transition:opacity 1s ease,transform 1s ease}
+			.reveal-scale.visible{opacity:1;transform:scale(1)}
+			.delay-100{transition-delay:0.1s}
+			.delay-200{transition-delay:0.2s}
+			.delay-300{transition-delay:0.3s}
+
+			/* PREMIUM DIVIDERS - thin → thick → ornament → thick → thin */
+			.premium-divider{display:flex;align-items:center;justify-content:center;gap:14px;margin:32px 0}
+			.premium-divider .pd-thin{height:1px;width:50px;background:linear-gradient(90deg,transparent 0%,var(--cocoa) 100%);opacity:0.5}
+			.premium-divider .pd-thin-r{height:1px;width:50px;background:linear-gradient(90deg,var(--cocoa) 0%,transparent 100%);opacity:0.5}
+			.premium-divider .pd-thick{height:2px;width:80px;background:var(--cocoa)}
+			.premium-divider .pd-diamond{width:8px;height:8px;background:linear-gradient(135deg,var(--burnt),var(--cocoa));transform:rotate(45deg)}
+
+			.premium-divider-dark .pd-thin{background:linear-gradient(90deg,transparent 0%,var(--burnt) 100%)}
+			.premium-divider-dark .pd-thin-r{background:linear-gradient(90deg,var(--burnt) 0%,transparent 100%)}
+			.premium-divider-dark .pd-thick{background:var(--burnt)}
+			.premium-divider-dark .pd-diamond{background:linear-gradient(135deg,var(--burnt),var(--tan))}
+
+			/* MINI DIVIDER for inline use */
+			.mini-divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+			.mini-divider .m-line{height:1px;width:30px;background:var(--burnt)}
+			.mini-divider .m-diamond{width:6px;height:6px;background:var(--burnt);transform:rotate(45deg)}
+			.mini-divider.center{justify-content:center}
+
+			.eyebrow{display:block;font-family:'Inter',sans-serif;font-size:11px;color:var(--burnt);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;font-weight:600}
+			.eyebrow-italic{display:block;font-family:Georgia,serif;font-style:italic;font-size:14px;color:var(--burnt);letter-spacing:4px;text-transform:uppercase;margin-bottom:18px;font-weight:500}
+
+			/* TOP BAR */
+			.top-bar{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 50%,var(--espresso-mid) 100%);padding:14px 0;border-bottom:1px solid rgba(198,161,109,0.15)}
+			.top-bar-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+			.top-bar-item{font-family:Georgia,serif;font-style:italic;font-size:13px;color:var(--tan);letter-spacing:1px}
+
+			/* HEADER */
+			.site-header{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 50%,var(--espresso-mid) 100%);color:var(--cream);padding:24px 0 0;position:sticky;top:0;z-index:100;animation:fadeIn 0.8s ease}
+			.header-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;align-items:center;gap:18px;position:relative;padding-bottom:28px}
+			.logo{display:flex;align-items:center;justify-content:center;transition:opacity 0.3s}
+			.logo:hover{opacity:0.85}
+			.logo-img{height:80px;width:auto;display:block}
+			.main-nav{display:flex;gap:30px;align-items:center;flex-wrap:wrap;justify-content:center}
+			.main-nav a{color:var(--cream);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2.5px;position:relative;padding:6px 0;transition:color 0.3s}
+			.main-nav a:not(.cta)::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:1px;background:var(--burnt);transition:all 0.4s ease;transform:translateX(-50%)}
+			.main-nav a:not(.cta):hover{color:var(--burnt-light)}
+			.main-nav a:not(.cta):hover::after{width:100%}
+
+			/* MONKEY BADGE BUTTONS - logo in dark circle + text */
+			.cta, .btn-primary{
+				background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);
+				color:var(--text-dark) !important;
+				padding:0 24px 0 4px;
+				font-family:'Inter',sans-serif;
+				font-size:11px;
+				letter-spacing:2.5px;
+				font-weight:600;
+				text-transform:uppercase;
+				display:inline-flex;
+				align-items:center;
+				gap:14px;
+				height:48px;
+				transition:all 0.4s ease;
+				border:1px solid var(--burnt);
+				cursor:pointer;
+			}
+			.cta::after, .btn-primary::after{display:none !important}
+			.cta:hover, .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(193,121,67,0.45);color:var(--text-dark) !important}
+			.cta-badge, .btn-badge{
+				width:40px;height:40px;
+				background:var(--espresso);
+				border-radius:50%;
+				display:inline-flex;align-items:center;justify-content:center;
+				flex-shrink:0;
+			}
+			.cta-badge img, .btn-badge img{
+				width:34px;height:34px;
+				object-fit:contain;
+				filter:brightness(0) invert(1) sepia(0.4) saturate(3) hue-rotate(355deg);
+			}
+
+			.btn-outline-cocoa{
+				background:transparent;
+				color:var(--cocoa) !important;
+				padding:0 24px 0 4px;
+				font-family:'Inter',sans-serif;
+				font-size:11px;
+				letter-spacing:2.5px;
+				font-weight:600;
+				text-transform:uppercase;
+				display:inline-flex;
+				align-items:center;
+				gap:14px;
+				height:48px;
+				border:1px solid var(--cocoa);
+				transition:all 0.4s ease;
+				cursor:pointer;
+			}
+			.btn-outline-cocoa:hover{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark) !important;border-color:var(--burnt);transform:translateY(-2px);box-shadow:0 10px 24px rgba(193,121,67,0.4)}
+			.btn-outline-cocoa .btn-badge{background:var(--cocoa);transition:background 0.4s ease}
+			.btn-outline-cocoa:hover .btn-badge{background:var(--espresso)}
+			.btn-outline-cocoa .btn-badge img{filter:brightness(0) invert(1)}
+
+			.btn-outline-cream{
+				background:transparent;
+				color:var(--cream) !important;
+				padding:0 24px 0 4px;
+				font-family:'Inter',sans-serif;
+				font-size:11px;
+				letter-spacing:2.5px;
+				font-weight:600;
+				text-transform:uppercase;
+				display:inline-flex;
+				align-items:center;
+				gap:14px;
+				height:48px;
+				border:1px solid var(--burnt);
+				transition:all 0.4s ease;
+			}
+			.btn-outline-cream:hover{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark) !important;transform:translateY(-2px);box-shadow:0 10px 24px rgba(193,121,67,0.5)}
+			.btn-outline-cream .btn-badge{background:var(--cream)}
+			.btn-outline-cream .btn-badge img{filter:brightness(0) sepia(1) saturate(2) hue-rotate(15deg) brightness(0.5)}
+
+			/* HEADER BOTTOM ZIGZAG */
+			.header-bottom-zigzag{height:1px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 50%,transparent 100%)}
+
+			/* HAMBURGER */
+			.hamburger{display:none;background:transparent;border:none;cursor:pointer;width:40px;height:40px;flex-direction:column;justify-content:center;align-items:center;gap:5px;position:absolute;right:24px;top:14px;padding:8px;z-index:200}
+			.hamburger span{display:block;width:26px;height:2px;background:var(--burnt);transition:all 0.3s ease}
+			.hamburger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+			.hamburger.active span:nth-child(2){opacity:0}
+			.hamburger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+			/* MOBILE MENU */
+			.mobile-menu{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:380px;background:linear-gradient(180deg,var(--espresso-deep) 0%,var(--espresso) 50%,var(--cocoa-deep) 100%);transform:translateX(100%);transition:transform 0.4s ease;z-index:99;overflow-y:auto;padding:90px 32px 40px;box-shadow:-10px 0 40px rgba(0,0,0,0.5)}
+			.mobile-menu.active{transform:translateX(0)}
+			.mobile-menu-inner{display:flex;flex-direction:column;gap:4px}
+			.mobile-menu-logo{text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid rgba(198,161,109,0.2)}
+			.mobile-menu-logo img{height:64px;width:auto;display:inline-block}
+			.mobile-menu-item{display:block;color:var(--cream);font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:500;padding:14px 0;border-bottom:1px solid rgba(198,161,109,0.15);transition:color 0.3s,padding-left 0.3s}
+			.mobile-menu-item:hover{color:var(--burnt-light);padding-left:6px}
+			.mobile-menu-divider{height:1px;background:linear-gradient(90deg,transparent,var(--burnt),transparent);margin:24px 0 16px}
+			.mobile-menu-label{font-family:'Inter',sans-serif;font-size:10px;color:var(--burnt);letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:10px}
+			.mobile-menu-info{font-family:Georgia,serif;font-style:italic;font-size:15px;color:rgba(243,227,195,0.85);line-height:1.7;margin-bottom:24px}
+			.mobile-menu-cta{display:inline-flex !important;align-items:center;gap:14px;background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark);padding:0 22px 0 4px;height:50px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:16px;text-decoration:none;transition:all 0.4s ease}
+			.mobile-menu-cta:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(193,121,67,0.4)}
+
+			/* HERO */
+			.hero{position:relative;min-height:75vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:90px 32px 100px;color:var(--cocoa);background:linear-gradient(180deg,var(--cream) 0%,var(--cream-soft) 100%);overflow:hidden;animation:fadeIn 1.2s ease}
+			.hero::before{content:'';position:absolute;top:60px;left:60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(193,121,67,0.15) 0%,transparent 70%);pointer-events:none}
+			.hero::after{content:'';position:absolute;bottom:60px;right:60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(140,90,58,0.12) 0%,transparent 70%);pointer-events:none}
+			.hero-content{position:relative;z-index:2;max-width:900px;width:100%}
+			.hero-logo{width:140px;height:auto;margin:0 auto 32px;display:block;animation:fadeUp 1s ease 0.1s both}
+			.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:64px;color:var(--cocoa);font-weight:500;line-height:1.1;margin-bottom:0;letter-spacing:-1px;animation:fadeUp 1.2s ease 0.3s both}
+			.hero h1 em{color:var(--burnt);font-style:italic;font-weight:400}
+			.hero-tagline{font-size:17px;font-weight:400;max-width:620px;margin:24px auto 36px;line-height:1.65;color:var(--text-soft);animation:fadeUp 1.2s ease 0.6s both}
+			.hero-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1.2s ease 0.9s both}
+
+			/* SECTIONS */
+			.section{padding:100px 32px;position:relative;overflow:hidden}
+			.section-tight{padding:70px 32px}
+			.container{max-width:1280px;margin:0 auto}
+			.container-narrow{max-width:980px;margin:0 auto}
+			.text-center{text-align:center}
+
+			.section-cream{background:linear-gradient(180deg,var(--cream) 0%,var(--cream-soft) 100%)}
+			.section-cream-reverse{background:linear-gradient(180deg,var(--cream-soft) 0%,var(--cream) 100%)}
+			.section-tan{background:linear-gradient(135deg,var(--tan) 0%,var(--tan-soft) 50%,var(--tan) 100%);color:var(--text-dark)}
+			.section-cocoa{background:linear-gradient(135deg,var(--cocoa-deep) 0%,var(--cocoa) 50%,var(--cocoa-deep) 100%);color:var(--cream)}
+			.section-espresso{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 35%,var(--espresso-mid) 70%,var(--espresso) 100%);color:var(--cream);position:relative}
+			.section-espresso::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(193,121,67,0.12) 0%,transparent 60%);pointer-events:none}
+			.section-espresso > *{position:relative;z-index:2}
+
+			.section-tan h1, .section-tan h2, .section-tan h3{color:var(--text-dark)}
+			.section-tan h1 em, .section-tan h2 em, .section-tan h3 em{color:var(--cocoa-deep)}
+			.section-tan p{color:var(--cocoa-deep)}
+
+			.section-cocoa h1, .section-cocoa h2, .section-cocoa h3{color:var(--cream)}
+			.section-cocoa h1 em, .section-cocoa h2 em, .section-cocoa h3 em{color:var(--burnt-light)}
+			.section-cocoa p{color:rgba(243,227,195,0.9)}
+
+			.section-espresso h1, .section-espresso h2, .section-espresso h3{color:var(--cream)}
+			.section-espresso h1 em, .section-espresso h2 em, .section-espresso h3 em{color:var(--burnt-light)}
+			.section-espresso p{color:rgba(243,227,195,0.85)}
+
+			/* INTRO BLOCK */
+			.intro-block{text-align:center;max-width:880px;margin:0 auto}
+			.intro-block h2{font-size:42px;font-weight:500;margin-bottom:20px;line-height:1.2}
+			.intro-block p{font-size:17px;line-height:1.85;font-weight:400}
+
+			/* SECTION DIVIDER (between sections, with logo or diamond) */
+			.section-divider{padding:50px 32px;text-align:center;background:linear-gradient(180deg,var(--cream-soft) 0%,var(--cream) 100%)}
+			.section-divider .premium-divider{margin:0}
+			.section-divider .pd-logo{width:46px;height:46px;object-fit:contain;opacity:0.6}
+
+			/* TWO-COLUMN ROW */
+			.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto}
+			.two-col-img{height:480px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+			.two-col-img.cocoa{background:linear-gradient(135deg,var(--cocoa-deep) 0%,var(--cocoa) 50%,var(--cocoa-deep) 100%)}
+			.two-col-img.espresso{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 50%,var(--cocoa-deep) 100%)}
+			.two-col-img-frame{position:absolute;top:20px;left:20px;right:20px;bottom:20px;border:1px solid rgba(198,161,109,0.3);pointer-events:none}
+			.two-col-img-corner{position:absolute;width:60px;height:60px;border:1px solid rgba(193,121,67,0.5)}
+			.two-col-img-corner.tl{top:30px;left:30px}
+			.two-col-img-corner.br{bottom:30px;right:30px}
+			.two-col-img img{position:relative;z-index:2;max-width:80%;max-height:80%;object-fit:cover}
+			.two-col-content h2{font-size:42px;line-height:1.2;margin-bottom:20px;font-weight:500}
+			.two-col-content p{font-size:16px;line-height:1.85;margin-bottom:18px;font-weight:400}
+
+			/* PATTERN OVERLAYS - small block use only */
+			.pattern-overlay{position:absolute;inset:0;opacity:0.3;pointer-events:none;mix-blend-mode:overlay}
+			.pattern-jaali{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M22 0 L44 22 L22 44 L0 22 Z' fill='none' stroke='%23C6A16D' stroke-width='0.6' opacity='0.4'/%3E%3Ccircle cx='22' cy='22' r='1.5' fill='%23C6A16D' opacity='0.4'/%3E%3C/svg%3E")}
+			.pattern-block{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Crect x='6' y='6' width='24' height='24' fill='none' stroke='%23C6A16D' stroke-width='0.7' opacity='0.5' transform='rotate(45 18 18)'/%3E%3Crect x='12' y='12' width='12' height='12' fill='none' stroke='%23C6A16D' stroke-width='0.5' opacity='0.5' transform='rotate(45 18 18)'/%3E%3Ccircle cx='18' cy='18' r='1.3' fill='%23C6A16D' opacity='0.55'/%3E%3C/svg%3E")}
+			.pattern-star{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z' fill='none' stroke='%23C6A16D' stroke-width='0.7' opacity='0.5'/%3E%3Ccircle cx='24' cy='24' r='1.5' fill='%23C6A16D' opacity='0.5'/%3E%3C/svg%3E")}
+			.pattern-wave{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 20 Q10 0 20 20 Q30 40 40 20' fill='none' stroke='%23C6A16D' stroke-width='0.7' opacity='0.45'/%3E%3Cpath d='M0 20 Q10 40 20 20 Q30 0 40 20' fill='none' stroke='%23C6A16D' stroke-width='0.7' opacity='0.45'/%3E%3Ccircle cx='20' cy='20' r='1.2' fill='%23C6A16D' opacity='0.5'/%3E%3C/svg%3E")}
+
+			/* PILL TAGS */
+			.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+			.tag{padding:7px 14px;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;font-weight:600;text-transform:uppercase;background:rgba(140,90,58,0.1);color:var(--cocoa)}
+			.tag-dark{background:rgba(193,121,67,0.2);color:var(--tan)}
+			.tag-cream{background:var(--espresso);color:var(--cream)}
+
+			/* CARDS - 3 across desktop, stack on mobile */
+			.card-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto}
+			.card{background:#FFF;border:1px solid rgba(140,90,58,0.15);overflow:hidden;position:relative;transition:transform 0.5s ease,box-shadow 0.5s ease}
+			.card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(45,27,20,0.15)}
+			.card-top-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--burnt) 0%,var(--cocoa) 50%,var(--burnt) 100%)}
+			.card-img{height:220px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+			.card-img.cocoa{background:linear-gradient(135deg,var(--burnt) 0%,var(--cocoa) 100%)}
+			.card-img.espresso{background:linear-gradient(135deg,var(--cocoa) 0%,var(--cocoa-deep) 100%)}
+			.card-img.tan{background:linear-gradient(135deg,var(--tan) 0%,var(--cocoa) 100%)}
+			.card-img-label{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:48px;color:var(--cream);opacity:0.95;position:relative;z-index:2}
+			.card-content{padding:30px 28px}
+			.card-content .eyebrow{margin-bottom:10px}
+			.card-content h3{font-size:22px;margin:0 0 10px;font-weight:500;line-height:1.3}
+			.card-content p{font-size:14px;color:var(--text-soft);line-height:1.7;margin:0;font-weight:400}
+
+			/* VISIT INFO - 3 columns */
+			.visit-info{display:flex;justify-content:center;gap:80px;flex-wrap:wrap;margin-top:30px}
+			.visit-info-item{text-align:center}
+			.visit-info-item .label{font-family:'Inter',sans-serif;font-size:10px;color:var(--burnt);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-weight:600}
+			.visit-info-item .value{font-family:'Playfair Display',Georgia,serif;font-size:20px;color:var(--cream);font-style:italic;font-weight:400}
+
+			/* FOOTER */
+			.site-footer{background:linear-gradient(180deg,var(--espresso) 0%,var(--espresso-deep) 100%);color:var(--cream);padding:0 32px}
+			.footer-divider{display:flex;align-items:center;justify-content:center;gap:14px;padding:60px 0 48px}
+			.footer-divider .d-thin{height:1px;width:50px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 100%);opacity:0.5}
+			.footer-divider .d-thick{height:2px;width:90px;background:var(--burnt)}
+			.footer-divider .d-logo{width:48px;height:48px;object-fit:contain;opacity:0.7}
+			.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;padding-bottom:60px}
+			.footer-brand{display:flex;flex-direction:column;gap:18px}
+			.footer-logo-img{height:80px;width:auto}
+			.footer-tag{font-family:Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.7);line-height:1.7}
+			.footer-col h4{font-family:'Inter',sans-serif;color:var(--burnt);font-size:11px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:18px}
+			.footer-col a{display:block;color:rgba(243,227,195,0.7);margin-bottom:10px;font-size:13px;font-weight:400;letter-spacing:0.4px;transition:color 0.3s,padding-left 0.3s;font-family:'Inter',sans-serif}
+			.footer-col a:hover{color:var(--burnt-light);padding-left:4px}
+			.footer-col p{color:rgba(243,227,195,0.7);font-size:13px;font-family:'Inter',sans-serif;line-height:1.7;margin-bottom:8px}
+			.footer-col p a{display:inline;padding:0;margin:0;color:var(--burnt-light)}
+			.footer-bottom{border-top:1px solid rgba(198,161,109,0.15);padding:24px 0;text-align:center}
+			.footer-bottom p{color:rgba(243,227,195,0.5);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:400}
+
+			/* RESPONSIVE , MOBILE FIRST RULES */
+			@media (max-width:900px){
+				.top-bar{padding:10px 0}
+				.top-bar-inner{flex-direction:column;gap:6px;text-align:center}
+				.top-bar-item{font-size:11px}
+				.logo-img{height:64px}
+				.desktop-nav{display:none}
+				.hamburger{display:flex}
+				.header-inner{padding-bottom:24px}
+				.hero{min-height:60vh;padding:60px 20px 70px}
+				.hero-logo{width:110px;margin-bottom:24px}
+				.hero h1{font-size:38px;line-height:1.2}
+				.hero-tagline{font-size:15px;line-height:1.6}
+				.intro-block h2{font-size:30px;line-height:1.25}
+				.two-col-content h2{font-size:30px}
+				.two-col{grid-template-columns:1fr;gap:40px}
+				.two-col-img{height:340px}
+				.two-col-content,.two-col-content h2,.two-col-content p{text-align:center}
+				.section{padding:60px 20px}
+				.section-tight{padding:50px 20px}
+				/* CRITICAL: 3-card grid stacks on mobile, never squeezes */
+				.card-grid-3{grid-template-columns:1fr;gap:20px;max-width:480px}
+				.card-img{height:180px}
+				.card-img-label{font-size:38px}
+				.card-content{padding:24px 22px}
+				.card-content h3{font-size:20px}
+				.visit-info{gap:36px}
+				.footer-inner{grid-template-columns:1fr;gap:36px;text-align:center}
+				.footer-brand{align-items:center;text-align:center}
+				.footer-divider{padding:40px 0 32px}
+				.footer-divider .d-thin,.footer-divider .d-thick{width:30px}
+				.footer-divider .d-logo{width:36px;height:36px}
+				.cta, .btn-primary, .btn-outline-cocoa, .btn-outline-cream{font-size:10px;letter-spacing:2px;height:46px;padding:0 20px 0 4px}
+				.cta-badge, .btn-badge{width:38px;height:38px}
+				.cta-badge img, .btn-badge img{width:32px;height:32px}
+				.premium-divider .pd-thin, .premium-divider .pd-thin-r{width:30px}
+				.premium-divider .pd-thick{width:60px}
+				.section-divider{padding:36px 20px}
+				.hero-buttons{flex-direction:column;align-items:center}
+				.hero-buttons .cta, .hero-buttons .btn-primary, .hero-buttons .btn-outline-cocoa{width:100%;max-width:280px;justify-content:flex-start}
+			}
+			@media (max-width:480px){
+				.hero h1{font-size:30px}
+				.intro-block h2{font-size:24px}
+				.two-col-content h2{font-size:24px}
+			}
+		</style>
+		<script is:inline>
+			const observer = new IntersectionObserver((entries)=>{
+				entries.forEach(entry=>{
+					if(entry.isIntersecting){
+						entry.target.classList.add('visible');
+						observer.unobserve(entry.target);
+					}
+				});
+			},{threshold:0.15,rootMargin:'0px 0px -50px 0px'});
+			document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>observer.observe(el));
+
+			const hamburger = document.getElementById('hamburger-btn');
+			const mobileMenu = document.getElementById('mobile-menu');
+			const body = document.body;
+			let menuOpen = false;
+			function toggleMenu(){
+				menuOpen = !menuOpen;
+				hamburger.classList.toggle('active');
+				mobileMenu.classList.toggle('active');
+				body.classList.toggle('menu-open');
+				hamburger.setAttribute('aria-expanded', menuOpen);
+				mobileMenu.setAttribute('aria-hidden', !menuOpen);
+			}
+			hamburger.addEventListener('click', toggleMenu);
+			document.querySelectorAll('.mobile-menu-item, .mobile-menu-cta').forEach(link=>{
+				link.addEventListener('click', ()=>{ if(menuOpen) toggleMenu(); });
+			});
+			document.addEventListener('keydown', (e)=>{
+				if(e.key === 'Escape' && menuOpen) toggleMenu();
+			});
+		</script>
+	</body>
+</html>
