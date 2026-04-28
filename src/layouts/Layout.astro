@@ -476,10 +476,17 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 				.card-content p{font-size:14px;line-height:1.7}
 				.visit-info{gap:30px;flex-direction:column;align-items:center}
 				.visit-info-item .value{font-size:18px}
-				.footer-top{padding:50px 20px 32px}
-				.footer-inner{grid-template-columns:1fr;gap:36px;text-align:center}
-				.footer-brand{align-items:center;text-align:center}
-				.footer-col h4::after{left:50%;transform:translateX(-50%)}
+				.footer-top{padding:40px 20px 24px}
+				.footer-inner{grid-template-columns:1fr 1fr;gap:24px;text-align:left;align-items:start}
+				.footer-brand{align-items:center;text-align:center;grid-column:1 / -1;gap:10px;padding-bottom:14px;border-bottom:1px solid rgba(193,121,67,0.15);margin-bottom:6px}
+				.footer-brand .footer-tag{font-size:14px;line-height:1.5}
+				.footer-brand .footer-tag-italic{font-size:13px;line-height:1.5}
+				.footer-family{grid-column:1 / -1;padding-top:14px;border-top:1px solid rgba(193,121,67,0.15)}
+				.footer-family .family-btn{margin-bottom:8px}
+				.footer-col h4{font-size:11px;letter-spacing:2px;margin-bottom:14px;padding-bottom:8px}
+				.footer-col h4::after{left:0;transform:none}
+				.footer-col a{font-size:14px;margin-bottom:9px}
+				.footer-col p{font-size:14px;line-height:1.6;margin-bottom:6px}
 				.family-btn{justify-content:center !important}
 				.cta,.btn-primary,.btn-outline-cocoa,.btn-outline-cream{font-size:11px;letter-spacing:2px;height:50px;padding:0 24px 0 6px;gap:14px}
 				.cta-badge,.btn-badge{width:38px;height:38px;padding:5px}
