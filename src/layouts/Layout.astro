@@ -124,13 +124,7 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 				<div class="footer-inner">
 					<div class="footer-col footer-brand">
 						<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Chai Café" class="footer-logo-img" />
-						<p class="footer-tag">Brewing moments of warmth, one cup at a time.</p>
-						<div class="footer-mini-divider">
-							<div class="m-line"></div>
-							<div class="m-diamond"></div>
-							<div class="m-line"></div>
-						</div>
-						<p class="footer-tag-italic">A takeout café and bakery in East Vancouver, from the Sula Indian Restaurant family.</p>
+						<p class="footer-tag">Brewing moments of warmth,<br/>one cup at a time.</p>
 					</div>
 					<div class="footer-col">
 						<h4>Useful Links</h4>
@@ -144,10 +138,9 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 					</div>
 					<div class="footer-col">
 						<h4>Visit Us</h4>
-						<p>260 East 5th Ave<br/>Vancouver, BC</p>
+						<p class="footer-address">260 East 5th Ave<br/>Vancouver, BC</p>
 						<p><a href="tel:7783861130">778-386-1130</a></p>
 						<p><a href="mailto:info@sulacafe.com">info@sulacafe.com</a></p>
-						<p style="margin-top:12px"><a href="https://maps.google.com/?q=260+East+5th+Ave+Vancouver+BC" target="_blank" rel="noopener" style="font-style:italic">Get Directions →</a></p>
 					</div>
 					<div class="footer-col footer-family">
 						<h4>The Sula Family</h4>
@@ -347,11 +340,12 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 			.section-divider .premium-divider{margin:0}
 
 			.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto}
-			.two-col-img{height:520px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:32px}
+			.two-col-img{height:560px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0}
 			.two-col-img.cocoa{background:linear-gradient(135deg,var(--cocoa-deep) 0%,var(--cocoa) 50%,var(--cocoa-deep) 100%)}
 			.two-col-img.espresso{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 50%,var(--cocoa-deep) 100%)}
-			.two-col-img-frame{position:absolute;top:20px;left:20px;right:20px;bottom:20px;border:1px solid rgba(198,161,109,0.4);pointer-events:none;z-index:3}
-			.two-col-img-corner{position:absolute;width:60px;height:60px;border:1px solid rgba(193,121,67,0.6);z-index:3}
+			.two-col-img img{width:100%;height:100%;object-fit:cover}
+			.two-col-img-frame{display:none}
+			.two-col-img-corner{display:none}
 			.two-col-img-corner.tl{top:30px;left:30px}
 			.two-col-img-corner.br{bottom:30px;right:30px}
 			.two-col-img > img{position:relative;width:calc(100% - 64px);height:calc(100% - 64px);object-fit:cover;z-index:4;border:1px solid rgba(193,121,67,0.3)}
@@ -381,10 +375,10 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 			.photo-card::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M22 0 L44 22 L22 44 L0 22 Z' fill='none' stroke='%23F3E3C3' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='22' cy='22' r='1.8' fill='%23F3E3C3' opacity='0.5'/%3E%3C/svg%3E");opacity:0.10;pointer-events:none;z-index:1}
 			.photo-card > *{position:relative;z-index:2}
 			.photo-card-top-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--burnt) 0%,var(--tan) 50%,var(--burnt) 100%);z-index:5}
-			.photo-card-img{padding:18px 18px 0;position:relative}
-			.photo-card-img img{width:100%;height:240px;object-fit:cover;display:block;border:1px solid rgba(193,121,67,0.25)}
+			.photo-card-img{padding:0;position:relative}
+			.photo-card-img img{width:100%;height:240px;object-fit:cover;display:block;border:none}
 			.photo-card-img.portrait img{height:auto;aspect-ratio:2/3;object-fit:cover}
-			.photo-card-content{padding:20px 24px 26px;text-align:center}
+			.photo-card-content{padding:20px 22px 24px;text-align:center}
 			.photo-card-content .eyebrow{color:var(--burnt-light);margin-bottom:10px}
 			.photo-card-content h3{font-size:22px;margin:0 0 10px;font-weight:500;line-height:1.3;color:var(--cream)}
 			.photo-card-content h3 em{color:var(--burnt-light)}
@@ -409,25 +403,26 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 			.site-footer{background:linear-gradient(135deg,#0a0503 0%,var(--espresso-deep) 25%,var(--espresso) 50%,var(--espresso-mid) 75%,var(--cocoa-deep) 100%);color:var(--cream);padding:0;position:relative;overflow:hidden}
 			.footer-pattern-overlay{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z' fill='none' stroke='%23C6A16D' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='24' cy='24' r='1.8' fill='%23C6A16D' opacity='0.5'/%3E%3C/svg%3E");opacity:0.10;pointer-events:none;z-index:1}
 			.site-footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 50%,transparent 100%);z-index:5}
-			.footer-top{padding:60px 32px 40px;position:relative;z-index:2}
-			.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:36px;align-items:start}
-			.footer-brand{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
-			.footer-logo-img{height:80px;width:auto;object-fit:contain;display:block}
-			.footer-tag{font-family:Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.85);line-height:1.6}
-			.footer-tag-italic{font-family:Georgia,serif;font-style:italic;font-size:13px;color:rgba(243,227,195,0.65);line-height:1.6}
+			.footer-top{padding:80px 32px 50px;position:relative;z-index:2}
+			.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:48px;align-items:start}
+			.footer-brand{display:flex;flex-direction:column;gap:18px;align-items:flex-start}
+			.footer-logo-img{height:96px;width:auto;object-fit:contain;display:block}
+			.footer-tag{font-family:Georgia,serif;font-style:italic;font-size:16px;color:rgba(243,227,195,0.85);line-height:1.6}
+			.footer-tag-italic{font-family:Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.65);line-height:1.6}
 			.footer-mini-divider{display:flex;align-items:center;gap:10px;margin:6px 0}
 			.footer-mini-divider .m-line{height:1px;width:30px;background:var(--burnt)}
 			.footer-mini-divider .m-diamond{width:6px;height:6px;background:var(--burnt);transform:rotate(45deg)}
-			.footer-col h4{font-family:'Inter',sans-serif;color:var(--burnt);font-size:11px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:18px;position:relative;padding-bottom:10px}
+			.footer-col h4{font-family:'Inter',sans-serif;color:var(--burnt);font-size:12px;text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:22px;position:relative;padding-bottom:12px}
 			.footer-col h4::after{content:'';position:absolute;left:0;bottom:0;width:30px;height:1px;background:var(--burnt);opacity:0.5}
-			.footer-col a{display:block;color:rgba(243,227,195,0.75);margin-bottom:9px;font-size:13px;font-weight:400;letter-spacing:0.4px;transition:color 0.3s,padding-left 0.3s;font-family:'Inter',sans-serif}
+			.footer-col a{display:block;color:rgba(243,227,195,0.82);margin-bottom:12px;font-size:15px;font-weight:400;letter-spacing:0.4px;transition:color 0.3s,padding-left 0.3s;font-family:'Inter',sans-serif}
 			.footer-col a:hover{color:var(--burnt-light);padding-left:4px}
-			.footer-col p{color:rgba(243,227,195,0.75);font-size:13px;font-family:'Inter',sans-serif;line-height:1.7;margin-bottom:6px}
+			.footer-col p{color:rgba(243,227,195,0.82);font-size:15px;font-family:'Inter',sans-serif;line-height:1.7;margin-bottom:10px}
 			.footer-col p a{display:inline;padding:0;margin:0;color:var(--burnt-light)}
+			.footer-address{font-family:Georgia,serif;font-style:italic;font-size:16px !important}
 
 			.footer-family{display:flex;flex-direction:column}
-			.family-btn{display:flex !important;align-items:center;justify-content:space-between;gap:12px;background:rgba(193,121,67,0.08);border:1px solid rgba(193,121,67,0.35);color:var(--cream) !important;padding:11px 16px !important;margin-bottom:10px !important;font-family:'Playfair Display',Georgia,serif !important;font-size:13px !important;font-weight:500 !important;font-style:italic;letter-spacing:0.3px !important;text-transform:none !important;transition:all 0.4s ease}
-			.family-btn:hover{background:rgba(193,121,67,0.18);border-color:var(--burnt);padding-left:20px !important;color:var(--burnt-light) !important}
+			.family-btn{display:flex !important;align-items:center;justify-content:space-between;gap:12px;background:rgba(193,121,67,0.08);border:1px solid rgba(193,121,67,0.35);color:var(--cream) !important;padding:14px 18px !important;margin-bottom:12px !important;font-family:'Playfair Display',Georgia,serif !important;font-size:14px !important;font-weight:500 !important;font-style:italic;letter-spacing:0.3px !important;text-transform:none !important;transition:all 0.4s ease}
+			.family-btn:hover{background:rgba(193,121,67,0.18);border-color:var(--burnt);padding-left:22px !important;color:var(--burnt-light) !important}
 			.family-btn-arrow{font-family:'Inter',sans-serif;font-size:18px;font-style:normal;font-weight:300;transition:transform 0.4s ease}
 			.family-btn:hover .family-btn-arrow{transform:translateX(4px)}
 			.family-btn-cta{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%) !important;border-color:var(--burnt) !important;color:var(--text-dark) !important;font-style:normal !important;font-family:'Inter',sans-serif !important;font-size:11px !important;text-transform:uppercase !important;letter-spacing:2px !important;font-weight:600 !important;margin-top:6px !important}
@@ -476,17 +471,19 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 				.card-content p{font-size:14px;line-height:1.7}
 				.visit-info{gap:30px;flex-direction:column;align-items:center}
 				.visit-info-item .value{font-size:18px}
-				.footer-top{padding:40px 20px 24px}
-				.footer-inner{grid-template-columns:1fr 1fr;gap:24px;text-align:left;align-items:start}
-				.footer-brand{align-items:center;text-align:center;grid-column:1 / -1;gap:10px;padding-bottom:14px;border-bottom:1px solid rgba(193,121,67,0.15);margin-bottom:6px}
-				.footer-brand .footer-tag{font-size:14px;line-height:1.5}
-				.footer-brand .footer-tag-italic{font-size:13px;line-height:1.5}
-				.footer-family{grid-column:1 / -1;padding-top:14px;border-top:1px solid rgba(193,121,67,0.15)}
-				.footer-family .family-btn{margin-bottom:8px}
-				.footer-col h4{font-size:11px;letter-spacing:2px;margin-bottom:14px;padding-bottom:8px}
-				.footer-col h4::after{left:0;transform:none}
-				.footer-col a{font-size:14px;margin-bottom:9px}
-				.footer-col p{font-size:14px;line-height:1.6;margin-bottom:6px}
+				.footer-top{padding:50px 24px 32px}
+				.footer-inner{grid-template-columns:1fr 1fr;gap:32px 20px;text-align:center;align-items:start}
+				.footer-brand{align-items:center;text-align:center;grid-column:1 / -1;gap:14px;padding-bottom:20px;border-bottom:1px solid rgba(193,121,67,0.15);margin-bottom:0}
+				.footer-brand .footer-tag{font-size:16px;line-height:1.55}
+				.footer-logo-img{height:88px}
+				.footer-family{grid-column:1 / -1;padding-top:20px;border-top:1px solid rgba(193,121,67,0.15);align-items:center}
+				.footer-family .family-btn{margin-bottom:10px !important;width:100%;max-width:340px;font-size:15px !important;padding:14px 20px !important}
+				.footer-col{text-align:center;display:flex;flex-direction:column;align-items:center}
+				.footer-col h4{font-size:12px;letter-spacing:2.5px;margin-bottom:16px;padding-bottom:10px}
+				.footer-col h4::after{left:50%;transform:translateX(-50%)}
+				.footer-col a{font-size:16px;margin-bottom:10px;text-align:center}
+				.footer-col p{font-size:16px;line-height:1.6;margin-bottom:6px;text-align:center}
+				.footer-address{font-size:18px !important}
 				.family-btn{justify-content:center !important}
 				.cta,.btn-primary,.btn-outline-cocoa,.btn-outline-cream{font-size:11px;letter-spacing:2px;height:50px;padding:0 24px 0 6px;gap:14px}
 				.cta-badge,.btn-badge{width:38px;height:38px;padding:5px}
