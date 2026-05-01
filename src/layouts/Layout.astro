@@ -171,7 +171,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 					</a>
 				</nav>
 				<button class="hamburger" aria-label="Open menu" aria-expanded="false" id="hamburger-btn">
-					<svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 						<path d="M11 5 Q12.5 7 11 9 Q9.5 11 11 13" opacity="0.55"/>
 						<path d="M16 3.5 Q17.8 6 16 8.5 Q14.2 11 16 13" opacity="0.85"/>
 						<path d="M21 5 Q22.5 7 21 9 Q19.5 11 21 13" opacity="0.55"/>
@@ -307,7 +307,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				--text-soft: #5C4031;
 			}
 			*{box-sizing:border-box;margin:0;padding:0}
-			html,body{overflow-x:hidden;scroll-behavior:smooth}
+			html,body{overflow-x:clip;scroll-behavior:smooth}
 			body{font-family:'Inter',-apple-system,sans-serif;font-weight:400;color:var(--text-dark);background:var(--cream);line-height:1.7;letter-spacing:0.2px}
 			body.menu-open{overflow:hidden}
 			img{max-width:100%;height:auto;display:block}
@@ -428,8 +428,8 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				.faq-a p{padding-top:14px;font-size:14px;line-height:1.7}
 			}
 
-			.hamburger{display:none;background:transparent;border:none;cursor:pointer;width:40px;height:40px;justify-content:center;align-items:center;position:absolute;right:24px;top:14px;padding:6px;z-index:200;color:var(--burnt)}
-			.hamburger svg{width:28px;height:28px;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
+			.hamburger{display:none;background:transparent;border:none;cursor:pointer;width:44px;height:44px;justify-content:center;align-items:center;position:absolute;right:24px;top:14px;padding:6px;z-index:200;color:var(--burnt)}
+			.hamburger svg{width:32px;height:32px;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
 			.hamburger.active svg{transform:rotate(8deg)}
 			.site-header.scrolled .hamburger{color:var(--cocoa-deep)}
 
