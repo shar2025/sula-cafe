@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/explore",
+      "destination": "/coffee-and-chai-in-vancouver",
+      "permanent": true
+    }
+  ]
+}
