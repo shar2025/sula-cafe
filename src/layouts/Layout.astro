@@ -471,12 +471,12 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.mobile-menu-divider{height:1px;background:linear-gradient(90deg,transparent,var(--burnt),transparent);margin:18px 0 12px}
 			.mobile-menu-label{font-family:'Inter',sans-serif;font-size:10px;color:var(--burnt);letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:10px}
 			.mobile-menu-info{font-family:Georgia,serif;font-style:italic;font-size:15px;color:rgba(243,227,195,0.85);line-height:1.4;margin-bottom:2px}
-			.mobile-menu-cta{display:inline-flex !important;align-items:center;gap:14px;background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark);padding:0 22px 0 4px;height:50px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;text-decoration:none;transition:all 0.4s ease}
+			.mobile-menu-cta{display:flex !important;justify-content:center;align-items:center;gap:14px;width:100%;background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark);padding:0 22px;height:50px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;text-decoration:none;transition:all 0.4s ease}
 			.mobile-menu-cta:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(193,121,67,0.4)}
-			.mobile-menu-social{display:flex;justify-content:center;align-items:center;gap:10px;color:rgba(243,227,195,0.85);font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:16px;text-decoration:none;padding-top:8px;border-top:1px solid rgba(198,161,109,0.35);margin-bottom:4px;transition:color 0.3s}
+			.mobile-menu-social{display:flex;justify-content:flex-start;align-items:center;gap:10px;color:rgba(243,227,195,0.85);font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:16px;text-decoration:none;padding-top:8px;border-top:1px solid rgba(198,161,109,0.35);margin-bottom:4px;transition:color 0.3s}
 			.mobile-menu-social:hover{color:var(--burnt-light)}
 			@media (max-width:900px){
-				body.menu-open .site-header{background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+				body.menu-open .site-header{background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;min-height:64px;overflow:visible}
 				body.menu-open .site-header::before{display:none}
 				body.menu-open .site-header .logo{display:none}
 				body.menu-open .header-bottom-zigzag{display:none}
