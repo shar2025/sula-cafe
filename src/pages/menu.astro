@@ -520,7 +520,99 @@ const menuSchema = {
 		</div>
 	</section>
 
+	<section class="section section-cream-deep reveal" id="faq">
+		<div class="container container-narrow">
+			<div class="intro-block">
+				<span class="eyebrow-italic">Menu Questions</span>
+				<h2>Things people <em>ask about the menu.</em></h2>
+				<div class="premium-divider">
+					<div class="pd-thin"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-diamond"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-thin-r"></div>
+				</div>
+				<p>Quick answers about what we serve.</p>
+			</div>
+
+			<div class="faq-list">
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">What chai blends do you have?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Five blends, all brewed slow with whole spices. Classic masala, lavender, pistachio, spicy ginger, and gulabi rose.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Is your coffee from India?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. Our exclusive Sula Blend is roasted by Alai Coffee, a Vancouver micro-roaster sourcing from Chikmagalur and Odisha.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">What's the most popular drink?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Classic masala chai is the everyday favourite. Jaggery velvet latte and coastal coconut cappuccino are close seconds.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Are the paninis vegetarian?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Chimichurri paneer is fully vegetarian. Pesto chicken tikka has chicken. Both are pressed in our masala focaccia from Union Market.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Do you have anything sugar-free?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. The spiced morning glory muffin is sugar-free. We also have unsweetened chai options on request.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">What's a cruffin?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Half croissant, half muffin. Flaky pastry filled with sweet curd or cream. Lime coconut, tiramisu, and orange chocolate are our regulars.</p>
+					</div>
+				</details>
+			</div>
+		</div>
+	</section>
+
 	<script type="application/ld+json" slot="schema" set:html={JSON.stringify(menuSchema)} />
+
+	<script type="application/ld+json" slot="schema" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{ "@type": "Question", "name": "What chai blends do you have?", "acceptedAnswer": { "@type": "Answer", "text": "Five blends, all brewed slow with whole spices. Classic masala, lavender, pistachio, spicy ginger, and gulabi rose." } },
+			{ "@type": "Question", "name": "Is your coffee from India?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Our exclusive Sula Blend is roasted by Alai Coffee, a Vancouver micro-roaster sourcing from Chikmagalur and Odisha." } },
+			{ "@type": "Question", "name": "What's the most popular drink?", "acceptedAnswer": { "@type": "Answer", "text": "Classic masala chai is the everyday favourite. Jaggery velvet latte and coastal coconut cappuccino are close seconds." } },
+			{ "@type": "Question", "name": "Are the paninis vegetarian?", "acceptedAnswer": { "@type": "Answer", "text": "Chimichurri paneer is fully vegetarian. Pesto chicken tikka has chicken. Both are pressed in our masala focaccia from Union Market." } },
+			{ "@type": "Question", "name": "Do you have anything sugar-free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The spiced morning glory muffin is sugar-free. We also have unsweetened chai options on request." } },
+			{ "@type": "Question", "name": "What's a cruffin?", "acceptedAnswer": { "@type": "Answer", "text": "Half croissant, half muffin. Flaky pastry filled with sweet curd or cream. Lime coconut, tiramisu, and orange chocolate are our regulars." } }
+		]
+	})} />
 
 	<section class="section section-espresso reveal">
 		<div class="container text-center">

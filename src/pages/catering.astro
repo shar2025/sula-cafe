@@ -254,6 +254,98 @@ import Layout from '../layouts/Layout.astro';
 		</div>
 	</section>
 
+	<section class="section section-cream-deep reveal" id="faq">
+		<div class="container container-narrow">
+			<div class="intro-block">
+				<span class="eyebrow-italic">Catering Questions</span>
+				<h2>Common questions <em>about catering.</em></h2>
+				<div class="premium-divider">
+					<div class="pd-thin"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-diamond"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-thin-r"></div>
+				</div>
+				<p>Quick answers before you book.</p>
+			</div>
+
+			<div class="faq-list">
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">What kinds of events do you cater?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Weddings, corporate lunches, private parties, birthdays. Everything from a 10-person boardroom to a 200-guest reception.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">How far in advance should I book?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>At least 2 weeks for small orders. 4 to 6 weeks for weddings and large events. Last minute is sometimes possible, just call.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Do you have a minimum order?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. $200 minimum for catering delivery in East Vancouver. Larger areas have higher minimums.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Where do you deliver?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Across Vancouver, Burnaby, and the Lower Mainland. Delivery fees scale with distance.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Can you do live chai bars at events?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. Our live chai stations are a guest favourite. Five blends, brewed fresh on site.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Do you handle dietary needs?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Vegan, vegetarian, gluten-free, halal options on every menu. Tell us what you need and we'll plan around it.</p>
+					</div>
+				</details>
+			</div>
+		</div>
+	</section>
+
+	<script type="application/ld+json" slot="schema" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{ "@type": "Question", "name": "What kinds of events do you cater?", "acceptedAnswer": { "@type": "Answer", "text": "Weddings, corporate lunches, private parties, birthdays. Everything from a 10-person boardroom to a 200-guest reception." } },
+			{ "@type": "Question", "name": "How far in advance should I book?", "acceptedAnswer": { "@type": "Answer", "text": "At least 2 weeks for small orders. 4 to 6 weeks for weddings and large events. Last minute is sometimes possible, just call." } },
+			{ "@type": "Question", "name": "Do you have a minimum order?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. $200 minimum for catering delivery in East Vancouver. Larger areas have higher minimums." } },
+			{ "@type": "Question", "name": "Where do you deliver?", "acceptedAnswer": { "@type": "Answer", "text": "Across Vancouver, Burnaby, and the Lower Mainland. Delivery fees scale with distance." } },
+			{ "@type": "Question", "name": "Can you do live chai bars at events?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Our live chai stations are a guest favourite. Five blends, brewed fresh on site." } },
+			{ "@type": "Question", "name": "Do you handle dietary needs?", "acceptedAnswer": { "@type": "Answer", "text": "Vegan, vegetarian, gluten-free, halal options on every menu. Tell us what you need and we'll plan around it." } }
+		]
+	})} />
+
 	<section class="section section-espresso reveal">
 		<div class="container text-center">
 			<span class="eyebrow-italic">Get In Touch</span>

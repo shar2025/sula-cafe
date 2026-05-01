@@ -96,6 +96,87 @@ import Layout from '../layouts/Layout.astro';
 		</div>
 	</section>
 
+	<section class="section section-cream-deep reveal" id="faq">
+		<div class="container container-narrow">
+			<div class="intro-block">
+				<span class="eyebrow-italic">Quick Answers</span>
+				<h2>Before you <em>reach out.</em></h2>
+				<div class="premium-divider">
+					<div class="pd-thin"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-diamond"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-thin-r"></div>
+				</div>
+				<p>Quick answers before you reach out.</p>
+			</div>
+
+			<div class="faq-list">
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">When are you open?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Monday through Friday from 8am to 5:30pm. Weekends 9am to 5:30pm. Open daily.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">How do I get there by transit?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>We're a 5-minute walk from Main Street-Science World SkyTrain station. The 3 Main Street bus stops a block away.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Do you take phone orders?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. Call 778-386-1130 and we'll have your order ready for pickup.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Can I order delivery?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. We're on UberEats with the full menu. Same-day delivery across East Vancouver.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Is there a way to provide feedback?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Email info@sulacafe.com. We read every message and respond within 24 hours.</p>
+					</div>
+				</details>
+			</div>
+		</div>
+	</section>
+
+	<script type="application/ld+json" slot="schema" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{ "@type": "Question", "name": "When are you open?", "acceptedAnswer": { "@type": "Answer", "text": "Monday through Friday from 8am to 5:30pm. Weekends 9am to 5:30pm. Open daily." } },
+			{ "@type": "Question", "name": "How do I get there by transit?", "acceptedAnswer": { "@type": "Answer", "text": "We're a 5-minute walk from Main Street-Science World SkyTrain station. The 3 Main Street bus stops a block away." } },
+			{ "@type": "Question", "name": "Do you take phone orders?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Call 778-386-1130 and we'll have your order ready for pickup." } },
+			{ "@type": "Question", "name": "Can I order delivery?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We're on UberEats with the full menu. Same-day delivery across East Vancouver." } },
+			{ "@type": "Question", "name": "Is there a way to provide feedback?", "acceptedAnswer": { "@type": "Answer", "text": "Email info@sulacafe.com. We read every message and respond within 24 hours." } }
+		]
+	})} />
+
 	<section class="section section-espresso reveal">
 		<div class="container text-center">
 			<span class="eyebrow-italic">Catering & Wholesale</span>

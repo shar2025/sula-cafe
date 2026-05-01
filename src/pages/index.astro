@@ -380,29 +380,4 @@ import Layout from '../layouts/Layout.astro';
 		</div>
 	</section>
 
-	<style>
-		.faq-list{margin-top:50px;display:flex;flex-direction:column;gap:14px;max-width:760px;margin-left:auto;margin-right:auto}
-		.faq-item{background:rgba(255,255,255,0.4);border:1px solid rgba(140,90,58,0.18);border-left:3px solid var(--burnt);transition:background 0.3s ease,border-color 0.3s ease}
-		.faq-item:hover{background:rgba(255,255,255,0.65);border-left-color:var(--cocoa)}
-		.faq-item[open]{background:rgba(255,255,255,0.65);border-left-color:var(--cocoa)}
-		.faq-item summary{padding:20px 24px;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:18px}
-		.faq-item summary::-webkit-details-marker{display:none}
-		.faq-item summary::marker{content:''}
-		.faq-q{font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:500;color:var(--cocoa);line-height:1.35;text-align:left}
-		.faq-icon{flex-shrink:0;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:24px;font-weight:300;color:var(--burnt);transition:transform 0.3s ease,color 0.3s ease;line-height:1}
-		.faq-item[open] .faq-icon{transform:rotate(45deg);color:var(--cocoa)}
-		.faq-a{padding:0 24px 22px;border-top:1px solid rgba(140,90,58,0.1)}
-		.faq-a p{padding-top:18px;font-size:15px;line-height:1.75;color:var(--text-soft);margin:0}
-		.faq-a a{color:var(--burnt);font-weight:500;border-bottom:1px solid rgba(193,121,67,0.3);transition:color 0.3s ease,border-color 0.3s ease}
-		.faq-a a:hover{color:var(--burnt-deep);border-bottom-color:var(--burnt)}
-		@media (max-width:600px){
-			.faq-list{margin-top:36px;gap:12px}
-			.faq-item summary{padding:16px 18px;gap:14px}
-			.faq-q{font-size:16px;line-height:1.35}
-			.faq-icon{width:24px;height:24px;font-size:22px}
-			.faq-a{padding:0 18px 18px}
-			.faq-a p{padding-top:14px;font-size:14px;line-height:1.7}
-		}
-	</style>
-
 </Layout>

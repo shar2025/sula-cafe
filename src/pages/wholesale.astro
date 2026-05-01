@@ -114,6 +114,98 @@ import Layout from '../layouts/Layout.astro';
 		</div>
 	</section>
 
+	<section class="section section-cream-deep reveal" id="faq">
+		<div class="container container-narrow">
+			<div class="intro-block">
+				<span class="eyebrow-italic">Wholesale Questions</span>
+				<h2>Common questions <em>from wholesale partners.</em></h2>
+				<div class="premium-divider">
+					<div class="pd-thin"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-diamond"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-thin-r"></div>
+				</div>
+				<p>What partners ask before getting started.</p>
+			</div>
+
+			<div class="faq-list">
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">What's the minimum wholesale order?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Varies by product. Pastries start at 24 units. Chai concentrates at 4 litres. Reach out and we'll match you to a starting plan.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Can you do custom items?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. Keto, gluten-free, and vegan items can be made to order. We also create custom assortments for cafés and offices.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Are you HACCP certified?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. All production happens in our HACCP-certified kitchen. Strict food safety standards at every stage.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">How much can you produce per day?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Up to 300 sandwiches and soup portions for breakfast or lunch service. Higher volumes possible with notice.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">How does delivery work?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Daily delivery available across Vancouver. Bulk orders coordinated with your team's preferred schedule.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Can I see samples first?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Always. We send sample boxes to potential wholesale partners. Tell us your business and we'll set it up.</p>
+					</div>
+				</details>
+			</div>
+		</div>
+	</section>
+
+	<script type="application/ld+json" slot="schema" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{ "@type": "Question", "name": "What's the minimum wholesale order?", "acceptedAnswer": { "@type": "Answer", "text": "Varies by product. Pastries start at 24 units. Chai concentrates at 4 litres. Reach out and we'll match you to a starting plan." } },
+			{ "@type": "Question", "name": "Can you do custom items?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Keto, gluten-free, and vegan items can be made to order. We also create custom assortments for cafés and offices." } },
+			{ "@type": "Question", "name": "Are you HACCP certified?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. All production happens in our HACCP-certified kitchen. Strict food safety standards at every stage." } },
+			{ "@type": "Question", "name": "How much can you produce per day?", "acceptedAnswer": { "@type": "Answer", "text": "Up to 300 sandwiches and soup portions for breakfast or lunch service. Higher volumes possible with notice." } },
+			{ "@type": "Question", "name": "How does delivery work?", "acceptedAnswer": { "@type": "Answer", "text": "Daily delivery available across Vancouver. Bulk orders coordinated with your team's preferred schedule." } },
+			{ "@type": "Question", "name": "Can I see samples first?", "acceptedAnswer": { "@type": "Answer", "text": "Always. We send sample boxes to potential wholesale partners. Tell us your business and we'll set it up." } }
+		]
+	})} />
+
 	<section class="section section-espresso reveal">
 		<div class="container text-center">
 			<span class="eyebrow-italic">Wholesale Inquiry</span>
