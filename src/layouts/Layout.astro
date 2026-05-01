@@ -115,7 +115,10 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 		<link rel="canonical" href={fullCanonical} />
 		<link rel="alternate" hreflang="en-CA" href={fullCanonical} />
 		<link rel="alternate" hreflang="x-default" href={fullCanonical} />
-		<link rel="icon" type="image/webp" href="/uploads/2025/09/sula-cafe-logo-2026.webp" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="icon" href="/favicon.ico" />
 		<meta property="og:type" content={canonical.startsWith('/blog/') ? 'article' : 'website'} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
@@ -594,7 +597,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.site-footer{background:linear-gradient(135deg,#0a0503 0%,var(--espresso-deep) 25%,var(--espresso) 50%,var(--espresso-mid) 75%,var(--cocoa-deep) 100%);color:var(--cream);padding:0;position:relative;overflow:hidden}
 			.footer-pattern-overlay{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z' fill='none' stroke='%23C6A16D' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='24' cy='24' r='1.8' fill='%23C6A16D' opacity='0.5'/%3E%3C/svg%3E");opacity:0.10;pointer-events:none;z-index:1}
 			.site-footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 50%,transparent 100%);z-index:5}
-			.footer-top{padding:92px 32px 58px;position:relative;z-index:2}
+			.footer-top{padding:92px 32px 40px;position:relative;z-index:2}
 			.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:53px;align-items:start}
 			.footer-col{display:flex;flex-direction:column;align-items:flex-start}
 			.footer-brand{display:flex;flex-direction:column;gap:18px;align-items:flex-start}
@@ -610,7 +613,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.footer-col > a:not(.family-btn)::after{content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--burnt);transition:width 0.3s ease}
 			.footer-col > a:not(.family-btn):hover{color:var(--burnt)}
 			.footer-col > a:not(.family-btn):hover::after{width:100%}
-			.footer-col p{color:rgba(243,227,195,0.82);font-size:17px;font-family:'Inter',sans-serif;line-height:1.7;margin-bottom:9px}
+			.footer-col p{color:rgba(243,227,195,0.82);font-size:17px;font-family:'Inter',sans-serif;line-height:1.7;margin-bottom:14px}
 			.footer-col p a{display:inline;padding:0;margin:0;color:var(--burnt-light)}
 			.footer-col p a.footer-social{display:inline-flex;align-items:center;gap:6px}
 			.footer-col p a[href^="tel:"]{font-family:'Inter',sans-serif;font-style:normal;font-size:15px;color:var(--tan-soft);letter-spacing:0.3px;transition:color 0.3s}
@@ -618,7 +621,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.footer-col p a[href^="mailto:"]{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:var(--burnt);position:relative;display:inline-block;transition:color 0.3s}
 			.footer-col p a[href^="mailto:"]::after{content:'';position:absolute;left:0;bottom:-1px;width:0;height:1px;background:var(--burnt);transition:width 0.3s ease}
 			.footer-col p a[href^="mailto:"]:hover::after{width:100%}
-			.footer-col p.footer-address{font-family:'Inter',sans-serif;font-style:normal;font-size:15px;color:var(--tan-soft);line-height:1.6;letter-spacing:0.3px;margin-bottom:9px}
+			.footer-col p.footer-address{font-family:'Inter',sans-serif;font-style:normal;font-size:15px;color:var(--tan-soft);line-height:1.6;letter-spacing:0.3px;margin-bottom:14px}
 
 			.footer-family{display:flex;flex-direction:column}
 			.family-btn{display:flex !important;align-items:center;justify-content:space-between;gap:12px;background:rgba(193,121,67,0.08);border:1px solid rgba(193,121,67,0.35);color:var(--cream) !important;padding:14px 18px !important;margin-bottom:12px !important;font-family:'Playfair Display',Georgia,serif !important;font-size:14px !important;font-weight:500 !important;font-style:italic;letter-spacing:0.3px !important;text-transform:none !important;transition:all 0.4s ease}
@@ -628,13 +631,13 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.family-btn-cta{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%) !important;border-color:var(--burnt) !important;color:var(--text-dark) !important;font-style:normal !important;font-family:'Inter',sans-serif !important;font-size:11px !important;text-transform:uppercase !important;letter-spacing:2px !important;font-weight:600 !important;margin-top:6px !important}
 			.family-btn-cta:hover{color:var(--text-dark) !important;transform:translateY(-2px);box-shadow:0 8px 20px rgba(193,121,67,0.4)}
 
-			.footer-divider-fancy{display:flex;align-items:center;justify-content:center;gap:14px;padding:0 32px 41px;position:relative;z-index:2}
+			.footer-divider-fancy{display:flex;align-items:center;justify-content:center;gap:14px;padding:0 32px 32px;position:relative;z-index:2}
 			.footer-divider-fancy .d-thin{height:1px;width:60px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 100%);opacity:0.6}
 			.footer-divider-fancy .d-thin-r{height:1px;width:60px;background:linear-gradient(90deg,var(--burnt) 0%,transparent 100%);opacity:0.6}
 			.footer-divider-fancy .d-thick{height:2px;width:90px;background:var(--burnt)}
 			.footer-divider-fancy .d-diamond{width:9px;height:9px;background:linear-gradient(135deg,var(--burnt),var(--tan));transform:rotate(45deg)}
 
-			.footer-bottom{border-top:1px solid rgba(198,161,109,0.15);padding:28px 32px;text-align:center;position:relative;z-index:2}
+			.footer-bottom{border-top:1px solid rgba(198,161,109,0.15);padding:32px 32px;text-align:center;position:relative;z-index:2}
 			.footer-bottom p{color:rgba(243,227,195,0.55);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:400;margin-bottom:6px}
 			.footer-bottom-loc{font-style:italic !important;letter-spacing:1px !important;text-transform:none !important;font-family:Georgia,serif !important}
 
