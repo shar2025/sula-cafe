@@ -174,6 +174,176 @@ import Layout from '../layouts/Layout.astro';
 		</div>
 	</section>
 
+	<section class="section section-cream-deep reveal" id="faq">
+		<div class="container container-narrow">
+			<div class="intro-block">
+				<span class="eyebrow-italic">Common Questions</span>
+				<h2>Things people <em>often ask.</em></h2>
+				<div class="premium-divider">
+					<div class="pd-thin"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-diamond"></div>
+					<div class="pd-thick"></div>
+					<div class="pd-thin-r"></div>
+				</div>
+				<p>Quick answers from the team behind the counter.</p>
+			</div>
+
+			<div class="faq-list">
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Where are you located?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>260 East 5th Avenue in East Vancouver, just off Main Street. Easy to spot, easier to find a chai you'll actually remember.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">What are your hours?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Open daily. Monday through Friday from 8am to 5:30pm, weekends 9am to 5:30pm.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Is Sula Café takeout only?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes. We're built for grab-and-go. There's a few seats inside if you want to sit with your cup, but the vibe is takeout first.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Do you offer catering?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>We do. Live chai bars, specialty coffee, fresh-baked pastries, and bakery boxes for offices, weddings, and private parties across Vancouver. <a href="/catering">See our catering page</a>.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Can I order online?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Yes, we're on UberEats. Full menu, delivery to your door. Or call ahead and we'll have it ready for pickup.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">What chai blends do you serve?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Five blends, each brewed slow with whole spices. Classic masala, lavender, pistachio, spicy ginger, and gulabi rose. <a href="/menu">See the full menu</a>.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Do you have vegan or gluten-free options?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Plenty. Our vegan options span chai (just ask for oat or coconut milk), pastries, and a sugar-free morning glory muffin. Gluten-free items available too, just ask the team.</p>
+					</div>
+				</details>
+
+				<details class="faq-item">
+					<summary>
+						<span class="faq-q">Is there parking?</span>
+						<span class="faq-icon" aria-hidden="true">+</span>
+					</summary>
+					<div class="faq-a">
+						<p>Free street parking on East 5th. Paid lots nearby on Main Street. Cycling? We've got racks out front.</p>
+					</div>
+				</details>
+			</div>
+		</div>
+	</section>
+
+	<script type="application/ld+json" slot="schema" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{
+				"@type": "Question",
+				"name": "Where are you located?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "260 East 5th Avenue in East Vancouver, just off Main Street. Easy to spot, easier to find a chai you'll actually remember."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What are your hours?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Open daily. Monday through Friday from 8am to 5:30pm, weekends 9am to 5:30pm."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Is Sula Café takeout only?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes. We're built for grab-and-go. There's a few seats inside if you want to sit with your cup, but the vibe is takeout first."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Do you offer catering?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "We do. Live chai bars, specialty coffee, fresh-baked pastries, and bakery boxes for offices, weddings, and private parties across Vancouver."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Can I order online?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes, we're on UberEats. Full menu, delivery to your door. Or call ahead and we'll have it ready for pickup."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What chai blends do you serve?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Five blends, each brewed slow with whole spices. Classic masala, lavender, pistachio, spicy ginger, and gulabi rose."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Do you have vegan or gluten-free options?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Plenty. Our vegan options span chai (just ask for oat or coconut milk), pastries, and a sugar-free morning glory muffin. Gluten-free items available too, just ask the team."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Is there parking?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Free street parking on East 5th. Paid lots nearby on Main Street. Cycling? We've got racks out front."
+				}
+			}
+		]
+	})} />
+
 	<section class="section section-cocoa reveal">
 		<div class="container text-center">
 			<span class="eyebrow-italic" style="color:var(--burnt-light)">Visit Us</span>
@@ -209,5 +379,30 @@ import Layout from '../layouts/Layout.astro';
 			</div>
 		</div>
 	</section>
+
+	<style>
+		.faq-list{margin-top:50px;display:flex;flex-direction:column;gap:14px;max-width:760px;margin-left:auto;margin-right:auto}
+		.faq-item{background:rgba(255,255,255,0.4);border:1px solid rgba(140,90,58,0.18);border-left:3px solid var(--burnt);transition:background 0.3s ease,border-color 0.3s ease}
+		.faq-item:hover{background:rgba(255,255,255,0.65);border-left-color:var(--cocoa)}
+		.faq-item[open]{background:rgba(255,255,255,0.65);border-left-color:var(--cocoa)}
+		.faq-item summary{padding:20px 24px;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:18px}
+		.faq-item summary::-webkit-details-marker{display:none}
+		.faq-item summary::marker{content:''}
+		.faq-q{font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:500;color:var(--cocoa);line-height:1.35;text-align:left}
+		.faq-icon{flex-shrink:0;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:24px;font-weight:300;color:var(--burnt);transition:transform 0.3s ease,color 0.3s ease;line-height:1}
+		.faq-item[open] .faq-icon{transform:rotate(45deg);color:var(--cocoa)}
+		.faq-a{padding:0 24px 22px;border-top:1px solid rgba(140,90,58,0.1)}
+		.faq-a p{padding-top:18px;font-size:15px;line-height:1.75;color:var(--text-soft);margin:0}
+		.faq-a a{color:var(--burnt);font-weight:500;border-bottom:1px solid rgba(193,121,67,0.3);transition:color 0.3s ease,border-color 0.3s ease}
+		.faq-a a:hover{color:var(--burnt-deep);border-bottom-color:var(--burnt)}
+		@media (max-width:600px){
+			.faq-list{margin-top:36px;gap:12px}
+			.faq-item summary{padding:16px 18px;gap:14px}
+			.faq-q{font-size:16px;line-height:1.35}
+			.faq-icon{width:24px;height:24px;font-size:22px}
+			.faq-a{padding:0 18px 18px}
+			.faq-a p{padding-top:14px;font-size:14px;line-height:1.7}
+		}
+	</style>
 
 </Layout>
