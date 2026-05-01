@@ -1,14 +1,81 @@
 ---
 const {
-	title = "Sula Chai Café Vancouver | Authentic Indian Chai, Alai Coffee & Indian-Inspired Bakery in East Vancouver",
-	description = "Sula Chai Café on East 5th Avenue, Vancouver. Authentic masala chai from Coorg & Chikmagalur, exclusive Alai Coffee blend, Indian-inspired baked goods, paninis on house-made masala focaccia. Takeout & UberEats available.",
+	title = "Sula Chai Café | Coffee & Chai in East Vancouver",
+	description = "Sula chai brewed slow with leaves from Coorg, Alai Coffee blend, croissants and cruffins baked daily. Drop by 260 East 5th Ave in East Vancouver.",
 	canonical = "/",
-	ogImage = "https://sulacafe.com/uploads/2026/02/sula-cafe-near-me-vancouver.webp"
+	ogImage = "/uploads/2026/02/sula-cafe-near-me-vancouver.webp",
+	breadcrumbs = null,
+	noIndex = false
 } = Astro.props;
 const fullCanonical = `https://sulacafe.com${canonical}`;
+const fullOgImage = ogImage.startsWith('http') ? ogImage : `https://sulacafe.com${ogImage}`;
+
+const orgSchema = {
+	"@context": "https://schema.org",
+	"@type": ["CafeOrCoffeeShop", "FoodEstablishment", "LocalBusiness"],
+	"@id": "https://sulacafe.com/#organization",
+	"name": "Sula Chai Café",
+	"alternateName": ["Sula Café", "Sula Cafe Vancouver"],
+	"url": "https://sulacafe.com",
+	"logo": "https://sulacafe.com/uploads/2025/09/sula-cafe-logo-2026.webp",
+	"image": "https://sulacafe.com/uploads/2026/02/sula-cafe-near-me-vancouver.webp",
+	"telephone": "+1-778-386-1130",
+	"email": "info@sulacafe.com",
+	"priceRange": "$$",
+	"currenciesAccepted": "CAD",
+	"paymentAccepted": "Cash, Credit Card, Debit Card",
+	"servesCuisine": ["Indian", "Coffee", "Café", "Bakery"],
+	"address": {
+		"@type": "PostalAddress",
+		"streetAddress": "260 East 5th Avenue",
+		"addressLocality": "Vancouver",
+		"addressRegion": "BC",
+		"addressCountry": "CA"
+	},
+	"geo": {
+		"@type": "GeoCoordinates",
+		"latitude": 49.2683,
+		"longitude": -123.1015
+	},
+	"openingHoursSpecification": [
+		{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "07:00", "closes": "18:00" },
+		{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "08:00", "closes": "17:00" }
+	],
+	"areaServed": ["Vancouver", "East Vancouver", "Mount Pleasant", "Main Street", "Vancouver BC"],
+	"sameAs": ["https://sulaindianrestaurant.com", "https://sulacatering.com"],
+	"hasMenu": "https://sulacafe.com/menu",
+	"acceptsReservations": false,
+	"potentialAction": {
+		"@type": "OrderAction",
+		"target": "https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw",
+		"deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
+	}
+};
+
+const websiteSchema = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	"@id": "https://sulacafe.com/#website",
+	"url": "https://sulacafe.com",
+	"name": "Sula Chai Café",
+	"description": "Authentic chai, Alai Coffee, and fresh-baked pastries in East Vancouver.",
+	"publisher": { "@id": "https://sulacafe.com/#organization" },
+	"inLanguage": "en-CA"
+};
+
+const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": breadcrumbs.map((c, i) => ({
+		"@type": "ListItem",
+		"position": i + 1,
+		"name": c.name,
+		"item": c.url ? `https://sulacafe.com${c.url}` : undefined
+	}))
+} : null;
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en-CA">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,43 +83,37 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 		<meta name="msapplication-navbutton-color" content="#1a0e08" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<title>{title}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={fullCanonical} />
-		<link rel="icon" type="image/png" href="/uploads/2025/09/sula-cafe-logo-2026.webp" />
-		<meta property="og:type" content="website" />
+		<link rel="alternate" hreflang="en-CA" href={fullCanonical} />
+		<link rel="alternate" hreflang="x-default" href={fullCanonical} />
+		<link rel="icon" type="image/webp" href="/uploads/2025/09/sula-cafe-logo-2026.webp" />
+		<meta property="og:type" content={canonical.startsWith('/blog/') ? 'article' : 'website'} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
-		<meta property="og:image" content={ogImage} />
+		<meta property="og:image" content={fullOgImage} />
+		<meta property="og:image:alt" content={title} />
 		<meta property="og:url" content={fullCanonical} />
 		<meta property="og:site_name" content="Sula Chai Café" />
 		<meta property="og:locale" content="en_CA" />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={ogImage} />
-		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+		<meta name="twitter:image" content={fullOgImage} />
+		<meta name="twitter:image:alt" content={title} />
+		<meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
 		<meta name="geo.region" content="CA-BC" />
 		<meta name="geo.placename" content="Vancouver" />
-		<title>{title}</title>
+		<meta name="geo.position" content="49.2683;-123.1015" />
+		<meta name="ICBM" content="49.2683, -123.1015" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" />
 		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-		<script type="application/ld+json" set:html={JSON.stringify({
-			"@context": "https://schema.org",
-			"@type": "CafeOrCoffeeShop",
-			"@id": "https://sulacafe.com/#organization",
-			"name": "Sula Chai Café",
-			"url": "https://sulacafe.com",
-			"telephone": "+1-778-386-1130",
-			"email": "info@sulacafe.com",
-			"priceRange": "$$",
-			"servesCuisine": ["Indian", "Coffee", "Bakery", "Café"],
-			"address": {"@type": "PostalAddress","streetAddress": "260 East 5th Avenue","addressLocality": "Vancouver","addressRegion": "BC","addressCountry": "CA"},
-			"sameAs": ["https://sulaindianrestaurant.com","https://sulacatering.com"],
-			"image": "https://sulacafe.com/uploads/2026/02/sula-cafe-near-me-vancouver.webp",
-			"hasMenu": "https://sulacafe.com/menus",
-			"acceptsReservations": false
-		})} />
+		<script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+		{breadcrumbSchema && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />}
 		<slot name="schema" />
 	</head>
 	<body>
@@ -114,6 +175,25 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 				</a>
 			</div>
 		</div>
+
+		{breadcrumbs && breadcrumbs.length > 0 && (
+			<nav class="breadcrumbs" aria-label="Breadcrumb">
+				<ol class="breadcrumbs-inner">
+					{breadcrumbs.map((crumb, i) => (
+						<li class="crumb">
+							{i < breadcrumbs.length - 1 ? (
+								<>
+									<a href={crumb.url}>{crumb.name}</a>
+									<span class="crumb-sep" aria-hidden="true">›</span>
+								</>
+							) : (
+								<span class="crumb-current" aria-current="page">{crumb.name}</span>
+							)}
+						</li>
+					))}
+				</ol>
+			</nav>
+		)}
 
 		<main><slot /></main>
 
@@ -272,6 +352,21 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 			.btn-outline-cream .btn-badge img{filter:brightness(0) sepia(1) saturate(2) hue-rotate(15deg) brightness(0.5)}
 
 			.header-bottom-zigzag{height:1px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 50%,transparent 100%)}
+
+			.breadcrumbs{background:linear-gradient(180deg,var(--cream-soft) 0%,var(--cream) 100%);border-bottom:1px solid rgba(193,121,67,0.15);padding:14px 32px}
+			.breadcrumbs-inner{max-width:1280px;margin:0 auto;display:flex;flex-wrap:wrap;gap:0;list-style:none;padding:0;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:1.8px;text-transform:uppercase;font-weight:600}
+			.breadcrumbs .crumb{display:flex;align-items:center;gap:10px;color:var(--cocoa)}
+			.breadcrumbs .crumb a{color:var(--cocoa-mid);transition:color 0.3s}
+			.breadcrumbs .crumb a:hover{color:var(--burnt)}
+			.breadcrumbs .crumb-sep{color:var(--burnt);font-family:Georgia,serif;font-size:14px;font-style:italic;font-weight:400}
+			.breadcrumbs .crumb-current{color:var(--burnt);font-family:Georgia,serif;font-style:italic;text-transform:none;letter-spacing:0.4px;font-size:13px;font-weight:500}
+			@media (max-width:600px){
+				.breadcrumbs{padding:10px 20px}
+				.breadcrumbs-inner{font-size:10px;letter-spacing:1.2px}
+				.breadcrumbs .crumb{gap:7px}
+				.breadcrumbs .crumb-current{font-size:11px}
+				.breadcrumbs .crumb-sep{font-size:12px}
+			}
 
 			.hamburger{display:none;background:transparent;border:none;cursor:pointer;width:40px;height:40px;flex-direction:column;justify-content:center;align-items:center;gap:5px;position:absolute;right:24px;top:14px;padding:8px;z-index:200}
 			.hamburger span{display:block;width:26px;height:2px;background:var(--burnt);transition:all 0.3s ease}
@@ -459,8 +554,8 @@ const fullCanonical = `https://sulacafe.com${canonical}`;
 				.two-col-content,.two-col-content p{text-align:center}
 				.two-col-content .tag-row{justify-content:center}
 				.two-col-content .mini-divider{justify-content:center}
-				.section{padding:48px 20px}
-				.section-tight{padding:44px 20px}
+				.section{padding:40px 20px}
+				.section-tight{padding:36px 20px}
 				.section-snug{padding:32px 20px}
 				.card-grid-3{grid-template-columns:1fr;gap:20px;max-width:480px}
 				.card-img{height:200px}

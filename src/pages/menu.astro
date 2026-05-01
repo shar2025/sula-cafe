@@ -1,10 +1,93 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const menuSchema = {
+	"@context": "https://schema.org",
+	"@type": "Menu",
+	"@id": "https://sulacafe.com/menu/#menu",
+	"name": "Sula Chai Café Menu",
+	"description": "Five chai blends, the Alai Coffee menu, paninis on masala focaccia, croissants, cruffins, samosas, cookies and macaroons.",
+	"inLanguage": "en-CA",
+	"provider": { "@id": "https://sulacafe.com/#organization" },
+	"hasMenuSection": [
+		{
+			"@type": "MenuSection",
+			"@id": "https://sulacafe.com/menu/#chai",
+			"name": "Sula Chai",
+			"description": "Premium tea leaves from Coorg and Chikmagalur, slow-brewed with traditional spices.",
+			"hasMenuItem": [
+				{ "@type": "MenuItem", "name": "Sula Classic Masala Chai", "description": "Cardamom, ginger, clove and pepper, slow-brewed with Assam tea and whole milk." },
+				{ "@type": "MenuItem", "name": "Lavender Chai", "description": "Soft lavender notes layered into our masala base. Aromatic and soothing." },
+				{ "@type": "MenuItem", "name": "Pistachio Chai", "description": "Roasted pistachios infused into rich masala chai. Nutty, creamy, decadent." },
+				{ "@type": "MenuItem", "name": "Spicy Ginger Chai", "description": "Generous fresh ginger for a sharp, warming brew. The morning wake-up call." },
+				{ "@type": "MenuItem", "name": "Gulabi Chai", "description": "Rose petal chai with a delicate floral finish. Pink, fragrant, romantic." }
+			]
+		},
+		{
+			"@type": "MenuSection",
+			"@id": "https://sulacafe.com/menu/#coffee",
+			"name": "Alai Coffee",
+			"description": "Exclusive Sula Blend by Alai Coffee, sourced from Chikmagalur and Odisha.",
+			"hasMenuItem": [
+				{ "@type": "MenuItem", "name": "Jaggery Velvet Latte", "description": "Smooth espresso with traditional Indian jaggery. Earthy sweetness, velvety finish." },
+				{ "@type": "MenuItem", "name": "Masala Monsoon Misto", "description": "Espresso meets warming masala spice. Half coffee, half steamed milk." },
+				{ "@type": "MenuItem", "name": "Coastal Coconut Cappuccino", "description": "Espresso with coconut milk foam. Toasted, tropical, distinctly Indian." },
+				{ "@type": "MenuItem", "name": "Malai Pista Mocha", "description": "Rich pistachio cream and chocolate over espresso. Indian dessert in a cup." },
+				{ "@type": "MenuItem", "name": "Indian Filter Coffee", "description": "Traditional South Indian filter coffee. Robust, frothy, served the proper way." }
+			]
+		},
+		{
+			"@type": "MenuSection",
+			"@id": "https://sulacafe.com/menu/#savory",
+			"name": "Savoury",
+			"description": "Paninis on house-made masala focaccia, samosas, soups, and savoury croissants.",
+			"hasMenuItem": [
+				{ "@type": "MenuItem", "name": "Chimichurri Paneer Panini", "description": "Fresh chimichurri spread, masala paneer, spinach, mozzarella, sundried tomatoes, arugula. Pressed in masala focaccia.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Pesto Chicken Tikka Panini", "description": "Juicy chicken tikka, fresh pesto, tandoori spicy mayo, mozzarella, sundried tomatoes, arugula. Pressed in masala focaccia." },
+				{ "@type": "MenuItem", "name": "Paneer or Chicken Panini XL", "description": "Pesto or chimichurri, tandoori mayo, mozzarella, sundried tomatoes, arugula. In masala focaccia." },
+				{ "@type": "MenuItem", "name": "Masala Tomato & Red Pepper Soup", "description": "Slow-roasted tomatoes and red peppers, simmered with warming Indian spices.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Herb Chutney Cheese Croissant", "description": "Spiced green chutney layered with melted cheese inside a buttery croissant.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Vegetable Samosa", "description": "Homemade classic vegetable samosas served with tamarind and mint chutneys.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Samosa Croissant", "description": "Peas, potatoes, and warming spices folded into a flaky croissant.", "suitableForDiet": "https://schema.org/VegetarianDiet" }
+			]
+		},
+		{
+			"@type": "MenuSection",
+			"@id": "https://sulacafe.com/menu/#sweets",
+			"name": "Sweets",
+			"description": "Cruffins, croissants, and pastries baked fresh every morning.",
+			"hasMenuItem": [
+				{ "@type": "MenuItem", "name": "Butter Croissant", "description": "Crisp, buttery layers and a tender, airy crumb. The classic, done right.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Spiced Morning Glory Muffin", "description": "Carrots, apples, coconut and warm spices. Sugar-free, deeply satisfying.", "suitableForDiet": ["https://schema.org/VegetarianDiet", "https://schema.org/DiabeticDiet"] },
+				{ "@type": "MenuItem", "name": "Lime Coconut Cruffin", "description": "Flaky cruffin filled with tangy lime curd and sprinkled with toasted coconut.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Tiramisu Cruffin", "description": "Espresso-mascarpone cream, dusted with cocoa and a hint of cardamom.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Orange Chocolate Pain Suisse", "description": "Fragrant orange zest meets silky dark chocolate.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Pistachio Loaf", "description": "Sweet pistachio loaf finished with pistachio crumb icing.", "suitableForDiet": "https://schema.org/VegetarianDiet" }
+			]
+		},
+		{
+			"@type": "MenuSection",
+			"@id": "https://sulacafe.com/menu/#cookies",
+			"name": "Cookies & Macaroons",
+			"description": "Spiced, malai-soaked, espresso-deep, or simply chocolate chip.",
+			"hasMenuItem": [
+				{ "@type": "MenuItem", "name": "Chocolate Chip Cookies", "description": "Soft, chewy, generous chocolate chunks.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Brown Butter Espresso Cookies", "description": "Brown butter and espresso baked into nutty buckwheat flour.", "suitableForDiet": "https://schema.org/VegetarianDiet" },
+				{ "@type": "MenuItem", "name": "Pistachio Malai Macaroons", "description": "Soft macaroons soaked in pistachio malai cream.", "suitableForDiet": "https://schema.org/VegetarianDiet" }
+			]
+		}
+	]
+};
 ---
 <Layout
-	title="Sula Chai Café Menu | Indian Chai, Alai Coffee, Paninis & Pastries Vancouver"
-	description="Full Sula Chai Café menu, masala chai, lavender chai, gulabi chai, Alai Coffee creations, paninis on masala focaccia, croissants, cruffins, samosas, and freshly baked cookies."
+	title="Menu | Specialty Chai & Coffee in East Vancouver | Sula"
+	description="Five chai blends from Coorg, the full Alai Coffee menu, paninis on masala focaccia, and fresh-baked pastries. Order ahead or grab takeout in East Vancouver."
 	canonical="/menu"
+	ogImage="/uploads/2025/12/cappuccino.jpg"
+	breadcrumbs={[
+		{ name: 'Home', url: '/' },
+		{ name: 'Menu', url: '/menu' }
+	]}
 >
 
 	<section class="hero">
@@ -22,7 +105,7 @@ import Layout from '../layouts/Layout.astro';
 			<div class="hero-buttons">
 				<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
 					<span class="cta-badge">
-						<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
+						<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
 					</span>
 					Order on UberEats
 				</a>
@@ -49,7 +132,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Masala-chai.webp" alt="Sula Classic Masala Chai" />
+						<img src="/uploads/2025/10/Masala-chai.webp" alt="Sula Classic Masala Chai" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Hand-Brewed</span>
@@ -61,7 +144,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Lavender-chai.webp" alt="Lavender Chai" />
+						<img src="/uploads/2025/10/Lavender-chai.webp" alt="Lavender Chai" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Floral & Calm</span>
@@ -73,7 +156,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-300">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/IMG_2965.webp" alt="Pistachio Chai" />
+						<img src="/uploads/2025/10/IMG_2965.webp" alt="Pistachio Chai" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">From Royal Kitchens</span>
@@ -85,7 +168,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/chai-near-me-2.webp" alt="Spicy Ginger Chai" />
+						<img src="/uploads/2025/10/chai-near-me-2.webp" alt="Spicy Ginger Chai" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Bold & Warming</span>
@@ -97,7 +180,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Rose-chai.webp" alt="Gulabi Chai with rose petals" />
+						<img src="/uploads/2025/10/Rose-chai.webp" alt="Gulabi Chai with rose petals" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">From Ancient Markets</span>
@@ -128,7 +211,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/a4.jpg" alt="Jaggery Velvet Latte" />
+						<img src="/uploads/2025/12/a4.jpg" alt="Jaggery Velvet Latte" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Warm Jaggery</span>
@@ -140,7 +223,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/a2.jpg" alt="Masala Monsoon Misto" />
+						<img src="/uploads/2025/12/a2.jpg" alt="Masala Monsoon Misto" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Monsoon Spice</span>
@@ -152,7 +235,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-300">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/cappuccino.jpg" alt="Coastal Coconut Cappuccino" />
+						<img src="/uploads/2025/12/cappuccino.jpg" alt="Coastal Coconut Cappuccino" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Coast of Kerala</span>
@@ -164,7 +247,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/a3.jpg" alt="Malai Pista Mocha" />
+						<img src="/uploads/2025/12/a3.jpg" alt="Malai Pista Mocha" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Fragrant Pistachio</span>
@@ -176,7 +259,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/09/filter-coffee.webp" alt="Indian Filter Coffee" />
+						<img src="/uploads/2025/09/filter-coffee.webp" alt="Indian Filter Coffee" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">South Indian</span>
@@ -207,7 +290,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/PXL_20251217_194925352.PORTRAIT.webp" alt="Chimichurri Paneer Panini" />
+						<img src="/uploads/2025/10/PXL_20251217_194925352.PORTRAIT.webp" alt="Chimichurri Paneer Panini" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Vegetarian</span>
@@ -219,7 +302,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Pesto-chicken-tikka-panini.webp" alt="Pesto Chicken Tikka Panini" />
+						<img src="/uploads/2025/10/Pesto-chicken-tikka-panini.webp" alt="Pesto Chicken Tikka Panini" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Bestseller</span>
@@ -231,7 +314,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-300">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/cafe-near-me.webp" alt="Paneer or Chicken Panini XL" />
+						<img src="/uploads/2025/10/cafe-near-me.webp" alt="Paneer or Chicken Panini XL" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Hearty Size</span>
@@ -243,7 +326,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/tomato-red-pepper-soup.webp" alt="Masala Tomato Red Pepper Soup" />
+						<img src="/uploads/2025/12/tomato-red-pepper-soup.webp" alt="Masala Tomato Red Pepper Soup" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Comfort</span>
@@ -255,7 +338,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Chutney-cheese-croissant.webp" alt="Herb Chutney Cheese Croissant" />
+						<img src="/uploads/2025/10/Chutney-cheese-croissant.webp" alt="Herb Chutney Cheese Croissant" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Savoury Pastry</span>
@@ -267,7 +350,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-300" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/samosa-near-me.webp" alt="Vegetable Samosa with chutneys" />
+						<img src="/uploads/2025/10/samosa-near-me.webp" alt="Vegetable Samosa with chutneys" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Classic Street Food</span>
@@ -279,7 +362,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/chai-near-me.webp" alt="Samosa Croissant" />
+						<img src="/uploads/2025/12/chai-near-me.webp" alt="Samosa Croissant" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Sula Original</span>
@@ -310,7 +393,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/butter-croissiant-sula-cafe-vancouver.webp" alt="Butter Croissant" />
+						<img src="/uploads/2025/10/butter-croissiant-sula-cafe-vancouver.webp" alt="Butter Croissant" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Classic French</span>
@@ -322,7 +405,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/morning-glory-muffin-sugar-free.webp" alt="Spiced Morning Glory Muffin sugar free" />
+						<img src="/uploads/2025/10/morning-glory-muffin-sugar-free.webp" alt="Spiced Morning Glory Muffin sugar free" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Sugar Free</span>
@@ -334,7 +417,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-300">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Coconut-lime-cruffin.webp" alt="Lime Coconut Cruffin" />
+						<img src="/uploads/2025/10/Coconut-lime-cruffin.webp" alt="Lime Coconut Cruffin" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Tropical Tang</span>
@@ -346,7 +429,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/tiramisu-cruffin.webp" alt="Tiramisu Cruffin" />
+						<img src="/uploads/2025/10/tiramisu-cruffin.webp" alt="Tiramisu Cruffin" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Italian × Indian</span>
@@ -358,7 +441,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Chocolate-croissaint-near-vancouver.webp" alt="Orange Chocolate Pain Suisse" />
+						<img src="/uploads/2025/10/Chocolate-croissaint-near-vancouver.webp" alt="Orange Chocolate Pain Suisse" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Citrus & Cocoa</span>
@@ -370,7 +453,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-300" style="margin-top:24px">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/pistachio-loaf.webp" alt="Pistachio Loaf" />
+						<img src="/uploads/2025/10/pistachio-loaf.webp" alt="Pistachio Loaf" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Sweet & Nutty</span>
@@ -401,7 +484,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/chocolate-chip-cookie.webp" alt="Chocolate Chip Cookies" />
+						<img src="/uploads/2025/10/chocolate-chip-cookie.webp" alt="Chocolate Chip Cookies" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Always Fresh</span>
@@ -413,7 +496,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/cafe-near-me-vancouver.webp" alt="Brown Butter Espresso Cookies" />
+						<img src="/uploads/2025/10/cafe-near-me-vancouver.webp" alt="Brown Butter Espresso Cookies" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Buckwheat Flour</span>
@@ -425,7 +508,7 @@ import Layout from '../layouts/Layout.astro';
 				<div class="photo-card reveal delay-300">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/paan-macaroons.webp" alt="Pistachio Malai Macaroons" />
+						<img src="/uploads/2025/10/paan-macaroons.webp" alt="Pistachio Malai Macaroons" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Indian Classic</span>
@@ -436,6 +519,8 @@ import Layout from '../layouts/Layout.astro';
 			</div>
 		</div>
 	</section>
+
+	<script type="application/ld+json" slot="schema" set:html={JSON.stringify(menuSchema)} />
 
 	<section class="section section-espresso reveal">
 		<div class="container text-center">
@@ -451,7 +536,7 @@ import Layout from '../layouts/Layout.astro';
 			<p style="max-width:560px;margin:24px auto 36px">Browse the full menu, customize your order, and get it delivered straight to your door.</p>
 			<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
 				<span class="cta-badge">
-					<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
+					<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
 				</span>
 				Order on UberEats
 			</a>

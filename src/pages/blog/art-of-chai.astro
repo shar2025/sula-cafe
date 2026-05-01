@@ -1,10 +1,40 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const datePublished = "2026-04-01";
+const dateModified = "2026-05-01";
+
+const articleSchema = {
+	"@context": "https://schema.org",
+	"@type": "Article",
+	"headline": "The Art of Chai",
+	"description": "What makes great masala chai. The story from Coorg to East Vancouver, the spices that matter, and where to find authentic chai in the city.",
+	"image": ["https://sulacafe.com/uploads/2025/10/Masala-chai.webp"],
+	"author": {
+		"@type": "Organization",
+		"name": "Sula Chai Café",
+		"url": "https://sulacafe.com"
+	},
+	"publisher": { "@id": "https://sulacafe.com/#organization" },
+	"datePublished": datePublished,
+	"dateModified": dateModified,
+	"mainEntityOfPage": "https://sulacafe.com/blog/art-of-chai",
+	"articleSection": "Chai Culture",
+	"isPartOf": { "@type": "Blog", "name": "Sula Stories", "url": "https://sulacafe.com/stories" },
+	"inLanguage": "en-CA",
+	"about": ["Masala chai", "Indian chai", "Specialty chai Vancouver"]
+};
 ---
 <Layout
 	title="The Art of Chai | Sula Chai Café Vancouver"
-	description="From the misty hills of Coorg to East Vancouver. The story of authentic chai, the spices that define it, and what makes a great cup of specialty chai in Vancouver."
+	description="What makes great masala chai. The story from Coorg to East Vancouver, the spices that matter, and where to find authentic chai in the city."
 	canonical="/blog/art-of-chai"
+	ogImage="/uploads/2025/10/Masala-chai.webp"
+	breadcrumbs={[
+		{ name: 'Home', url: '/' },
+		{ name: 'Stories', url: '/stories' },
+		{ name: 'The Art of Chai', url: '/blog/art-of-chai' }
+	]}
 >
 
 	<section class="hero" style="padding:80px 32px 60px">
@@ -22,8 +52,25 @@ import Layout from '../../layouts/Layout.astro';
 		</div>
 	</section>
 
-	<section class="section section-cream-reverse reveal">
+	<section class="section section-cream-reverse reveal" style="padding-top:0">
 		<div class="container-narrow" style="max-width:780px">
+			<div class="byline">
+				<div class="byline-avatar">
+					<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
+				</div>
+				<div class="byline-info">
+					<div class="byline-name">By the Sula Chai Café team</div>
+					<div class="byline-bio">Sister café to <a href="https://sulaindianrestaurant.com" target="_blank" rel="noopener">Sula Indian Restaurant</a>. Brewing chai and roasting Alai Coffee in East Vancouver.</div>
+					<div class="byline-meta">
+						<time datetime={datePublished}>Published April 1, 2026</time>
+						<span class="byline-sep">·</span>
+						<time datetime={dateModified}>Updated May 1, 2026</time>
+						<span class="byline-sep">·</span>
+						<span>4 min read</span>
+					</div>
+				</div>
+			</div>
+
 			<div class="blog-prose">
 
 				<p class="blog-lede">Chai is not just a drink. It is a memory, a ritual, an act of slowing down in a city that rarely stops.</p>
@@ -80,7 +127,7 @@ import Layout from '../../layouts/Layout.astro';
 
 				<p style="margin-top:48px;text-align:center"><a href="/menu#chai" class="cta">
 					<span class="cta-badge">
-						<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
+						<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
 					</span>
 					Explore the Chai Menu
 				</a></p>
@@ -106,7 +153,7 @@ import Layout from '../../layouts/Layout.astro';
 				<a href="/blog/specialty-coffee-vancouver" class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/a4.jpg" alt="Specialty Indian coffee Vancouver" />
+						<img src="/uploads/2025/12/a4.jpg" alt="Specialty Indian coffee Vancouver" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Coffee</span>
@@ -117,7 +164,7 @@ import Layout from '../../layouts/Layout.astro';
 				<a href="/blog/pastries-coffee-pairing" class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/butter-croissiant-sula-cafe-vancouver.webp" alt="Fresh croissants Vancouver" />
+						<img src="/uploads/2025/10/butter-croissiant-sula-cafe-vancouver.webp" alt="Fresh croissants Vancouver" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Pastry & Pairing</span>
@@ -128,7 +175,7 @@ import Layout from '../../layouts/Layout.astro';
 				<a href="/explore" class="photo-card reveal delay-300">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Lavender-chai.webp" alt="Explore chai spices and origins" />
+						<img src="/uploads/2025/10/Lavender-chai.webp" alt="Explore chai spices and origins" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Deep Dive</span>
@@ -148,23 +195,30 @@ import Layout from '../../layouts/Layout.astro';
 		.blog-prose strong{color:var(--cocoa-deep);font-weight:600}
 		.blog-prose a{color:var(--burnt);font-weight:500;border-bottom:1px solid rgba(193,121,67,0.3);transition:all 0.3s}
 		.blog-prose a:hover{color:var(--burnt-deep);border-bottom-color:var(--burnt)}
+
+		.byline{display:flex;align-items:center;gap:18px;padding:32px 0 28px;border-bottom:1px solid rgba(140,90,58,0.18);margin-bottom:36px}
+		.byline-avatar{flex-shrink:0;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--cocoa-deep),var(--cocoa));display:flex;align-items:center;justify-content:center;padding:8px;border:1px solid var(--burnt)}
+		.byline-avatar img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1) sepia(0.4) saturate(3) hue-rotate(355deg)}
+		.byline-info{flex:1;min-width:0}
+		.byline-name{font-family:'Playfair Display',Georgia,serif;font-size:17px;font-weight:500;color:var(--cocoa);margin-bottom:4px;font-style:italic}
+		.byline-bio{font-size:13px;color:var(--text-soft);line-height:1.55;margin-bottom:6px}
+		.byline-bio a{color:var(--burnt);font-weight:500;border-bottom:1px solid rgba(193,121,67,0.3)}
+		.byline-meta{font-family:'Inter',sans-serif;font-size:11px;color:var(--cocoa);letter-spacing:1.2px;text-transform:uppercase;font-weight:500}
+		.byline-meta .byline-sep{margin:0 8px;color:var(--burnt)}
+
 		@media (max-width:900px){
 			.blog-prose p{font-size:16px}
 			.blog-prose .blog-lede{font-size:20px}
 			.blog-prose h2{font-size:24px;line-height:1.25}
+			.byline{gap:14px;padding:24px 0 22px;margin-bottom:28px}
+			.byline-avatar{width:46px;height:46px}
+			.byline-name{font-size:16px}
+			.byline-bio{font-size:12.5px}
+			.byline-meta{font-size:10px;letter-spacing:1px}
+			.byline-meta .byline-sep{margin:0 6px}
 		}
 	</style>
 
-	<script type="application/ld+json" slot="schema" set:html={JSON.stringify({
-		"@context": "https://schema.org",
-		"@type": "Article",
-		"headline": "The Art of Chai",
-		"description": "From the misty hills of Coorg to East Vancouver. The story of authentic chai and what makes great specialty chai.",
-		"image": "https://sulacafe.com/uploads/2025/10/Masala-chai.webp",
-		"author": {"@type": "Organization", "name": "Sula Chai Café"},
-		"publisher": {"@type": "Organization", "name": "Sula Chai Café", "logo": {"@type": "ImageObject", "url": "https://sulacafe.com/uploads/2025/09/sula-cafe-logo-2026.webp"}},
-		"datePublished": "2026-04-01",
-		"mainEntityOfPage": "https://sulacafe.com/blog/art-of-chai"
-	})} />
+	<script type="application/ld+json" slot="schema" set:html={JSON.stringify(articleSchema)} />
 
 </Layout>

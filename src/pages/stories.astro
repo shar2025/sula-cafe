@@ -2,9 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <Layout
-	title="Stories | Sula Chai Café Vancouver | Chai, Coffee & Pastry Journal"
-	description="Stories from Sula Chai Café Vancouver. The art of chai, specialty coffee culture, and the craft of fresh-baked pastries. A journal for coffee lovers and chai enthusiasts in Vancouver."
+	title="Stories | Chai & Coffee Journal | Sula Café Vancouver"
+	description="Slow reads on chai, specialty coffee, and the craft behind every cup. Notes from Sula Chai Café in East Vancouver."
 	canonical="/stories"
+	ogImage="/uploads/2025/10/Lavender-chai.webp"
+	breadcrumbs={[
+		{ name: 'Home', url: '/' },
+		{ name: 'Stories', url: '/stories' }
+	]}
 >
 
 	<section class="hero">
@@ -28,7 +33,7 @@ import Layout from '../layouts/Layout.astro';
 				<a href="/blog/art-of-chai" class="photo-card reveal delay-100">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/Masala-chai.webp" alt="Authentic masala chai brewing in Vancouver" />
+						<img src="/uploads/2025/10/Masala-chai.webp" alt="Authentic masala chai brewing in Vancouver" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Chai Culture</span>
@@ -40,7 +45,7 @@ import Layout from '../layouts/Layout.astro';
 				<a href="/blog/specialty-coffee-vancouver" class="photo-card reveal delay-200">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/12/a4.jpg" alt="Specialty Indian coffee in Vancouver" />
+						<img src="/uploads/2025/12/a4.jpg" alt="Specialty Indian coffee in Vancouver" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Coffee Craftsmanship</span>
@@ -52,7 +57,7 @@ import Layout from '../layouts/Layout.astro';
 				<a href="/blog/pastries-coffee-pairing" class="photo-card reveal delay-300">
 					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img portrait">
-						<img src="/uploads/2025/10/butter-croissiant-sula-cafe-vancouver.webp" alt="Fresh-baked croissants and pastries Vancouver" />
+						<img src="/uploads/2025/10/butter-croissiant-sula-cafe-vancouver.webp" alt="Fresh-baked croissants and pastries Vancouver" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
 						<span class="eyebrow">Pastry & Pairing</span>
@@ -78,7 +83,7 @@ import Layout from '../layouts/Layout.astro';
 			<p style="max-width:580px;margin:24px auto 36px">Five chai blends, full coffee menu, fresh bakery. 260 East 5th Avenue.</p>
 			<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
 				<span class="cta-badge">
-					<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
+					<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
 				</span>
 				Order on UberEats
 			</a>
