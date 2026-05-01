@@ -24,27 +24,40 @@ const orgSchema = {
 	"priceRange": "$$",
 	"currenciesAccepted": "CAD",
 	"paymentAccepted": "Cash, Credit Card, Debit Card",
-	"servesCuisine": ["Indian", "Coffee", "Café", "Bakery"],
+	"servesCuisine": ["Indian", "Coffee", "Café", "Bakery", "Chai"],
 	"address": {
 		"@type": "PostalAddress",
 		"streetAddress": "260 East 5th Avenue",
 		"addressLocality": "Vancouver",
 		"addressRegion": "BC",
-		"addressCountry": "CA"
+		"postalCode": "V5T 1H3",
+		"addressCountry": { "@type": "Country", "name": "CA" }
 	},
 	"geo": {
 		"@type": "GeoCoordinates",
-		"latitude": 49.2683,
-		"longitude": -123.1015
+		"latitude": 49.26628631891023,
+		"longitude": -123.0992136625663
 	},
 	"openingHoursSpecification": [
-		{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "07:00", "closes": "18:00" },
-		{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "08:00", "closes": "17:00" }
+		{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "17:30" },
+		{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "09:00", "closes": "17:30" }
 	],
-	"areaServed": ["Vancouver", "East Vancouver", "Mount Pleasant", "Main Street", "Vancouver BC"],
-	"sameAs": ["https://sulaindianrestaurant.com", "https://sulacatering.com"],
+	"areaServed": [
+		{ "@type": "City", "name": "Vancouver" },
+		{ "@type": "City", "name": "Burnaby" },
+		{ "@type": "Place", "name": "East Vancouver" },
+		{ "@type": "Place", "name": "Mount Pleasant" },
+		{ "@type": "Place", "name": "Main Street" }
+	],
+	"sameAs": [
+		"https://sulaindianrestaurant.com/",
+		"https://sulacatering.com/",
+		"https://www.instagram.com/sula.cafe"
+	],
 	"hasMenu": "https://sulacafe.com/menu",
 	"acceptsReservations": false,
+	"takeOut": true,
+	"delivery": true,
 	"potentialAction": {
 		"@type": "OrderAction",
 		"target": "https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw",
@@ -105,8 +118,8 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 		<meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"} />
 		<meta name="geo.region" content="CA-BC" />
 		<meta name="geo.placename" content="Vancouver" />
-		<meta name="geo.position" content="49.2683;-123.1015" />
-		<meta name="ICBM" content="49.2683, -123.1015" />
+		<meta name="geo.position" content="49.26628631891023;-123.0992136625663" />
+		<meta name="ICBM" content="49.26628631891023, -123.0992136625663" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" />
