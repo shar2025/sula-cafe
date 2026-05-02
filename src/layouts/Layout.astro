@@ -483,7 +483,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				body.menu-open .site-header::before{display:none}
 				body.menu-open .site-header .logo{display:none}
 				body.menu-open .header-bottom-zigzag{display:none}
-				body.menu-open .hamburger{position:fixed !important;top:16px;right:24px;z-index:9999;color:var(--burnt) !important}
+				body.menu-open .hamburger{position:fixed !important;top:16px;right:24px;z-index:9999;transform:none !important;color:var(--burnt) !important}
 			}
 
 			.hero{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:70px 32px 50px;color:var(--cocoa);background:linear-gradient(180deg,var(--cream) 0%,var(--cream-soft) 100%);overflow:hidden;animation:fadeIn 1.2s ease}
@@ -725,18 +725,22 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			const hamburger = document.getElementById('hamburger-btn');
 			const mobileMenu = document.getElementById('mobile-menu');
 			const body = document.body;
-			let menuOpen = false;
-			function toggleMenu(){
-				menuOpen = !menuOpen;
-				hamburger.classList.toggle('active');
-				mobileMenu.classList.toggle('active');
-				body.classList.toggle('menu-open');
-				hamburger.setAttribute('aria-expanded', menuOpen);
-				mobileMenu.setAttribute('aria-hidden', !menuOpen);
+			function isMenuOpen(){
+				return body.classList.contains('menu-open');
 			}
-			hamburger.addEventListener('click', toggleMenu);
+			function setMenu(open){
+				body.classList.toggle('menu-open', open);
+				mobileMenu.classList.toggle('active', open);
+				hamburger.classList.toggle('active', open);
+				hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+				mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+			}
+			hamburger.addEventListener('click', (e)=>{
+				e.stopPropagation();
+				setMenu(!isMenuOpen());
+			});
 			document.querySelectorAll('.mobile-menu-item, .mobile-menu-cta').forEach(link=>{
-				link.addEventListener('click', ()=>{ if(menuOpen) toggleMenu(); });
+				link.addEventListener('click', ()=>{ if(isMenuOpen()) setMenu(false); });
 			});
 
 			const siteHeader = document.querySelector('.site-header');
@@ -753,7 +757,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			}
 			window.addEventListener('scroll', handleHeaderScroll, {passive:true});
 			document.addEventListener('keydown', (e)=>{
-				if(e.key === 'Escape' && menuOpen) toggleMenu();
+				if(e.key === 'Escape' && isMenuOpen()) setMenu(false);
 			});
 		</script>
 	</body>
