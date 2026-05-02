@@ -89,6 +89,13 @@ const menuSchema = {
 		{ name: 'Menu', url: '/menu' }
 	]}
 >
+	<style is:global>
+		/* Force reveal animations to render visible on this page — IntersectionObserver timing on mobile was leaving sections hidden mid-scroll, creating perceived empty gaps. */
+		body:has(#chai) .reveal,
+		body:has(#chai) .reveal-left,
+		body:has(#chai) .reveal-right,
+		body:has(#chai) .reveal-scale{opacity:1 !important;transform:none !important}
+	</style>
 
 	<section class="hero">
 		<div class="hero-content">
