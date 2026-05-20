@@ -1,0 +1,341 @@
+---
+// Floating Chai chat widget for sulacafe.com.
+// Single self-contained component, drop into Layout.astro right before </body>.
+---
+<button id="chai-launch" class="chai-launch" type="button" aria-label="Chat with Chai">
+  <span class="chai-launch-dot"></span>
+  <span class="chai-launch-text">Chat with <strong>Chai</strong></span>
+</button>
+
+<aside id="chai-panel" class="chai-panel" aria-hidden="true">
+  <header class="chai-head">
+    <span class="chai-head-mark" aria-hidden="true"></span>
+    <span class="chai-head-text">
+      <span class="chai-head-name">Chai</span>
+      <span class="chai-head-sub">Sula Café · here to help</span>
+    </span>
+    <button id="chai-close" class="chai-close" type="button" aria-label="Close">&times;</button>
+  </header>
+
+  <div id="chai-thread" class="chai-thread">
+    <div class="chai-msg chai-msg-bot">
+      <p>Hi, I'm Chai. Ask me about our menu, hours, where to find us, or anything else about Sula Café.</p>
+    </div>
+  </div>
+
+  <form id="chai-form" class="chai-form" autocomplete="off">
+    <input
+      id="chai-input"
+      type="text"
+      placeholder="Ask Chai a question..."
+      maxlength="280"
+      autocomplete="off"
+      aria-label="Your message"
+      required
+    />
+    <button type="submit" class="chai-send" aria-label="Send">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </form>
+
+  <p class="chai-fine">AI assistant. Not the team. For urgent stuff, call <a href="tel:+17783861130">778-386-1130</a>.</p>
+</aside>
+
+<style is:global>
+  :root {
+    --chai-brand: #6f3a1e;
+    --chai-brand-soft: #c08a5a;
+    --chai-cream: #f7f1e6;
+    --chai-ink: #2a1810;
+    --chai-shadow: 0 18px 48px rgba(42, 24, 16, 0.28);
+  }
+
+  .chai-launch {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9998;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 18px 12px 14px;
+    border-radius: 999px;
+    border: none;
+    background: var(--chai-brand);
+    color: var(--chai-cream);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.92rem;
+    line-height: 1;
+    box-shadow: var(--chai-shadow);
+    transition: transform .25s ease, box-shadow .25s ease, background .2s ease;
+  }
+  .chai-launch:hover { transform: translateY(-2px); background: #5a2f17; }
+  .chai-launch-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--chai-brand-soft);
+    box-shadow: 0 0 0 0 rgba(192, 138, 90, 0.6);
+    animation: chai-pulse 2.4s infinite;
+  }
+  .chai-launch-text strong { font-weight: 600; margin-left: 3px; }
+  @keyframes chai-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(192, 138, 90, 0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(192, 138, 90, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(192, 138, 90, 0); }
+  }
+  .chai-launch.is-hidden { display: none; }
+
+  .chai-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    height: 540px;
+    max-height: calc(100vh - 40px);
+    z-index: 9999;
+    background: var(--chai-cream);
+    color: var(--chai-ink);
+    border-radius: 18px;
+    box-shadow: var(--chai-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    font-family: inherit;
+  }
+  .chai-panel.is-open {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .chai-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    background: var(--chai-brand);
+    color: var(--chai-cream);
+    flex: none;
+  }
+  .chai-head-mark {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--chai-brand-soft), #e6c19a);
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.18);
+    flex: none;
+  }
+  .chai-head-text { display: flex; flex-direction: column; line-height: 1.15; flex: 1; min-width: 0; }
+  .chai-head-name { font-weight: 600; font-size: 1.05rem; letter-spacing: 0.01em; }
+  .chai-head-sub { font-size: 0.74rem; opacity: 0.78; margin-top: 2px; }
+  .chai-close {
+    background: none; border: none; color: var(--chai-cream);
+    font-size: 1.5rem; line-height: 1; cursor: pointer; padding: 0 4px;
+    opacity: 0.7; transition: opacity .2s ease;
+  }
+  .chai-close:hover { opacity: 1; }
+
+  .chai-thread {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--chai-cream);
+  }
+  .chai-msg {
+    max-width: 86%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+  .chai-msg p { margin: 0; }
+  .chai-msg p + p { margin-top: 6px; }
+  .chai-msg-bot {
+    align-self: flex-start;
+    background: #fff;
+    color: var(--chai-ink);
+    border: 1px solid rgba(42, 24, 16, 0.08);
+    border-bottom-left-radius: 4px;
+  }
+  .chai-msg-user {
+    align-self: flex-end;
+    background: var(--chai-brand);
+    color: var(--chai-cream);
+    border-bottom-right-radius: 4px;
+  }
+  .chai-msg-typing {
+    align-self: flex-start;
+    background: #fff;
+    color: rgba(42, 24, 16, 0.55);
+    border: 1px solid rgba(42, 24, 16, 0.08);
+    font-style: italic;
+  }
+  .chai-msg-typing .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--chai-brand-soft); margin-right: 3px;
+    animation: chai-typing 1.2s infinite;
+  }
+  .chai-msg-typing .dot:nth-child(2) { animation-delay: 0.15s; }
+  .chai-msg-typing .dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes chai-typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  .chai-form {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    background: #fff;
+    border-top: 1px solid rgba(42, 24, 16, 0.08);
+    flex: none;
+  }
+  .chai-form input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(42, 24, 16, 0.12);
+    background: var(--chai-cream);
+    color: var(--chai-ink);
+    font-family: inherit;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color .2s ease;
+  }
+  .chai-form input:focus { border-color: var(--chai-brand-soft); }
+  .chai-send {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: none;
+    background: var(--chai-brand);
+    color: var(--chai-cream);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s ease, transform .15s ease;
+    flex: none;
+  }
+  .chai-send:hover { background: #5a2f17; }
+  .chai-send:active { transform: scale(0.94); }
+  .chai-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .chai-fine {
+    margin: 0;
+    padding: 8px 12px 10px;
+    font-size: 0.7rem;
+    text-align: center;
+    color: rgba(42, 24, 16, 0.55);
+    background: #fff;
+    border-top: 1px solid rgba(42, 24, 16, 0.04);
+    flex: none;
+  }
+  .chai-fine a { color: var(--chai-brand); text-decoration: underline; }
+
+  @media (max-width: 480px) {
+    .chai-panel {
+      bottom: 12px; right: 12px; left: 12px;
+      width: auto;
+      height: calc(100vh - 24px);
+      max-height: none;
+    }
+    .chai-launch { bottom: 14px; right: 14px; padding: 10px 16px 10px 12px; font-size: 0.88rem; }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const launch = document.getElementById('chai-launch');
+    const panel  = document.getElementById('chai-panel');
+    const close  = document.getElementById('chai-close');
+    const thread = document.getElementById('chai-thread');
+    const form   = document.getElementById('chai-form');
+    const input  = document.getElementById('chai-input');
+    if (!launch || !panel || !close || !thread || !form || !input) return;
+
+    const history = []; // {role, content}
+    let busy = false;
+
+    const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+
+    const setOpen = (open) => {
+      panel.classList.toggle('is-open', open);
+      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      launch.classList.toggle('is-hidden', open);
+      if (open) setTimeout(() => input.focus(), 240);
+    };
+
+    launch.addEventListener('click', () => setOpen(true));
+    close.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) setOpen(false);
+    });
+
+    const addMsg = (role, text) => {
+      const el = document.createElement('div');
+      el.className = role === 'bot' ? 'chai-msg chai-msg-bot' : 'chai-msg chai-msg-user';
+      // split on newlines into paragraphs
+      const html = text.split(/\n+/).map((p) => `<p>${escapeHtml(p)}</p>`).join('');
+      el.innerHTML = html;
+      thread.appendChild(el);
+      thread.scrollTop = thread.scrollHeight;
+    };
+
+    const addTyping = () => {
+      const el = document.createElement('div');
+      el.className = 'chai-msg chai-msg-typing';
+      el.id = 'chai-typing';
+      el.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+      thread.appendChild(el);
+      thread.scrollTop = thread.scrollHeight;
+    };
+    const removeTyping = () => {
+      const el = document.getElementById('chai-typing');
+      if (el) el.remove();
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (busy) return;
+      const text = input.value.trim();
+      if (!text) return;
+      busy = true;
+      input.value = '';
+      input.disabled = true;
+      addMsg('user', text);
+      history.push({ role: 'user', content: text });
+      addTyping();
+
+      try {
+        const r = await fetch('/api/chai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+        });
+        const data = await r.json();
+        removeTyping();
+        if (r.ok && data.text) {
+          addMsg('bot', data.text);
+          history.push({ role: 'assistant', content: data.text });
+        } else {
+          addMsg('bot', data.error || 'Sorry, I tripped on that one. Mind trying again?');
+        }
+      } catch (err) {
+        removeTyping();
+        addMsg('bot', "I'm having trouble connecting. Try in a moment, or call 778 386 1130.");
+      } finally {
+        busy = false;
+        input.disabled = false;
+        input.focus();
+      }
+    });
+  })();
+</script>

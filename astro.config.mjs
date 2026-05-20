@@ -1,8 +1,13 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: 'https://sulacafe.com',
+  // Astro 5 default is 'static'.  Pages stay prerendered; the /api/chai
+  // endpoint opts into SSR via `export const prerender = false`.
+  output: 'static',
+  adapter: vercel(),
   integrations: [
     sitemap({
       changefreq: 'weekly',

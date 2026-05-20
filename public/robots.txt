@@ -1,4 +1,4 @@
-# Sula Chai Café - Vancouver
+# Sula Café - Vancouver
 # https://sulacafe.com
 
 User-agent: *

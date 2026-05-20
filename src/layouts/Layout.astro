@@ -1,6 +1,7 @@
 ---
+import Chai from '../components/Chai.astro';
 const {
-	title = "Sula Chai Café | Coffee & Chai in East Vancouver",
+	title = "Coffee & Chai in East Vancouver | Sula Café",
 	description = "Sula chai brewed slow with leaves from Coorg, Alai Coffee blend, croissants and cruffins baked daily. Drop by 260 East 5th Ave in East Vancouver.",
 	canonical = "/",
 	ogImage = "/uploads/2026/02/sula-cafe-near-me-vancouver.webp",
@@ -14,7 +15,7 @@ const orgSchema = {
 	"@context": "https://schema.org",
 	"@type": ["CafeOrCoffeeShop", "FoodEstablishment", "LocalBusiness"],
 	"@id": "https://sulacafe.com/#organization",
-	"name": "Sula Chai Café",
+	"name": "Sula Café",
 	"alternateName": ["Sula Café", "Sula Cafe Vancouver"],
 	"url": "https://sulacafe.com",
 	"logo": "https://sulacafe.com/uploads/2025/09/sula-cafe-logo-2026.webp",
@@ -81,7 +82,7 @@ const websiteSchema = {
 	"@type": "WebSite",
 	"@id": "https://sulacafe.com/#website",
 	"url": "https://sulacafe.com",
-	"name": "Sula Chai Café",
+	"name": "Sula Café",
 	"description": "Authentic chai, Alai Coffee, and fresh-baked pastries in East Vancouver.",
 	"publisher": { "@id": "https://sulacafe.com/#organization" },
 	"inLanguage": "en-CA"
@@ -106,8 +107,28 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="theme-color" content="#1a0e08" />
-		<meta name="msapplication-navbutton-color" content="#1a0e08" />
+		<meta name="theme-color" content="#F3E3C3" />
+		<meta name="msapplication-navbutton-color" content="#F3E3C3" />
+		<!-- Apply the saved brand theme before first paint to avoid a flash.
+		     Default (no saved value) is the light scheme, so the site looks
+		     unchanged on first visit and for crawlers. -->
+		<script is:inline>
+			(() => {
+				try {
+					var THEMES = ['light', 'saffron', 'dark'];
+					var CHROME = { light: '#F3E3C3', saffron: '#F5DCAB', dark: '#14100C' };
+					var saved = localStorage.getItem('sula-cafe-theme');
+					var mode = THEMES.indexOf(saved) !== -1 ? saved : 'light';
+					if (mode !== 'light') {
+						document.documentElement.setAttribute('data-theme', mode);
+					}
+					var m1 = document.querySelector('meta[name="theme-color"]');
+					var m2 = document.querySelector('meta[name="msapplication-navbutton-color"]');
+					if (m1) m1.setAttribute('content', CHROME[mode]);
+					if (m2) m2.setAttribute('content', CHROME[mode]);
+				} catch (e) {}
+			})();
+		</script>
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<title>{title}</title>
@@ -125,7 +146,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 		<meta property="og:image" content={fullOgImage} />
 		<meta property="og:image:alt" content={title} />
 		<meta property="og:url" content={fullCanonical} />
-		<meta property="og:site_name" content="Sula Chai Café" />
+		<meta property="og:site_name" content="Sula Café" />
 		<meta property="og:locale" content="en_CA" />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
@@ -139,24 +160,18 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 		<meta name="ICBM" content="49.26628631891023, -123.0992136625663" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600&display=swap" />
-		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600&display=swap" rel="stylesheet" />
+		<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Red+Rose:wght@300;400;500;600;700&display=swap" />
+		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Red+Rose:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 		<script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
 		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 		{breadcrumbSchema && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />}
 		<slot name="schema" />
 	</head>
 	<body>
-		<div class="top-bar">
-			<div class="top-bar-inner">
-				<span class="top-bar-item">260 East 5th Ave · East Vancouver<span class="top-bar-divider"></span>Takeout · Order on UberEats</span>
-			</div>
-		</div>
-
 		<header class="site-header">
 			<div class="header-inner">
-				<a href="/" class="logo" aria-label="Sula Chai Café Home">
-					<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Chai Café Vancouver" class="logo-img" />
+				<a href="/" class="logo" aria-label="Sula Café Home">
+					<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Café Vancouver" class="logo-img" />
 				</a>
 				<nav class="main-nav desktop-nav" aria-label="Main navigation">
 					<a href="/">Home</a>
@@ -174,10 +189,10 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 						</svg>
 					</a>
 					<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
-						<span class="cta-badge">
-							<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
-						</span>
 						<span>Order on UberEats</span>
+						<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M9 18l6-6-6-6"/>
+						</svg>
 					</a>
 				</nav>
 				<button class="hamburger" aria-label="Open menu" aria-expanded="false" id="hamburger-btn">
@@ -194,13 +209,14 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 					</svg>
 				</button>
 			</div>
+			<p class="header-strip">260 East 5th Ave · East Vancouver &nbsp;·&nbsp; Takeout · UberEats</p>
 			<div class="header-bottom-zigzag" aria-hidden="true"></div>
 		</header>
 
 		<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
 			<div class="mobile-menu-inner">
 				<div class="mobile-menu-logo">
-					<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Chai Café" />
+					<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Café" />
 				</div>
 				<a href="/" class="mobile-menu-item">Home</a>
 				<a href="/coffee-and-chai-in-vancouver" class="mobile-menu-item">Coffee &amp; Chai</a>
@@ -223,10 +239,10 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 					<span class="mobile-menu-follow-label">Follow @sula.cafe</span>
 				</a>
 				<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="mobile-menu-cta" target="_blank" rel="noopener">
-					<span class="cta-badge">
-						<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" />
-					</span>
-					Order on UberEats
+					<span>Order on UberEats</span>
+					<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
 				</a>
 			</div>
 		</div>
@@ -258,7 +274,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			<div class="footer-top">
 				<div class="footer-inner">
 					<div class="footer-col footer-brand">
-						<img src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Chai Café" class="footer-logo-img" />
+						<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Café" class="footer-logo-img" />
 						<p class="footer-tag">Brewing moments of warmth,<br/>one cup at a time.</p>
 					</div>
 					<div class="footer-col">
@@ -312,12 +328,14 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			</div>
 
 			<div class="footer-bottom">
-				<p>© 2026 Sula Chai Café · All Rights Reserved</p>
+				<p>© 2026 Sula Café · All Rights Reserved</p>
 				<p class="footer-bottom-loc">Authentic Indian Chai, Alai Coffee & Bakery · East Vancouver</p>
 			</div>
 		</footer>
 
 		<style is:global>
+			/* LIGHT (default) -- the original warm cafe scheme. No data-theme
+			   attribute needed, so first paint and SEO crawl are unchanged. */
 			:root {
 				--cream: #F3E3C3;
 				--cream-soft: #EBD8B0;
@@ -335,16 +353,151 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				--burnt-deep: #9a5a30;
 				--text-dark: #2D1B14;
 				--text-soft: #5C4031;
+				--ink: #2A1B12;
+				--copper-line: rgba(140, 90, 58, 0.16);
+				--copper-line-soft: rgba(140, 90, 58, 0.08);
+				--header-scrolled-bg: rgba(243,227,195,0.55);
+			}
+
+			/* SAFFRON -- a midday golden-hour mode. Warmer cream surface (marigold
+			   linen), deeper burnt accents that read as turmeric and saffron, and
+			   richer cocoa for headings. Sits between Morning and Espresso, the
+			   brand at its most Indian-warm. */
+			:root[data-theme="saffron"] {
+				--cream: #F5DCAB;
+				--cream-soft: #EBCC8C;
+				--cream-deep: #DEB76A;
+				--tan: #B98744;
+				--tan-soft: #C99964;
+				--cocoa: #6D3F1F;
+				--cocoa-mid: #5C3416;
+				--cocoa-deep: #4A2912;
+				--espresso: #2E1A0C;
+				--espresso-deep: #1F1108;
+				--espresso-mid: #3D2210;
+				--burnt: #C97A2A;
+				--burnt-light: #E59648;
+				--burnt-deep: #A4621C;
+				--text-dark: #3A2210;
+				--text-soft: #5C3416;
+				--ink: #2E1A0C;
+				--copper-line: rgba(120, 70, 25, 0.22);
+				--copper-line-soft: rgba(120, 70, 25, 0.10);
+				--header-scrolled-bg: rgba(245, 220, 171, 0.62);
+			}
+
+			/* DARK -- the same cafe brand after hours. Espresso and deep-cocoa
+			   surfaces, cream text, burnt-orange accent kept vivid. The token
+			   names are reused so every existing rule repaints automatically:
+			   the warm "cream" family becomes the dark surface family, the
+			   "cocoa/espresso" family becomes the light text family, and the
+			   burnt accents are nudged brighter to carry on the dark field. */
+			:root[data-theme="dark"] {
+				--cream: #241712;
+				--cream-soft: #2D1B14;
+				--cream-deep: #3a2618;
+				--tan: #E6C893;
+				--tan-soft: #D9B57A;
+				--cocoa: #F0DDBC;
+				--cocoa-mid: #E3CBA0;
+				--cocoa-deep: #F3E3C3;
+				--espresso: #EDDCBC;
+				--espresso-deep: #14100C;
+				--espresso-mid: #4A3526;
+				--burnt: #E08A4E;
+				--burnt-light: #F0A064;
+				--burnt-deep: #C77A3E;
+				--text-dark: #F3E3C3;
+				--text-soft: #D8C39C;
+				--ink: #F1DCB4;
+				--copper-line: rgba(230, 200, 147, 0.22);
+				--copper-line-soft: rgba(230, 200, 147, 0.10);
+				--header-scrolled-bg: rgba(26,16,10,0.78);
+			}
+
+			/* Smooth the repaint when the switcher fires. */
+			html { transition: background 0.35s ease; }
+			body { transition: background 0.35s ease, color 0.35s ease; }
+
+			/* Theme switcher -- a 3-segment copper-lined pill. Three modes
+			   (Morning, Saffron, Espresso) live side by side so a guest sees
+			   all options and the brand's diamond glyph reads as Saffron. The
+			   pill itself is a cream-surface capsule with a hairline border;
+			   the active segment fills with the deepest cocoa available in
+			   the current palette and inverts to cream icon. Slim, considered,
+			   stays out of the way of the Chai launcher bottom-right. */
+			.theme-switch {
+				position: fixed; left: 18px; bottom: 18px; z-index: 90;
+				display: inline-flex; align-items: center; gap: 2px;
+				padding: 4px; border-radius: 999px;
+				background: color-mix(in oklab, var(--cream) 78%, transparent);
+				border: 1px solid var(--copper-line);
+				backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+				box-shadow: 0 8px 24px rgba(45,27,20,0.12);
+				transition: background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+			}
+			.theme-switch:hover {
+				box-shadow: 0 12px 30px rgba(45,27,20,0.18);
+				border-color: color-mix(in oklab, var(--burnt) 40%, var(--copper-line));
+			}
+			.theme-seg {
+				width: 34px; height: 34px;
+				border-radius: 999px;
+				border: 0; padding: 0;
+				background: transparent;
+				color: var(--cocoa-mid);
+				display: inline-flex; align-items: center; justify-content: center;
+				cursor: pointer; position: relative;
+				transition: color 0.35s ease, background 0.45s ease, transform 0.35s ease;
+			}
+			.theme-seg svg {
+				width: 17px; height: 17px;
+				transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+				pointer-events: none;
+			}
+			.theme-seg:hover { color: var(--burnt); }
+			.theme-seg:hover svg { transform: scale(1.08) rotate(-3deg); }
+			.theme-seg.is-active {
+				background: var(--cocoa-deep);
+				color: var(--cream);
+				box-shadow: 0 4px 12px rgba(45,27,20,0.22);
+			}
+			.theme-seg.is-active svg { transform: scale(1.05); }
+			.theme-seg.is-active:hover svg { transform: scale(1.10) rotate(-3deg); }
+			.theme-switch-label {
+				position: absolute; left: 50%; top: -22px;
+				transform: translateX(-50%);
+				font-family: 'Inter', sans-serif;
+				font-size: 9px; letter-spacing: 0.22em;
+				text-transform: uppercase; color: var(--cocoa-mid);
+				white-space: nowrap; pointer-events: none;
+				opacity: 0; transition: opacity 0.35s ease, color 0.45s ease;
+			}
+			.theme-switch:hover .theme-switch-label { opacity: 0.78; }
+			@media (max-width: 900px) {
+				.theme-switch { left: 14px; bottom: 14px; padding: 3px; gap: 1px; }
+				.theme-seg { width: 32px; height: 32px; }
+				.theme-seg svg { width: 16px; height: 16px; }
+				.theme-switch-label { font-size: 8.5px; top: -20px; }
 			}
 			*{box-sizing:border-box;margin:0;padding:0}
 			html,body{overflow-x:clip;scroll-behavior:smooth}
-			body{font-family:'Inter',-apple-system,sans-serif;font-weight:400;color:var(--text-dark);background:var(--cream);line-height:1.7;letter-spacing:0.2px}
+			body{font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;color:var(--ink);background:var(--cream);line-height:1.55;letter-spacing:0.14px}
 			body.menu-open{overflow:hidden}
 			img{max-width:100%;height:auto;display:block}
 			a{color:var(--burnt);text-decoration:none}
 
-			h1,h2,h3,h4,h5,h6{font-family:'Playfair Display',Georgia,serif;font-weight:500;color:var(--cocoa);letter-spacing:-0.3px;word-wrap:break-word;overflow-wrap:break-word;line-height:1.2}
-			h1 em, h2 em, h3 em, h4 em{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:400;color:var(--burnt)}
+			:focus-visible{outline:2px solid var(--burnt);outline-offset:3px;border-radius:2px}
+
+			h1,h2,h3,h4,h5,h6{font-weight:400;color:var(--cocoa);letter-spacing:-0.25px;word-wrap:break-word;overflow-wrap:break-word;line-height:1.16}
+			h1,h2{font-family:'Playfair Display',Georgia,serif;letter-spacing:-0.4px}
+			h3,h4,h5,h6{font-family:'Red Rose',Georgia,serif;letter-spacing:0;line-height:1.25}
+			/* Italic accents on headings are no longer global. The .has-accent
+			   marker (used sparingly on the hero and one pivot heading per page)
+			   opts a heading in. Everywhere else, the headline carries its own
+			   weight without the burnt italic emphasis. */
+			.has-accent em{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:400;color:var(--burnt)}
+			.has-accent.h-anchor em{color:var(--burnt-light)}
 
 			@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 			@keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -373,57 +526,87 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.mini-divider .m-diamond{width:7px;height:7px;background:var(--burnt);transform:rotate(45deg)}
 			.mini-divider.center{justify-content:center}
 
-			.eyebrow{display:block;font-family:'Inter',sans-serif;font-size:11px;color:var(--burnt);letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;font-weight:600}
-			.eyebrow-italic{display:block;font-family:Georgia,serif;font-style:italic;font-size:14px;color:var(--burnt);letter-spacing:4px;text-transform:uppercase;margin-bottom:18px;font-weight:500}
+			/* Unified eyebrow: one consistent small-caps language across the
+			   site. .eyebrow-italic is kept as an alias so existing markup
+			   keeps working, but it now renders identically to .eyebrow. The
+			   2026 luxe pass shrinks letter-spacing from a loud 4px to a
+			   calmer 0.22em so the small caps read editorial, not retail. */
+			.eyebrow,.eyebrow-italic{display:inline-flex;align-items:center;gap:10px;font-family:'Inter',sans-serif;font-style:normal;font-size:10.5px;color:var(--burnt);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:14px;font-weight:600}
 
-			.top-bar{background:linear-gradient(135deg,#0a0503 0%,var(--espresso-deep) 30%,var(--espresso-mid) 65%,var(--cocoa-deep) 100%);padding:14px 0;border-bottom:1px solid rgba(198,161,109,0.2)}
-			.top-bar-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;justify-content:center;align-items:center;gap:30px;flex-wrap:wrap}
-			.top-bar-item{font-family:Georgia,serif;font-style:italic;font-size:13px;color:var(--tan);letter-spacing:1px;display:flex;align-items:center;gap:30px}
-			.top-bar-divider{width:6px;height:6px;background:var(--burnt);transform:rotate(45deg);display:inline-block;flex-shrink:0}
+			/* Editorial section numbering. Pair with .eyebrow on each section,
+			   e.g. <span class="eyebrow"><span class="sec-num">№ 02</span> Alai Coffee</span>.
+			   The numeral sits in Cormorant italic so it reads like a chapter
+			   mark in a magazine, not a system number. */
+			.sec-num{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:14px;letter-spacing:0.04em;color:var(--cocoa);text-transform:none;line-height:1;position:relative;padding-right:10px}
+			.sec-num::after{content:'';position:absolute;right:0;top:50%;width:1px;height:14px;background:var(--copper-line);transform:translateY(-50%)}
 
-			.site-header{background:linear-gradient(135deg,#0a0503 0%,var(--espresso-deep) 25%,var(--espresso-mid) 55%,var(--cocoa-deep) 80%,var(--espresso-mid) 100%);color:var(--cream);padding:24px 0 0;position:sticky;top:0;z-index:100;animation:fadeIn 0.8s ease;box-shadow:0 8px 24px rgba(0,0,0,0.15);overflow:hidden;transition:background 0.35s cubic-bezier(0.4,0,0.2,1),padding 0.35s cubic-bezier(0.4,0,0.2,1),box-shadow 0.35s cubic-bezier(0.4,0,0.2,1)}
-			.site-header.scrolled{background:rgba(243,227,195,0.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 4px 20px rgba(45,27,20,0.08);padding:12px 0 0}
+			/* Single luxe hairline divider, used in place of the 5-piece
+			   premium-divider in most sections. One copper line, one diamond. */
+			.lux-rule{display:flex;align-items:center;justify-content:center;gap:18px;margin:28px 0}
+			.lux-rule .lx-line{flex:0 0 88px;height:1px;background:linear-gradient(90deg,transparent,var(--copper-line),transparent)}
+			.lux-rule .lx-diamond{width:6px;height:6px;background:var(--burnt);transform:rotate(45deg);opacity:0.7}
+			.lux-rule.is-start .lx-line:first-child{background:linear-gradient(90deg,transparent,var(--copper-line) 50%,var(--copper-line))}
+			.lux-rule.is-start .lx-line:last-child{background:linear-gradient(90deg,var(--copper-line),var(--copper-line) 50%,transparent)}
+
+			/* The 2026 luxe pass folds the old top-bar address line into the
+			   header itself, so the page opens with one calm dark band, not
+			   two stacked. The header background is now a single deep
+			   espresso, no multi-stop gradient, with a copper hairline at
+			   the bottom doing the brand work. */
+			.site-header{background:var(--espresso-deep);color:var(--cream);padding:22px 0 0;position:sticky;top:0;z-index:100;animation:fadeIn 0.8s ease;box-shadow:0 1px 0 var(--copper-line),0 6px 18px rgba(0,0,0,0.12);overflow:hidden;transition:background 0.35s cubic-bezier(0.4,0,0.2,1),padding 0.35s cubic-bezier(0.4,0,0.2,1),box-shadow 0.35s cubic-bezier(0.4,0,0.2,1)}
+			.site-header.scrolled{background:var(--header-scrolled-bg);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 4px 20px rgba(45,27,20,0.08);padding:12px 0 0}
 			.site-header.scrolled::before{opacity:0;transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1)}
 			.site-header.scrolled .header-inner{padding-bottom:12px;transition:padding-bottom 0.35s cubic-bezier(0.4,0,0.2,1)}
 			.site-header.scrolled .main-nav a:not(.cta){color:var(--espresso)}
 			.site-header.scrolled .main-nav a:not(.cta):hover{color:var(--burnt)}
 			.site-header.scrolled .header-bottom-zigzag{opacity:0.5}
-			.site-header::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z' fill='none' stroke='%23C6A16D' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='24' cy='24' r='1.8' fill='%23C6A16D' opacity='0.5'/%3E%3C/svg%3E");opacity:0.16;pointer-events:none;z-index:1}
+			.site-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(193,121,67,0.10) 0%,transparent 60%);pointer-events:none;z-index:1}
 			.site-header > *{position:relative;z-index:2}
 			.header-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;align-items:center;gap:18px;position:relative;padding-bottom:28px}
 			.logo{display:flex;align-items:center;justify-content:center;transition:opacity 0.3s}
 			.logo:hover{opacity:0.85}
 			.logo-img{height:84px;width:auto;display:block;object-fit:contain;transition:height 0.35s cubic-bezier(0.4,0,0.2,1)}
 			.site-header.scrolled .logo-img{height:50px}
-			.main-nav{display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
-			.main-nav a{color:var(--cream);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2.5px;position:relative;padding:6px 0;transition:color 0.3s}
+			.main-nav{display:flex;gap:26px;align-items:center;flex-wrap:wrap;justify-content:center}
+			.main-nav a{color:var(--cream);font-family:'Inter',sans-serif;font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:0.20em;position:relative;padding:6px 0;transition:color 0.3s}
 			.main-nav a:not(.cta)::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:1px;background:var(--burnt);transition:all 0.4s ease;transform:translateX(-50%)}
 			.main-nav a:not(.cta):hover{color:var(--burnt-light)}
 			.main-nav a:not(.cta):hover::after{width:100%}
-			.main-nav a.cta{height:44px;padding:0 24px 0 5px;gap:14px;font-size:10px}
-			.main-nav a.cta .cta-badge{width:34px;height:34px;padding:5px}
-			.main-nav a.cta .cta-badge img{width:24px;height:24px}
+			.main-nav a.cta{height:42px;padding:0 22px;gap:10px;font-size:10px;letter-spacing:0.18em}
+
+			/* Small italic address strip beneath the nav, replaces the old
+			   stacked top-bar. Quiet, one line, no diamond divider. */
+			.header-strip{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:13px;color:var(--tan-soft);letter-spacing:0.04em;text-align:center;padding:6px 32px 0;opacity:0.85}
+			.header-strip a{color:inherit;transition:color 0.3s}
+			.header-strip a:hover{color:var(--burnt-light)}
+			.site-header.scrolled .header-strip{color:var(--cocoa-mid)}
 			.main-nav .nav-icon{display:inline-flex;align-items:center;padding:6px;line-height:0}
 			.main-nav .nav-icon::after{display:none !important}
 
-			.cta,.btn-primary{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark) !important;padding:0 28px 0 6px;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2.5px;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:18px;height:52px;transition:all 0.4s ease;border:1px solid var(--burnt);cursor:pointer}
+			/* Luxe button language. One height (48), one weight, one accent
+			   stroke. Solid burnt fill on primary, copper hairline on the
+			   outline variants. The old logo-badge inside every CTA is gone,
+			   replaced by a single chevron that gently shifts on hover. */
+			.cta,.btn-primary{background:var(--burnt);color:var(--cream) !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;transition:background 0.4s ease,color 0.4s ease,border-color 0.4s ease,box-shadow 0.4s ease;border:1px solid var(--burnt);cursor:pointer;position:relative}
 			.cta::after,.btn-primary::after{display:none !important}
-			.cta:hover,.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(193,121,67,0.45);color:var(--text-dark) !important}
-			.cta-badge,.btn-badge{width:40px;height:40px;background:var(--espresso);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:6px}
-			.cta-badge img,.btn-badge img{width:28px;height:28px;object-fit:contain;filter:brightness(0) invert(1) sepia(0.4) saturate(3) hue-rotate(355deg)}
+			.cta:hover,.btn-primary:hover{background:var(--burnt-deep);border-color:var(--burnt-deep);color:var(--cream) !important;box-shadow:0 8px 22px rgba(193,121,67,0.28)}
+			/* Compact button modifier -- the only secondary height. */
+			.btn-compact{height:42px;padding:0 22px;font-size:10px}
+			/* Clean CTA glyph: a single-colour chevron, the only ornament. */
+			.cta-chevron{flex-shrink:0;transition:transform 0.4s ease}
+			.cta:hover .cta-chevron,.btn-primary:hover .cta-chevron,.mobile-menu-cta:hover .cta-chevron{transform:translateX(4px)}
+			/* Legacy CTA badge -- retained for backward compatibility, but
+			   hidden in the 2026 luxe pass. The chevron carries the visual
+			   cue now. Old markup keeps working without showing the badge. */
+			.cta-badge,.btn-badge{display:none !important}
 
-			.btn-outline-cocoa{background:transparent;color:var(--cocoa) !important;padding:0 28px 0 6px;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2.5px;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:18px;height:52px;border:1px solid var(--cocoa);transition:all 0.4s ease;cursor:pointer}
-			.btn-outline-cocoa:hover{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark) !important;border-color:var(--burnt);transform:translateY(-2px);box-shadow:0 10px 24px rgba(193,121,67,0.4)}
-			.btn-outline-cocoa .btn-badge{background:var(--cocoa);transition:background 0.4s ease}
-			.btn-outline-cocoa:hover .btn-badge{background:var(--espresso)}
-			.btn-outline-cocoa .btn-badge img{filter:brightness(0) invert(1)}
+			.btn-outline-cocoa{background:transparent;color:var(--cocoa) !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;border:1px solid var(--copper-line);transition:all 0.4s ease;cursor:pointer}
+			.btn-outline-cocoa:hover{background:var(--burnt);color:var(--cream) !important;border-color:var(--burnt)}
 
-			.btn-outline-cream{background:transparent;color:var(--cream) !important;padding:0 28px 0 6px;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2.5px;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:18px;height:52px;border:1px solid var(--burnt);transition:all 0.4s ease}
-			.btn-outline-cream:hover{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark) !important;transform:translateY(-2px);box-shadow:0 10px 24px rgba(193,121,67,0.5)}
-			.btn-outline-cream .btn-badge{background:var(--cream)}
-			.btn-outline-cream .btn-badge img{filter:brightness(0) sepia(1) saturate(2) hue-rotate(15deg) brightness(0.5)}
+			.btn-outline-cream{background:transparent;color:var(--cream) !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;border:1px solid rgba(243,227,195,0.35);transition:all 0.4s ease}
+			.btn-outline-cream:hover{background:var(--burnt);color:var(--cream) !important;border-color:var(--burnt)}
 
-			.header-bottom-zigzag{height:1px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 50%,transparent 100%)}
+			.header-bottom-zigzag{height:1px;background:linear-gradient(90deg,transparent 0%,var(--copper-line) 50%,transparent 100%);opacity:0.85}
 
 			.faq-list{margin-top:50px;display:flex;flex-direction:column;gap:14px;max-width:760px;margin-left:auto;margin-right:auto}
 			.faq-item{background:rgba(255,255,255,0.4);border:1px solid rgba(140,90,58,0.18);border-left:3px solid var(--burnt);transition:background 0.3s ease,border-color 0.3s ease}
@@ -445,8 +628,8 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.breadcrumbs .crumb{display:flex;align-items:center;gap:10px;color:var(--cocoa)}
 			.breadcrumbs .crumb a{color:var(--cocoa-mid);transition:color 0.3s}
 			.breadcrumbs .crumb a:hover{color:var(--burnt)}
-			.breadcrumbs .crumb-sep{color:var(--burnt);font-family:Georgia,serif;font-size:14px;font-style:italic;font-weight:400}
-			.breadcrumbs .crumb-current{color:var(--burnt);font-family:Georgia,serif;font-style:italic;text-transform:none;letter-spacing:0.4px;font-size:13px;font-weight:500}
+			.breadcrumbs .crumb-sep{color:var(--burnt);font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-style:italic;font-weight:400}
+			.breadcrumbs .crumb-current{color:var(--burnt);font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;text-transform:none;letter-spacing:0.4px;font-size:13px;font-weight:500}
 			@media (max-width:600px){
 				.breadcrumbs{padding:10px 20px}
 				.breadcrumbs-inner{font-size:10px;letter-spacing:1.2px}
@@ -475,8 +658,8 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.mobile-menu-item:hover{color:var(--burnt-light);padding-left:6px}
 			.mobile-menu-divider{height:1px;background:linear-gradient(90deg,transparent,var(--burnt),transparent);margin:20px 0 14px}
 			.mobile-menu-label{font-family:'Inter',sans-serif;font-size:13px;color:var(--burnt);letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
-			.mobile-menu-info{font-family:Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.85);line-height:1.4;margin-bottom:8px}
-			.mobile-menu-cta{display:flex !important;justify-content:center;align-items:center;gap:14px;width:100%;background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark);padding:0 22px;height:46px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:12px;text-decoration:none;transition:all 0.4s ease}
+			.mobile-menu-info{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.85);line-height:1.4;margin-bottom:8px}
+			.mobile-menu-cta{display:flex !important;justify-content:center;align-items:center;gap:10px;width:100%;background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark);padding:0 22px;height:44px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:12px;text-decoration:none;transition:all 0.4s ease}
 			.mobile-menu-cta:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(193,121,67,0.4)}
 			.mobile-menu-follow{display:inline-flex;flex-direction:row;align-items:center;gap:12px;padding:14px 0;align-self:center;text-decoration:none;transition:color 0.3s}
 			.mobile-menu-follow-badge{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border:1.5px solid var(--tan);border-radius:50%;color:var(--tan);transition:background 0.35s ease,border-color 0.35s ease,color 0.35s ease}
@@ -496,7 +679,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.hero::after{content:'';position:absolute;bottom:60px;right:60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(140,90,58,0.15) 0%,transparent 70%);pointer-events:none}
 			.hero-content{position:relative;z-index:2;max-width:900px;width:100%}
 			.hero-logo{width:120px;height:auto;margin:0 auto 28px;display:block;animation:fadeUp 1s ease 0.1s both}
-			.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:60px;color:var(--cocoa);font-weight:500;line-height:1.1;margin-bottom:0;letter-spacing:-1px;animation:fadeUp 1.2s ease 0.3s both}
+			.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:60px;color:var(--cocoa);font-weight:400;line-height:1.1;margin-bottom:0;letter-spacing:-1px;animation:fadeUp 1.2s ease 0.3s both}
 			.hero h1 em{color:var(--burnt);font-style:italic;font-weight:400}
 			.hero-tagline{font-size:17px;font-weight:400;max-width:620px;margin:24px auto 32px;line-height:1.65;color:var(--text-soft);animation:fadeUp 1.2s ease 0.6s both}
 			.hero-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1.2s ease 0.9s both}
@@ -512,11 +695,13 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.container-narrow{max-width:980px;margin:0 auto}
 			.text-center{text-align:center}
 
-			.section-cream{background:linear-gradient(180deg,var(--cream) 0%,var(--cream-soft) 100%)}
-			.section-cream-reverse{background:linear-gradient(180deg,var(--cream-soft) 0%,var(--cream) 100%)}
-			.section-cream-deep{background:linear-gradient(135deg,var(--cream-soft) 0%,var(--cream-deep) 50%,var(--cream-soft) 100%)}
-			.section-tan{background:linear-gradient(135deg,var(--tan) 0%,var(--tan-soft) 50%,var(--tan) 100%);color:var(--text-dark)}
-			.section-cocoa{background:linear-gradient(135deg,var(--cocoa-deep) 0%,var(--cocoa) 50%,var(--cocoa-deep) 100%);color:var(--cream)}
+			/* Solid section fills. Gradients are reserved for the hero and the
+			   espresso feature band, so the page reads calmer and flatter. */
+			.section-cream{background:var(--cream)}
+			.section-cream-reverse{background:var(--cream-soft)}
+			.section-cream-deep{background:var(--cream-deep)}
+			.section-tan{background:var(--tan);color:var(--text-dark)}
+			.section-cocoa{background:var(--cocoa-deep);color:var(--cream)}
 			.section-espresso{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 35%,var(--espresso-mid) 70%,var(--espresso) 100%);color:var(--cream);position:relative}
 			.section-espresso::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(193,121,67,0.18) 0%,transparent 60%);pointer-events:none}
 			.section-espresso > *{position:relative;z-index:2}
@@ -532,25 +717,25 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.section-espresso p{color:rgba(243,227,195,0.85)}
 
 			.intro-block{text-align:center;max-width:880px;margin:0 auto}
-			.intro-block h2{font-size:42px;font-weight:500;margin-bottom:20px;line-height:1.2}
-			.intro-block p{font-size:17px;line-height:1.85;font-weight:400}
+			.intro-block h2{font-size:42px;font-weight:400;margin-bottom:20px;line-height:1.2}
+			.intro-block p{font-size:17px;line-height:1.85;font-weight:400;max-width:62ch;margin-left:auto;margin-right:auto}
 
 			.section-divider{padding:30px 32px;text-align:center;background:linear-gradient(180deg,var(--cream-soft) 0%,var(--cream) 100%)}
 			.section-divider .premium-divider{margin:0}
 
-			.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1200px;margin:0 auto}
-			.two-col-img{height:560px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0}
-			.two-col-img.cocoa{background:linear-gradient(135deg,var(--cocoa-deep) 0%,var(--cocoa) 50%,var(--cocoa-deep) 100%)}
-			.two-col-img.espresso{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 50%,var(--cocoa-deep) 100%)}
+			.two-col{display:grid;grid-template-columns:1.05fr 1fr;gap:88px;align-items:center;max-width:1240px;margin:0 auto}
+			.two-col-img{height:560px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;box-shadow:inset 0 0 0 1px var(--copper-line)}
+			.two-col-img.cocoa,.two-col-img.espresso{background:transparent}
 			.two-col-img img{width:100%;height:100%;object-fit:cover}
+			.two-col-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(45,27,20,0.12) 100%);pointer-events:none;z-index:3}
+			.two-col-img .pattern-overlay{display:none}
 			.two-col-img-frame{display:none}
 			.two-col-img-corner{display:none}
 			.two-col-img-corner.tl{top:30px;left:30px}
 			.two-col-img-corner.br{bottom:30px;right:30px}
-			.two-col-img > img{position:relative;width:calc(100% - 64px);height:calc(100% - 64px);object-fit:cover;z-index:4;border:1px solid rgba(193,121,67,0.3)}
-			.two-col-img .pattern-overlay{position:absolute;inset:0;z-index:1}
-			.two-col-content h2{font-size:42px;line-height:1.2;margin-bottom:20px;font-weight:500}
-			.two-col-content p{font-size:16px;line-height:1.85;margin-bottom:18px;font-weight:400}
+			.two-col-img > img{position:relative;width:100%;height:100%;object-fit:cover;z-index:4;border:none}
+			.two-col-content h2{font-size:46px;line-height:1.14;margin-bottom:22px;font-weight:400}
+			.two-col-content p{font-size:18px;line-height:1.65;margin-bottom:20px;font-weight:400;max-width:46ch;color:var(--text-soft)}
 
 			.pattern-overlay{position:absolute;inset:0;pointer-events:none;z-index:2}
 			.pattern-jaali{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M22 0 L44 22 L22 44 L0 22 Z' fill='none' stroke='%23F3E3C3' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='22' cy='22' r='2.4' fill='%23F3E3C3' opacity='0.7'/%3E%3C/svg%3E");opacity:0.4}
@@ -564,7 +749,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.tag-cream{background:var(--espresso);color:var(--cream)}
 
 			.card-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto}
-			.card{background:linear-gradient(180deg,#F3E3C3 0%,#E8D5A8 100%);border:1px solid rgba(140,90,58,0.25);overflow:hidden;position:relative;transition:transform 0.5s ease,box-shadow 0.5s ease}
+			.card{background:linear-gradient(180deg,var(--cream) 0%,var(--cream-deep) 100%);border:1px solid rgba(140,90,58,0.25);overflow:hidden;position:relative;transition:transform 0.5s ease,box-shadow 0.5s ease}
 			.card::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 4 L24 16 L36 20 L24 24 L20 36 L16 24 L4 20 L16 16 Z' fill='none' stroke='%238C5A3A' stroke-width='0.6' opacity='0.08'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
 			.card > *{position:relative;z-index:1}
 
@@ -608,7 +793,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.footer-brand{display:flex;flex-direction:column;gap:18px;align-items:flex-start}
 			.footer-logo-img{height:108px;width:auto;object-fit:contain;display:block}
 			.footer-tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:18px;color:var(--tan);line-height:1.5;text-align:center;max-width:280px;letter-spacing:0.06em;align-self:center}
-			.footer-tag-italic{font-family:Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.65);line-height:1.6}
+			.footer-tag-italic{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.65);line-height:1.6}
 			.footer-mini-divider{display:flex;align-items:center;gap:10px;margin:6px 0}
 			.footer-mini-divider .m-line{height:1px;width:30px;background:var(--burnt)}
 			.footer-mini-divider .m-diamond{width:6px;height:6px;background:var(--burnt);transform:rotate(45deg)}
@@ -645,7 +830,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 
 			.footer-bottom{border-top:1px solid rgba(198,161,109,0.15);padding:32px 32px;text-align:center;position:relative;z-index:2}
 			.footer-bottom p{color:rgba(243,227,195,0.55);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:400;margin-bottom:6px}
-			.footer-bottom-loc{font-style:italic !important;letter-spacing:1px !important;text-transform:none !important;font-family:Georgia,serif !important}
+			.footer-bottom-loc{font-style:italic !important;letter-spacing:1px !important;text-transform:none !important;font-family:'Cormorant Garamond',Georgia,serif !important}
 
 			@media (max-width:900px){
 				.top-bar{padding:10px 0}
@@ -694,9 +879,10 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				.footer-col > a:not(.family-btn){font-size:16px;margin-bottom:14px;text-align:center}
 				.footer-col p{font-size:16px;line-height:1.6;margin-bottom:9px;text-align:center}
 				.family-btn{justify-content:center !important}
-				.cta,.btn-primary,.btn-outline-cocoa,.btn-outline-cream{font-size:11px;letter-spacing:2px;height:50px;padding:0 24px 0 6px;gap:14px}
-				.cta-badge,.btn-badge{width:38px;height:38px;padding:5px}
-				.cta-badge img,.btn-badge img{width:26px;height:26px}
+				.cta,.btn-primary,.btn-outline-cocoa,.btn-outline-cream{font-size:11px;letter-spacing:2px;height:52px;padding:0 22px;gap:10px}
+				.btn-compact{height:44px}
+				.cta-badge,.btn-badge{width:32px;height:32px;padding:5px}
+				.cta-badge img,.btn-badge img{width:20px;height:20px}
 				.premium-divider{margin:24px auto;justify-content:center}
 				.premium-divider .pd-thin,.premium-divider .pd-thin-r{width:36px}
 				.premium-divider .pd-thick{width:64px}
@@ -724,7 +910,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 						observer.unobserve(entry.target);
 					}
 				});
-			},{threshold:0.15,rootMargin:'0px 0px -50px 0px'});
+			},{threshold:0.01});
 			document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>observer.observe(el));
 
 			const hamburger = document.getElementById('hamburger-btn');
@@ -765,5 +951,63 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				if(e.key === 'Escape' && isMenuOpen()) setMenu(false);
 			});
 		</script>
+
+		<div class="theme-switch" role="group" aria-label="Colour mode: Morning, Saffron, Espresso">
+			<span class="theme-switch-label" id="theme-switch-label">Morning</span>
+			<button type="button" class="theme-seg" data-theme-mode="light" aria-label="Morning, light cream cafe">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<circle cx="12" cy="12" r="4"/>
+					<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+				</svg>
+			</button>
+			<button type="button" class="theme-seg" data-theme-mode="saffron" aria-label="Saffron, golden hour warm">
+				<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+					<path d="M12 2.5 L13.7 10.3 L21.5 12 L13.7 13.7 L12 21.5 L10.3 13.7 L2.5 12 L10.3 10.3 Z"/>
+				</svg>
+			</button>
+			<button type="button" class="theme-seg" data-theme-mode="dark" aria-label="Espresso, deep dark cafe">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+				</svg>
+			</button>
+		</div>
+		<script is:inline>
+			(() => {
+				var sw = document.querySelector('.theme-switch');
+				if (!sw) return;
+				var THEMES = ['light', 'saffron', 'dark'];
+				var CHROME = { light: '#F3E3C3', saffron: '#F5DCAB', dark: '#14100C' };
+				var NAMES = { light: 'Morning', saffron: 'Saffron', dark: 'Espresso' };
+				var labelEl = document.getElementById('theme-switch-label');
+				var segs = sw.querySelectorAll('[data-theme-mode]');
+				var root = document.documentElement;
+				function currentMode() {
+					var t = root.getAttribute('data-theme');
+					return THEMES.indexOf(t) !== -1 ? t : 'light';
+				}
+				function paint(mode) {
+					if (mode === 'light') root.removeAttribute('data-theme');
+					else root.setAttribute('data-theme', mode);
+					segs.forEach(function (el) {
+						el.classList.toggle('is-active', el.dataset.themeMode === mode);
+					});
+					if (labelEl) labelEl.textContent = NAMES[mode];
+					var m1 = document.querySelector('meta[name="theme-color"]');
+					var m2 = document.querySelector('meta[name="msapplication-navbutton-color"]');
+					if (m1) m1.setAttribute('content', CHROME[mode]);
+					if (m2) m2.setAttribute('content', CHROME[mode]);
+				}
+				paint(currentMode());
+				segs.forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						var mode = btn.dataset.themeMode;
+						if (mode === currentMode()) return;
+						paint(mode);
+						try { localStorage.setItem('sula-cafe-theme', mode); } catch (e) {}
+					});
+				});
+			})();
+		</script>
+		<Chai />
 	</body>
 </html>
