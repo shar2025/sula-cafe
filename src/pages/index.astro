@@ -8,49 +8,47 @@ import Layout from '../layouts/Layout.astro';
 	ogImage="/uploads/2026/02/sula-cafe-near-me-vancouver.webp"
 >
 
-	<section class="hero">
+	<section class="hero is-split">
+		<div class="hero-figure" aria-hidden="true">
+			<img src="/uploads/2026/02/sula-cafe-near-me-vancouver.webp" alt="" loading="eager" fetchpriority="high" decoding="async" />
+		</div>
 		<div class="hero-content">
-			<span class="eyebrow-italic">From The Sula Indian Restaurant Team</span>
-			<h1>Brewed slow.<br/><em>Made to be remembered.</em></h1>
-			<div class="premium-divider">
-				<div class="pd-thin"></div>
-				<div class="pd-thick"></div>
-				<div class="pd-diamond"></div>
-				<div class="pd-thick"></div>
-				<div class="pd-thin-r"></div>
-			</div>
-			<p class="hero-tagline">A takeout <a href="/coffee-and-chai-in-vancouver" class="body-link">coffee shop in East Vancouver</a>. Authentic Sula chai, Alai Coffee, and bakery fresh every morning.</p>
+			<span class="eyebrow-italic">From the Sula Indian Restaurant team</span>
+			<h1 class="has-accent">Brewed slow.<br/><em>Made to be remembered.</em></h1>
+			<p class="hero-lede">
+				A takeout <a href="/coffee-and-chai-in-vancouver" class="body-link">coffee shop in East Vancouver</a>.
+				Authentic Sula chai, Alai Coffee, and bakery fresh every morning.
+			</p>
 			<div class="hero-buttons">
 				<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
-					<span class="cta-badge">
-						<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
-					</span>
 					Order on UberEats
+					<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
+				</a>
+				<a href="/menu" class="btn-outline-cocoa">
+					See the menu
+					<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
 				</a>
 			</div>
 		</div>
 	</section>
 
-	<div class="hero-image-band">
-		<img width="900" height="600" src="/uploads/2026/02/sula-cafe-near-me-vancouver.webp" alt="Sula Café storefront on East 5th Avenue, East Vancouver" loading="eager" fetchpriority="high" decoding="async" />
-	</div>
-
 	<section class="section section-cream-reverse reveal">
 		<div class="two-col container">
 			<div class="two-col-img cocoa">
-				<div class="pattern-overlay pattern-jaali"></div>
 				<img width="600" height="900" src="/uploads/2026/02/chai-near-me-vancouver-sula-chai-cafe.webp" alt="Masala chai brewed at Sula Café in Vancouver with Coorg and Chikmagalur tea leaves" loading="lazy" decoding="async" />
-				<div class="two-col-img-frame"></div>
 			</div>
 			<div class="two-col-content">
-				<span class="eyebrow-italic">Sula Chai</span>
-				<h2>Tea leaves from <em>Coorg & Chikmagalur.</em></h2>
-				<div class="mini-divider">
-					<div class="m-line"></div>
-					<div class="m-diamond"></div>
-					<div class="m-line"></div>
-				</div>
-				<p>The Scotland of India. Cool, misty highlands produce aromatic, full-bodied teas. Five blends, brewed slow with traditional spices. Want the longer story? Walk the <a href="/coffee-and-chai-in-vancouver" class="body-link">spice trail</a>.</p>
+				<span class="eyebrow-italic"><span class="sec-num">№ 01</span>Sula Chai</span>
+				<h2 class="has-accent">Tea leaves from <em>Coorg &amp; Chikmagalur.</em></h2>
+				<p>
+					The Scotland of India. Cool, misty highlands produce aromatic, full-bodied teas. Five
+					blends, brewed slow with traditional spices. Want the longer story? Walk the
+					<a href="/coffee-and-chai-in-vancouver" class="body-link">spice trail</a>.
+				</p>
 				<div class="tag-row">
 					<span class="tag">Masala</span>
 					<span class="tag">Lavender</span>
@@ -65,14 +63,13 @@ import Layout from '../layouts/Layout.astro';
 	<section class="section section-tan reveal">
 		<div class="two-col container">
 			<div class="two-col-content">
-				<span class="eyebrow-italic">Alai Coffee Partnership</span>
-				<h2>Crafted by <em>Alai.</em> Brewed at <em>Sula.</em></h2>
-				<div class="mini-divider">
-					<div class="m-line"></div>
-					<div class="m-diamond"></div>
-					<div class="m-line"></div>
-				</div>
-				<p>Our Exclusive Sula Blend by <a href="https://alaicoffee.ca" target="_blank" rel="noopener" class="body-link">Alai Coffee</a>. Single-origin from Chikmagalur and Odisha. Specialty coffee inspired by Indian dessert traditions.</p>
+				<span class="eyebrow-italic"><span class="sec-num">№ 02</span>Alai Coffee</span>
+				<h2>Crafted by Alai. Brewed at Sula.</h2>
+				<p>
+					Our exclusive Sula Blend by <a href="https://alaicoffee.ca" target="_blank" rel="noopener" class="body-link">Alai Coffee</a>.
+					Single-origin from Chikmagalur and Odisha. Specialty coffee inspired by Indian
+					dessert traditions.
+				</p>
 				<div class="tag-row">
 					<span class="tag tag-cream">Jaggery Velvet Latte</span>
 					<span class="tag tag-cream">Coastal Coconut Cap</span>
@@ -81,11 +78,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 			</div>
 			<div class="two-col-img espresso">
-				<div class="pattern-overlay pattern-block"></div>
 				<img width="600" height="900" src="/uploads/2026/02/alai-coffee-vancouver.webp" alt="Alai Coffee Sula Blend, specialty coffee roasted in Vancouver from Chikmagalur and Odisha beans" loading="lazy" decoding="async" />
-				<div class="two-col-img-frame"></div>
-				<div class="two-col-img-corner tl"></div>
-				<div class="two-col-img-corner br"></div>
 			</div>
 		</div>
 	</section>
@@ -93,52 +86,44 @@ import Layout from '../layouts/Layout.astro';
 	<section class="section section-cream reveal">
 		<div class="container">
 			<div class="intro-block">
-				<span class="eyebrow-italic">Our Baked Goods</span>
-				<h2>Indian neighbourhood bakeries, with a <em>Vancouver twist.</em></h2>
-				<div class="premium-divider">
-					<div class="pd-thin"></div>
-					<div class="pd-thick"></div>
-					<div class="pd-diamond"></div>
-					<div class="pd-thick"></div>
-					<div class="pd-thin-r"></div>
-				</div>
-				<p>Spiced cookies, chai-infused cakes, paninis on house-made masala focaccia. Fresh every morning. Slow-laminated. We've been writing about <a href="/blog/pastries-coffee-pairing" class="body-link">pairings and pastries</a> over in the journal.</p>
+				<span class="eyebrow-italic"><span class="sec-num">№ 03</span>The Bakery</span>
+				<h2>Indian neighbourhood bakeries, with a Vancouver twist.</h2>
+				<p>
+					Spiced cookies, chai-infused cakes, paninis on house-made masala focaccia. Fresh
+					every morning. Slow-laminated. We've been writing about
+					<a href="/blog/pastries-coffee-pairing" class="body-link">pairings and pastries</a> over in the journal.
+				</p>
 			</div>
 
-			<div class="card-grid-3" style="margin-top:60px">
-				<a href="/menu#savory" class="photo-card reveal delay-100">
-					<div class="photo-card-top-stripe"></div>
-					<div class="photo-card-img">
-						<img width="1200" height="1800" src="/uploads/2025/10/Pesto-chicken-tikka-panini.webp" alt="Pesto chicken tikka panini on house-made masala focaccia at Sula Café Vancouver" loading="lazy" decoding="async" />
-					</div>
-					<div class="photo-card-content">
-						<span class="eyebrow">Masala Focaccia</span>
-						<h3>Paneer & Chicken <em>Paninis</em></h3>
-						<p>Chimichurri paneer. Pesto chicken tikka. Pressed in masala focaccia from Union Market.</p>
-					</div>
-				</a>
-
-				<a href="/menu#sweets" class="photo-card reveal delay-200">
-					<div class="photo-card-top-stripe"></div>
+			<div class="bakery-spread">
+				<a href="/menu#sweets" class="photo-card reveal delay-100">
 					<div class="photo-card-img">
 						<img width="1200" height="1800" src="/uploads/2025/10/Coconut-lime-cruffin.webp" alt="Lime coconut cruffin and fresh-baked pastries from Sula Café in East Vancouver" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
-						<span class="eyebrow">Sweet Pastries</span>
-						<h3>Cruffins & <em>Croissants</em></h3>
+						<span class="eyebrow">Sweet pastries</span>
+						<h3>Cruffins &amp; croissants</h3>
 						<p>Lime coconut. Tiramisu. Orange chocolate pain suisse. Pistachio loaf. All baked daily.</p>
 					</div>
 				</a>
 
+				<a href="/menu#savory" class="photo-card reveal delay-200">
+					<div class="photo-card-img">
+						<img width="1200" height="1800" src="/uploads/2025/10/Pesto-chicken-tikka-panini.webp" alt="Pesto chicken tikka panini on house-made masala focaccia at Sula Café Vancouver" loading="lazy" decoding="async" />
+					</div>
+					<div class="photo-card-content">
+						<span class="eyebrow">Masala focaccia</span>
+						<h3>Paneer &amp; chicken paninis</h3>
+					</div>
+				</a>
+
 				<a href="/menu#cookies" class="photo-card reveal delay-300">
-					<div class="photo-card-top-stripe"></div>
 					<div class="photo-card-img">
 						<img width="1200" height="1800" src="/uploads/2025/10/cafe-near-me-vancouver.webp" alt="Brown butter espresso cookies and macaroons at Sula Café Vancouver" loading="lazy" decoding="async" />
 					</div>
 					<div class="photo-card-content">
-						<span class="eyebrow">Cookies & Treats</span>
-						<h3>Cookies & <em>Macaroons</em></h3>
-						<p>Brown butter espresso. Pistachio malai. Chocolate chip. Plus samosas with chutneys.</p>
+						<span class="eyebrow">Cookies &amp; treats</span>
+						<h3>Cookies &amp; macaroons</h3>
 					</div>
 				</a>
 			</div>
@@ -147,28 +132,25 @@ import Layout from '../layouts/Layout.astro';
 
 	<section class="section section-espresso reveal">
 		<div class="container text-center">
-			<span class="eyebrow-italic">Catering & Events</span>
-			<h2>Bring Sula <em>to your gathering.</em></h2>
-			<div class="premium-divider premium-divider-dark">
-				<div class="pd-thin"></div>
-				<div class="pd-thick"></div>
-				<div class="pd-diamond"></div>
-				<div class="pd-thick"></div>
-				<div class="pd-thin-r"></div>
-			</div>
-			<p style="max-width:680px;margin:24px auto 36px">Live chai bars, specialty coffee, and bakery boxes for weddings, corporate events, and private parties. We also do <a href="/wholesale" style="color:var(--burnt-light)">wholesale</a> for cafés and offices.</p>
-			<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+			<span class="eyebrow-italic"><span class="sec-num">№ 04</span>Catering &amp; Events</span>
+			<h2 class="has-accent h-anchor">Bring Sula <em>to your gathering.</em></h2>
+			<div class="lux-rule"><span class="lx-line"></span><span class="lx-diamond"></span><span class="lx-line"></span></div>
+			<p class="catering-lede">
+				Live chai bars, specialty coffee, and bakery boxes for weddings, corporate events,
+				and private parties. We also do <a href="/wholesale" class="body-link body-link-light">wholesale</a> for cafés and offices.
+			</p>
+			<div class="catering-buttons">
 				<a href="/catering" class="cta">
-					<span class="cta-badge">
-						<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
-					</span>
-					Explore Catering
+					Explore catering
+					<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
 				</a>
 				<a href="/wholesale" class="btn-outline-cream">
-					<span class="btn-badge">
-						<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
-					</span>
-					Wholesale Bakery
+					Wholesale bakery
+					<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
 				</a>
 			</div>
 		</div>
@@ -177,15 +159,8 @@ import Layout from '../layouts/Layout.astro';
 	<section class="section section-cream-deep reveal" id="faq">
 		<div class="container container-narrow">
 			<div class="intro-block">
-				<span class="eyebrow-italic">Common Questions</span>
-				<h2>Things people <em>often ask.</em></h2>
-				<div class="premium-divider">
-					<div class="pd-thin"></div>
-					<div class="pd-thick"></div>
-					<div class="pd-diamond"></div>
-					<div class="pd-thick"></div>
-					<div class="pd-thin-r"></div>
-				</div>
+				<span class="eyebrow-italic"><span class="sec-num">№ 05</span>Common Questions</span>
+				<h2>Things people often ask.</h2>
 				<p>Quick answers from the team behind the counter.</p>
 			</div>
 
@@ -277,84 +252,21 @@ import Layout from '../layouts/Layout.astro';
 		"@context": "https://schema.org",
 		"@type": "FAQPage",
 		"mainEntity": [
-			{
-				"@type": "Question",
-				"name": "Where are you located?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "260 East 5th Avenue in East Vancouver, just off Main Street. Easy to spot, easier to find a chai you'll actually remember."
-				}
-			},
-			{
-				"@type": "Question",
-				"name": "What are your hours?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "Open daily. Monday through Friday from 8am to 5:30pm, weekends 9am to 5:30pm."
-				}
-			},
-			{
-				"@type": "Question",
-				"name": "Is Sula Café takeout only?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "Yes. We're built for grab-and-go. There's a few seats inside if you want to sit with your cup, but the vibe is takeout first."
-				}
-			},
-			{
-				"@type": "Question",
-				"name": "Do you offer catering?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "We do. Live chai bars, specialty coffee, fresh-baked pastries, and bakery boxes for offices, weddings, and private parties. See our catering for events in Vancouver."
-				}
-			},
-			{
-				"@type": "Question",
-				"name": "Can I order online?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "Yes, we're on UberEats. Full menu, delivery to your door. Or call ahead and we'll have it ready for pickup."
-				}
-			},
-			{
-				"@type": "Question",
-				"name": "What chai blends do you serve?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "Five blends, each brewed slow with whole spices. Classic masala, lavender, pistachio, spicy ginger, and gulabi rose. Browse our specialty chai in Vancouver menu for the full list."
-				}
-			},
-			{
-				"@type": "Question",
-				"name": "Do you have vegan or gluten-free options?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "Plenty. Our vegan options span chai (just ask for oat or coconut milk), pastries, and a sugar-free morning glory muffin. Gluten-free items available too, just ask the team."
-				}
-			},
-			{
-				"@type": "Question",
-				"name": "Is there parking?",
-				"acceptedAnswer": {
-					"@type": "Answer",
-					"text": "Free street parking on East 5th. Paid lots nearby on Main Street. Cycling? We've got racks out front."
-				}
-			}
+			{ "@type": "Question", "name": "Where are you located?", "acceptedAnswer": { "@type": "Answer", "text": "260 East 5th Avenue in East Vancouver, just off Main Street. Easy to spot, easier to find a chai you'll actually remember." } },
+			{ "@type": "Question", "name": "What are your hours?", "acceptedAnswer": { "@type": "Answer", "text": "Open daily. Monday through Friday from 8am to 5:30pm, weekends 9am to 5:30pm." } },
+			{ "@type": "Question", "name": "Is Sula Café takeout only?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We're built for grab-and-go. There's a few seats inside if you want to sit with your cup, but the vibe is takeout first." } },
+			{ "@type": "Question", "name": "Do you offer catering?", "acceptedAnswer": { "@type": "Answer", "text": "We do. Live chai bars, specialty coffee, fresh-baked pastries, and bakery boxes for offices, weddings, and private parties. See our catering for events in Vancouver." } },
+			{ "@type": "Question", "name": "Can I order online?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, we're on UberEats. Full menu, delivery to your door. Or call ahead and we'll have it ready for pickup." } },
+			{ "@type": "Question", "name": "What chai blends do you serve?", "acceptedAnswer": { "@type": "Answer", "text": "Five blends, each brewed slow with whole spices. Classic masala, lavender, pistachio, spicy ginger, and gulabi rose. Browse our specialty chai in Vancouver menu for the full list." } },
+			{ "@type": "Question", "name": "Do you have vegan or gluten-free options?", "acceptedAnswer": { "@type": "Answer", "text": "Plenty. Our vegan options span chai (just ask for oat or coconut milk), pastries, and a sugar-free morning glory muffin. Gluten-free items available too, just ask the team." } },
+			{ "@type": "Question", "name": "Is there parking?", "acceptedAnswer": { "@type": "Answer", "text": "Free street parking on East 5th. Paid lots nearby on Main Street. Cycling? We've got racks out front." } }
 		]
 	})} />
 
 	<section class="section section-cocoa reveal">
 		<div class="container text-center">
-			<span class="eyebrow-italic" style="color:var(--burnt-light)">Visit Us</span>
-			<h2>Find us in <em>East Vancouver.</em></h2>
-			<div class="premium-divider premium-divider-dark">
-				<div class="pd-thin"></div>
-				<div class="pd-thick"></div>
-				<div class="pd-diamond"></div>
-				<div class="pd-thick"></div>
-				<div class="pd-thin-r"></div>
-			</div>
+			<span class="eyebrow-italic visit-eyebrow"><span class="sec-num">№ 06</span>Visit Us</span>
+			<h2 class="has-accent h-anchor">Find us in <em>East Vancouver.</em></h2>
 			<div class="visit-info">
 				<div class="visit-info-item">
 					<div class="label">Address</div>
@@ -369,15 +281,25 @@ import Layout from '../layouts/Layout.astro';
 					<div class="value">778-386-1130</div>
 				</div>
 			</div>
-			<div style="margin-top:50px">
+			<div class="visit-cta">
 				<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
-					<span class="cta-badge">
-						<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="" loading="lazy" decoding="async" />
-					</span>
 					Order on UberEats
+					<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
 				</a>
 			</div>
 		</div>
 	</section>
+
+	<style>
+		.catering-lede{max-width:660px;margin:24px auto 40px;font-size:18px;line-height:1.62}
+		.catering-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+		.visit-eyebrow{color:var(--burnt-light)}
+		.visit-cta{margin-top:56px}
+		.body-link{color:var(--burnt);border-bottom:1px solid color-mix(in oklab,var(--burnt) 35%,transparent);transition:color 0.3s ease,border-color 0.3s ease}
+		.body-link:hover{color:var(--burnt-deep);border-bottom-color:var(--burnt)}
+		.body-link-light{color:var(--burnt-light)}
+	</style>
 
 </Layout>

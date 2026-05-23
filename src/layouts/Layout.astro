@@ -107,17 +107,26 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="theme-color" content="#F3E3C3" />
-		<meta name="msapplication-navbutton-color" content="#F3E3C3" />
+		<meta name="theme-color" content="#FAF7EE" />
+		<meta name="msapplication-navbutton-color" content="#FAF7EE" />
 		<!-- Apply the saved brand theme before first paint to avoid a flash.
 		     Default (no saved value) is the light scheme, so the site looks
 		     unchanged on first visit and for crawlers. -->
 		<script is:inline>
 			(() => {
 				try {
-					var THEMES = ['light', 'saffron', 'dark'];
-					var CHROME = { light: '#F3E3C3', saffron: '#F5DCAB', dark: '#14100C' };
+					var THEMES = ['light', 'mocha', 'dark'];
+					var LEGACY = { saffron: 'mocha' };
+					/* Browser chrome (Android Chrome address bar, PWA toolbar)
+					   tints from these values; matched 1:1 to the body bg of
+					   each mode so there is no seam between the address bar
+					   and the page surface. */
+					var CHROME = { light: '#FAF7EE', mocha: '#DDC8AA', dark: '#241712' };
 					var saved = localStorage.getItem('sula-cafe-theme');
+					if (LEGACY[saved]) {
+						saved = LEGACY[saved];
+						try { localStorage.setItem('sula-cafe-theme', saved); } catch (e) {}
+					}
 					var mode = THEMES.indexOf(saved) !== -1 ? saved : 'light';
 					if (mode !== 'light') {
 						document.documentElement.setAttribute('data-theme', mode);
@@ -168,82 +177,88 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 		<slot name="schema" />
 	</head>
 	<body>
-		<header class="site-header">
-			<div class="header-inner">
-				<a href="/" class="logo" aria-label="Sula Café Home">
-					<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Café Vancouver" class="logo-img" />
+		<header class="site-header" id="site-header">
+			<div class="nav-capsule" id="nav-capsule">
+				<a href="/" class="nav-mark" aria-label="Sula Café Home">
+					<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Café Vancouver" />
 				</a>
-				<nav class="main-nav desktop-nav" aria-label="Main navigation">
-					<a href="/">Home</a>
-					<a href="/coffee-and-chai-in-vancouver">Coffee &amp; Chai</a>
-					<a href="/menu">Menu</a>
-					<a href="/catering">Catering</a>
-					<a href="/wholesale">Wholesale</a>
-					<a href="/stories">Stories</a>
-					<a href="/contact">Contact</a>
-					<a href="https://www.instagram.com/sula.cafe" target="_blank" rel="noopener noreferrer" aria-label="Sula Cafe on Instagram" class="nav-icon">
-						<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<rect x="3" y="3" width="18" height="18" rx="5" ry="5"/>
-							<circle cx="12" cy="12" r="4"/>
-							<circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/>
-						</svg>
-					</a>
-					<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="cta" target="_blank" rel="noopener">
-						<span>Order on UberEats</span>
-						<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<path d="M9 18l6-6-6-6"/>
-						</svg>
-					</a>
+				<span class="nav-status" id="nav-status" aria-live="polite">
+					<span class="status-dot"></span>
+					<span class="status-text" id="status-text">Open</span>
+				</span>
+				<nav class="nav-chips" aria-label="Main navigation">
+					<a href="/" class="nav-chip" data-path="/">Home</a>
+					<a href="/coffee-and-chai-in-vancouver" class="nav-chip" data-path="/coffee-and-chai-in-vancouver">Coffee &amp; Chai</a>
+					<a href="/menu" class="nav-chip" data-path="/menu">Menu</a>
+					<a href="/catering" class="nav-chip" data-path="/catering">Catering</a>
+					<a href="/wholesale" class="nav-chip" data-path="/wholesale">Wholesale</a>
+					<a href="/stories" class="nav-chip" data-path="/stories">Stories</a>
+					<a href="/contact" class="nav-chip" data-path="/contact">Contact</a>
 				</nav>
-				<button class="hamburger" aria-label="Open menu" aria-expanded="false" id="hamburger-btn">
-					<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<g transform="translate(-1,0)">
-							<path d="M11 5 Q12.5 7 11 9 Q9.5 11 11 13" opacity="0.55"/>
-							<path d="M16 3.5 Q17.8 6 16 8.5 Q14.2 11 16 13" opacity="0.85"/>
-							<path d="M21 5 Q22.5 7 21 9 Q19.5 11 21 13" opacity="0.55"/>
-							<path d="M8 14.5 L8 22 Q8 25.5 11.5 25.5 L20.5 25.5 Q24 25.5 24 22 L24 14.5 Z"/>
-							<path d="M24 17 Q27.5 17.2 27.5 19.5 Q27.5 21.8 24 22"/>
-							<path d="M9 15 L23 15" opacity="0.5"/>
-							<path d="M6 27.5 Q16 28.5 26 27.5"/>
-						</g>
+				<a href="https://www.instagram.com/sula.cafe" target="_blank" rel="noopener noreferrer" aria-label="Sula Cafe on Instagram" class="nav-ig">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<rect x="3" y="3" width="18" height="18" rx="5" ry="5"/>
+						<circle cx="12" cy="12" r="4"/>
+						<circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/>
 					</svg>
+				</a>
+				<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="nav-cta" target="_blank" rel="noopener">
+					<span>Order</span>
+					<svg class="nav-cta-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M5 12 H 19 M13 6 l 6 6 -6 6"/>
+					</svg>
+				</a>
+				<button class="nav-menu" aria-label="Open menu" aria-expanded="false" id="hamburger-btn" type="button">
+					<span class="nav-menu-bar"></span>
+					<span class="nav-menu-bar"></span>
+					<span class="nav-menu-bar"></span>
 				</button>
 			</div>
-			<p class="header-strip">260 East 5th Ave · East Vancouver &nbsp;·&nbsp; Takeout · UberEats</p>
-			<div class="header-bottom-zigzag" aria-hidden="true"></div>
 		</header>
 
 		<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-			<div class="mobile-menu-inner">
-				<div class="mobile-menu-logo">
-					<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Café" />
+			<button class="mm-close" id="mobile-menu-close" aria-label="Close menu" type="button">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+					<path d="M6 6 L18 18 M18 6 L6 18"/>
+				</svg>
+			</button>
+			<div class="mm-inner">
+				<p class="mm-eyebrow"><span class="mm-eyebrow-line"></span>Sula Café · East Vancouver</p>
+				<p class="mm-status">
+					<span class="status-dot"></span>
+					<span id="mm-status-text">Open now</span>
+				</p>
+				<nav class="mm-nav" aria-label="Main navigation">
+					<a href="/" class="mm-item"><span class="mm-num">01</span><span class="mm-name">Home</span><span class="mm-arrow">→</span></a>
+					<a href="/coffee-and-chai-in-vancouver" class="mm-item"><span class="mm-num">02</span><span class="mm-name">Coffee &amp; Chai</span><span class="mm-arrow">→</span></a>
+					<a href="/menu" class="mm-item"><span class="mm-num">03</span><span class="mm-name">Menu</span><span class="mm-arrow">→</span></a>
+					<a href="/catering" class="mm-item"><span class="mm-num">04</span><span class="mm-name">Catering</span><span class="mm-arrow">→</span></a>
+					<a href="/wholesale" class="mm-item"><span class="mm-num">05</span><span class="mm-name">Wholesale</span><span class="mm-arrow">→</span></a>
+					<a href="/stories" class="mm-item"><span class="mm-num">06</span><span class="mm-name">Stories</span><span class="mm-arrow">→</span></a>
+					<a href="/contact" class="mm-item"><span class="mm-num">07</span><span class="mm-name">Contact</span><span class="mm-arrow">→</span></a>
+				</nav>
+				<div class="mm-card">
+					<span class="mm-card-label">Visit</span>
+					<p class="mm-card-line">260 East 5th Ave</p>
+					<p class="mm-card-line">East Vancouver, BC</p>
+					<a href="tel:7783861130" class="mm-card-tel">778-386-1130</a>
 				</div>
-				<a href="/" class="mobile-menu-item">Home</a>
-				<a href="/coffee-and-chai-in-vancouver" class="mobile-menu-item">Coffee &amp; Chai</a>
-				<a href="/menu" class="mobile-menu-item">Menu</a>
-				<a href="/catering" class="mobile-menu-item">Catering</a>
-				<a href="/wholesale" class="mobile-menu-item">Wholesale</a>
-				<a href="/stories" class="mobile-menu-item">Stories</a>
-				<a href="/contact" class="mobile-menu-item">Contact</a>
-				<div class="mobile-menu-divider"></div>
-				<p class="mobile-menu-label">Visit Us</p>
-				<p class="mobile-menu-info">260 East 5th Ave<br/>East Vancouver<br/>778-386-1130</p>
-				<a href="https://www.instagram.com/sula.cafe" target="_blank" rel="noopener noreferrer" aria-label="Follow Sula Cafe on Instagram" class="mobile-menu-follow">
-					<span class="mobile-menu-follow-badge">
-						<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<div class="mm-actions">
+					<a href="https://www.instagram.com/sula.cafe" target="_blank" rel="noopener noreferrer" aria-label="Follow Sula Cafe on Instagram" class="mm-icon">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 							<rect x="3" y="3" width="18" height="18" rx="5" ry="5"/>
 							<circle cx="12" cy="12" r="4"/>
 							<circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/>
 						</svg>
-					</span>
-					<span class="mobile-menu-follow-label">Follow @sula.cafe</span>
-				</a>
-				<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="mobile-menu-cta" target="_blank" rel="noopener">
-					<span>Order on UberEats</span>
-					<svg class="cta-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M9 18l6-6-6-6"/>
-					</svg>
-				</a>
+						<span>@sula.cafe</span>
+					</a>
+					<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" class="mm-cta" target="_blank" rel="noopener">
+						<span>Order on UberEats</span>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+							<path d="M5 12 H 19 M13 6 l 6 6 -6 6"/>
+						</svg>
+					</a>
+				</div>
 			</div>
 		</div>
 
@@ -269,67 +284,63 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 		<main><slot /></main>
 
 		<footer class="site-footer">
-			<div class="footer-pattern-overlay"></div>
+			<div class="footer-holo" aria-hidden="true">
+				<span class="footer-holo-sweep"></span>
+			</div>
 
-			<div class="footer-top">
-				<div class="footer-inner">
-					<div class="footer-col footer-brand">
-						<img width="300" height="136" src="/uploads/2025/09/sula-cafe-logo-2026.webp" alt="Sula Café" class="footer-logo-img" />
-						<p class="footer-tag">Brewing moments of warmth,<br/>one cup at a time.</p>
+			<div class="footer-grid">
+				<section class="ft-tile ft-visit">
+					<span class="tile-label"><span class="tile-tick"></span>Visit</span>
+					<p class="tile-headline">260 East 5th Ave</p>
+					<p class="tile-meta">East Vancouver, BC V5T 1H3</p>
+					<div class="tile-hours">
+						<p><span class="day">Mon-Fri</span><span class="hours">8am - 5:30pm</span></p>
+						<p><span class="day">Sat-Sun</span><span class="hours">9am - 5:30pm</span></p>
 					</div>
-					<div class="footer-col">
-						<h4>Useful Links</h4>
-						<a href="/">Home</a>
-						<a href="/coffee-and-chai-in-vancouver">Coffee &amp; Chai</a>
-						<a href="/menu">Menu</a>
-						<a href="/catering">Catering</a>
-						<a href="/wholesale">Wholesale</a>
-						<a href="/stories">Stories</a>
-						<a href="/contact">Contact</a>
+					<div class="tile-contacts">
+						<a href="tel:7783861130" class="tile-tel">778-386-1130</a>
+						<a href="mailto:info@sulacafe.com" class="tile-email">info@sulacafe.com</a>
 					</div>
-					<div class="footer-col">
-						<h4>Visit Us</h4>
-						<p class="footer-address">260 East 5th Ave<br/>Vancouver, BC</p>
-						<p><a href="tel:7783861130">778-386-1130</a></p>
-						<p><a href="mailto:info@sulacafe.com">info@sulacafe.com</a></p>
-						<p><a href="https://www.instagram.com/sula.cafe" target="_blank" rel="noopener noreferrer" aria-label="Sula Cafe on Instagram" class="footer-social">
-							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-								<rect x="3" y="3" width="18" height="18" rx="5" ry="5"/>
-								<circle cx="12" cy="12" r="4"/>
-								<circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/>
-							</svg>
-							<span>@sula.cafe</span>
-						</a></p>
-					</div>
-					<div class="footer-col footer-family">
-						<h4>The Sula Family</h4>
-						<a href="https://sulaindianrestaurant.com" target="_blank" rel="noopener" class="family-btn">
-							<span class="family-btn-label">Sula Indian Restaurant</span>
-							<span class="family-btn-arrow">→</span>
-						</a>
-						<a href="https://sulacatering.com" target="_blank" rel="noopener" class="family-btn">
-							<span class="family-btn-label">Sula Catering</span>
-							<span class="family-btn-arrow">→</span>
-						</a>
-						<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" target="_blank" rel="noopener" class="family-btn family-btn-cta">
-							<span class="family-btn-label">Order on UberEats</span>
-							<span class="family-btn-arrow">→</span>
-						</a>
-					</div>
+				</section>
+
+				<section class="ft-tile ft-browse">
+					<span class="tile-label"><span class="tile-tick"></span>Browse</span>
+					<a href="/" class="ft-link">Home</a>
+					<a href="/coffee-and-chai-in-vancouver" class="ft-link">Coffee &amp; Chai</a>
+					<a href="/menu" class="ft-link">Menu</a>
+					<a href="/catering" class="ft-link">Catering</a>
+					<a href="/wholesale" class="ft-link">Wholesale</a>
+					<a href="/stories" class="ft-link">Stories</a>
+					<a href="/contact" class="ft-link">Contact</a>
+				</section>
+
+				<section class="ft-tile ft-family">
+					<span class="tile-label"><span class="tile-tick"></span>Family</span>
+					<a href="https://sulaindianrestaurant.com" target="_blank" rel="noopener" class="ft-chip">
+						<span class="ft-chip-label">Sula Indian Restaurant</span>
+						<span class="ft-chip-arrow" aria-hidden="true">↗</span>
+					</a>
+					<a href="https://sulacatering.com" target="_blank" rel="noopener" class="ft-chip">
+						<span class="ft-chip-label">Sula Catering</span>
+						<span class="ft-chip-arrow" aria-hidden="true">↗</span>
+					</a>
+					<a href="https://www.instagram.com/sula.cafe" target="_blank" rel="noopener" class="ft-chip">
+						<span class="ft-chip-label">@sula.cafe</span>
+						<span class="ft-chip-arrow" aria-hidden="true">↗</span>
+					</a>
+					<a href="https://www.order.store/store/sula-cafe/0egsttFCUIahN8Ja4Uqhtw" target="_blank" rel="noopener" class="ft-chip ft-chip-cta">
+						<span class="ft-chip-label">Order on UberEats</span>
+						<span class="ft-chip-arrow" aria-hidden="true">→</span>
+					</a>
+				</section>
+			</div>
+
+			<div class="footer-signoff">
+				<div class="signoff-left">
+					<span class="signoff-mark">◆</span>
+					<p class="signoff-tag">Brewing moments of warmth, one cup at a time.</p>
 				</div>
-			</div>
-
-			<div class="footer-divider-fancy">
-				<div class="d-thin"></div>
-				<div class="d-thick"></div>
-				<div class="d-diamond"></div>
-				<div class="d-thick"></div>
-				<div class="d-thin-r"></div>
-			</div>
-
-			<div class="footer-bottom">
-				<p>© 2026 Sula Café · All Rights Reserved</p>
-				<p class="footer-bottom-loc">Authentic Indian Chai, Alai Coffee & Bakery · East Vancouver</p>
+				<p class="signoff-meta">© 2026 Sula Café · East Vancouver</p>
 			</div>
 		</footer>
 
@@ -337,53 +348,59 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			/* LIGHT (default) -- the original warm cafe scheme. No data-theme
 			   attribute needed, so first paint and SEO crawl are unchanged. */
 			:root {
-				--cream: #F3E3C3;
-				--cream-soft: #EBD8B0;
-				--cream-deep: #E0CC9F;
-				--tan: #C6A16D;
-				--tan-soft: #D4B383;
-				--cocoa: #8C5A3A;
-				--cocoa-mid: #6F462C;
-				--cocoa-deep: #5C4031;
+				/* DAYLIGHT -- the actual light mode. Near-white linen, very low
+				   saturation, reads bright like a cafe in mid-morning sun. No
+				   yellow cast, no warm sand, just clean daylight with a hint
+				   of warmth from the cocoa-line accents. */
+				--cream: #FAF7EE;
+				--cream-soft: #F0E9D5;
+				--cream-deep: #E2D6B7;
+				--tan: #AC8B5A;
+				--tan-soft: #C2A37C;
+				--cocoa: #4F2F1B;
+				--cocoa-mid: #3A2110;
+				--cocoa-deep: #261309;
 				--espresso: #2D1B14;
 				--espresso-deep: #1a0e08;
 				--espresso-mid: #3a2618;
-				--burnt: #C17943;
-				--burnt-light: #D88A50;
-				--burnt-deep: #9a5a30;
-				--text-dark: #2D1B14;
-				--text-soft: #5C4031;
-				--ink: #2A1B12;
-				--copper-line: rgba(140, 90, 58, 0.16);
-				--copper-line-soft: rgba(140, 90, 58, 0.08);
-				--header-scrolled-bg: rgba(243,227,195,0.55);
+				--burnt: #A0511E;
+				--burnt-light: #C0723A;
+				--burnt-deep: #7C3D14;
+				--text-dark: #1A0F06;
+				--text-soft: #3A2410;
+				--ink: #1A0F06;
+				--copper-line: rgba(79, 47, 27, 0.20);
+				--copper-line-soft: rgba(79, 47, 27, 0.10);
+				--header-scrolled-bg: rgba(250, 247, 238, 0.65);
 			}
 
-			/* SAFFRON -- a midday golden-hour mode. Warmer cream surface (marigold
-			   linen), deeper burnt accents that read as turmeric and saffron, and
-			   richer cocoa for headings. Sits between Morning and Espresso, the
-			   brand at its most Indian-warm. */
-			:root[data-theme="saffron"] {
-				--cream: #F5DCAB;
-				--cream-soft: #EBCC8C;
-				--cream-deep: #DEB76A;
-				--tan: #B98744;
-				--tan-soft: #C99964;
-				--cocoa: #6D3F1F;
-				--cocoa-mid: #5C3416;
-				--cocoa-deep: #4A2912;
+			/* MOCHA -- the middle mode. A warm cocoa surface, brown not yellow,
+			   distinctly different from Daylight and from Espresso. Reads like
+			   sepia paper or steamed milk over coffee. Burnt becomes a deeper
+			   terracotta, cocoa goes near-black, ink stays rich. The palette
+			   is intentionally browner-toned (low yellow component) so it can
+			   never be mistaken for the old Saffron mode. */
+			:root[data-theme="mocha"] {
+				--cream: #DDC8AA;
+				--cream-soft: #CDB590;
+				--cream-deep: #BBA075;
+				--tan: #87623E;
+				--tan-soft: #A07F5D;
+				--cocoa: #3D2110;
+				--cocoa-mid: #2D170A;
+				--cocoa-deep: #1F0E05;
 				--espresso: #2E1A0C;
 				--espresso-deep: #1F1108;
 				--espresso-mid: #3D2210;
-				--burnt: #C97A2A;
-				--burnt-light: #E59648;
-				--burnt-deep: #A4621C;
-				--text-dark: #3A2210;
-				--text-soft: #5C3416;
-				--ink: #2E1A0C;
-				--copper-line: rgba(120, 70, 25, 0.22);
-				--copper-line-soft: rgba(120, 70, 25, 0.10);
-				--header-scrolled-bg: rgba(245, 220, 171, 0.62);
+				--burnt: #903E10;
+				--burnt-light: #B8551E;
+				--burnt-deep: #6D2E0A;
+				--text-dark: #18100A;
+				--text-soft: #2D170A;
+				--ink: #18100A;
+				--copper-line: rgba(61, 33, 16, 0.32);
+				--copper-line-soft: rgba(61, 33, 16, 0.15);
+				--header-scrolled-bg: rgba(221, 200, 170, 0.72);
 			}
 
 			/* DARK -- the same cafe brand after hours. Espresso and deep-cocoa
@@ -459,9 +476,13 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.theme-seg:hover svg { transform: scale(1.08) rotate(-3deg); }
 			.theme-seg.is-active {
 				background: var(--cocoa-deep);
-				color: var(--cream);
+				color: #F3E3C3;
 				box-shadow: 0 4px 12px rgba(45,27,20,0.22);
 			}
+			/* In Espresso the --cocoa-deep token flips to cream, so the
+			   active pill becomes light and the icon needs dark ink so it
+			   doesn't disappear. */
+			:root[data-theme="dark"] .theme-seg.is-active{background:#F3E3C3;color:#14100C}
 			.theme-seg.is-active svg { transform: scale(1.05); }
 			.theme-seg.is-active:hover svg { transform: scale(1.10) rotate(-3deg); }
 			.theme-switch-label {
@@ -553,43 +574,73 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			   two stacked. The header background is now a single deep
 			   espresso, no multi-stop gradient, with a copper hairline at
 			   the bottom doing the brand work. */
-			.site-header{background:var(--espresso-deep);color:var(--cream);padding:22px 0 0;position:sticky;top:0;z-index:100;animation:fadeIn 0.8s ease;box-shadow:0 1px 0 var(--copper-line),0 6px 18px rgba(0,0,0,0.12);overflow:hidden;transition:background 0.35s cubic-bezier(0.4,0,0.2,1),padding 0.35s cubic-bezier(0.4,0,0.2,1),box-shadow 0.35s cubic-bezier(0.4,0,0.2,1)}
-			.site-header.scrolled{background:var(--header-scrolled-bg);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 4px 20px rgba(45,27,20,0.08);padding:12px 0 0}
-			.site-header.scrolled::before{opacity:0;transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1)}
-			.site-header.scrolled .header-inner{padding-bottom:12px;transition:padding-bottom 0.35s cubic-bezier(0.4,0,0.2,1)}
-			.site-header.scrolled .main-nav a:not(.cta){color:var(--espresso)}
-			.site-header.scrolled .main-nav a:not(.cta):hover{color:var(--burnt)}
-			.site-header.scrolled .header-bottom-zigzag{opacity:0.5}
-			.site-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(193,121,67,0.10) 0%,transparent 60%);pointer-events:none;z-index:1}
-			.site-header > *{position:relative;z-index:2}
-			.header-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;align-items:center;gap:18px;position:relative;padding-bottom:28px}
-			.logo{display:flex;align-items:center;justify-content:center;transition:opacity 0.3s}
-			.logo:hover{opacity:0.85}
-			.logo-img{height:84px;width:auto;display:block;object-fit:contain;transition:height 0.35s cubic-bezier(0.4,0,0.2,1)}
-			.site-header.scrolled .logo-img{height:50px}
-			.main-nav{display:flex;gap:26px;align-items:center;flex-wrap:wrap;justify-content:center}
-			.main-nav a{color:var(--cream);font-family:'Inter',sans-serif;font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:0.20em;position:relative;padding:6px 0;transition:color 0.3s}
-			.main-nav a:not(.cta)::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:1px;background:var(--burnt);transition:all 0.4s ease;transform:translateX(-50%)}
-			.main-nav a:not(.cta):hover{color:var(--burnt-light)}
-			.main-nav a:not(.cta):hover::after{width:100%}
-			.main-nav a.cta{height:42px;padding:0 22px;gap:10px;font-size:10px;letter-spacing:0.18em}
+			/* FUTURISTIC FLOATING-CAPSULE HEADER -- the site-header is a
+			   sticky transparent rail; the nav-capsule is the translucent
+			   glass pill that floats over the page with backdrop-blur. The
+			   capsule's surface tints from theme tokens (Daylight/Mocha/
+			   Espresso) so the glass reads correctly in every mode. */
+			.site-header{position:sticky;top:0;z-index:100;padding:18px 24px 14px;background:transparent;pointer-events:none;animation:fadeIn 0.8s ease;color:var(--cocoa);transition:padding 0.4s cubic-bezier(0.4,0,0.2,1)}
+			.site-header.scrolled{padding:12px 24px 10px}
+			.site-header > *{pointer-events:auto;position:relative;z-index:2}
+			.nav-capsule{display:flex;align-items:center;gap:6px;max-width:1180px;margin:0 auto;padding:7px 7px 7px 16px;background:color-mix(in oklab,var(--cream) 78%,transparent);border:1px solid var(--copper-line);border-radius:999px;backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 14px 40px rgba(45,27,20,0.16),inset 0 1px 0 rgba(255,255,255,0.20);transition:max-width 0.45s cubic-bezier(0.4,0,0.2,1),padding 0.45s ease,background 0.45s ease,border-color 0.45s ease,box-shadow 0.45s ease}
+			.site-header.scrolled .nav-capsule{max-width:1080px;background:color-mix(in oklab,var(--cream) 88%,transparent);box-shadow:0 18px 46px rgba(45,27,20,0.20),inset 0 1px 0 rgba(255,255,255,0.24)}
+			:root[data-theme="mocha"] .nav-capsule{background:color-mix(in oklab,var(--cream) 82%,transparent);border-color:rgba(61,33,16,0.38)}
+			:root[data-theme="dark"] .nav-capsule{background:color-mix(in oklab,var(--espresso-deep) 76%,transparent);border-color:rgba(243,227,195,0.20);box-shadow:0 14px 40px rgba(0,0,0,0.45),inset 0 1px 0 rgba(243,227,195,0.08)}
+			:root[data-theme="dark"] .site-header.scrolled .nav-capsule{background:color-mix(in oklab,var(--espresso-deep) 88%,transparent)}
 
-			/* Small italic address strip beneath the nav, replaces the old
-			   stacked top-bar. Quiet, one line, no diamond divider. */
-			.header-strip{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:13px;color:var(--tan-soft);letter-spacing:0.04em;text-align:center;padding:6px 32px 0;opacity:0.85}
-			.header-strip a{color:inherit;transition:color 0.3s}
-			.header-strip a:hover{color:var(--burnt-light)}
-			.site-header.scrolled .header-strip{color:var(--cocoa-mid)}
-			.main-nav .nav-icon{display:inline-flex;align-items:center;padding:6px;line-height:0}
-			.main-nav .nav-icon::after{display:none !important}
+			/* Brand mark, sits at the left of the capsule. */
+			.nav-mark{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;padding:2px 4px;transition:opacity 0.3s}
+			.nav-mark:hover{opacity:0.85}
+			.nav-mark img{height:32px;width:auto;object-fit:contain;display:block;transition:height 0.4s ease}
+			.site-header.scrolled .nav-mark img{height:28px}
+
+			/* OPEN/CLOSED status pill with a soft pulsing dot. */
+			.nav-status{display:inline-flex;align-items:center;gap:8px;padding:0 14px;height:28px;flex-shrink:0;position:relative}
+			.nav-status::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:1px;height:18px;background:var(--copper-line)}
+			.nav-status::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:18px;background:var(--copper-line)}
+			.status-dot{width:6px;height:6px;border-radius:50%;background:#2EBE4F;box-shadow:0 0 8px rgba(46,190,79,0.55),0 0 0 2px rgba(46,190,79,0.16);animation:statusPulse 2.6s cubic-bezier(0.4,0,0.4,1) infinite;flex-shrink:0}
+			.nav-status.is-closed .status-dot{background:#9A9A9A;box-shadow:0 0 6px rgba(154,154,154,0.45);animation:none}
+			@keyframes statusPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:0.55}}
+			.status-text{font-family:'Inter',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--cocoa);line-height:1}
+			:root[data-theme="dark"] .status-text{color:#F3E3C3}
+
+			/* Chip-style nav inside the capsule. */
+			.nav-chips{display:flex;align-items:center;gap:1px;flex:1 1 auto;justify-content:center}
+			.nav-chip{padding:9px 14px;border-radius:999px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--cocoa-mid);transition:background 0.35s ease,color 0.35s ease;position:relative;line-height:1;text-align:center;white-space:nowrap}
+			.nav-chip:hover{background:color-mix(in oklab,var(--burnt) 14%,transparent);color:var(--cocoa-deep)}
+			.nav-chip.is-active{background:var(--cocoa-deep);color:#F3E3C3}
+			:root[data-theme="dark"] .nav-chip{color:var(--tan-soft)}
+			:root[data-theme="dark"] .nav-chip:hover{background:color-mix(in oklab,var(--burnt) 28%,transparent);color:#F3E3C3}
+			:root[data-theme="dark"] .nav-chip.is-active{background:#F3E3C3;color:#14100C}
+
+			.nav-ig{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:var(--cocoa-mid);transition:color 0.35s ease,background 0.35s ease;flex-shrink:0}
+			.nav-ig:hover{color:var(--burnt);background:color-mix(in oklab,var(--burnt) 12%,transparent)}
+			:root[data-theme="dark"] .nav-ig{color:var(--tan-soft)}
+			:root[data-theme="dark"] .nav-ig:hover{color:#F3E3C3;background:rgba(243,227,195,0.10)}
+
+			.nav-cta{display:inline-flex;align-items:center;gap:9px;padding:0 18px;height:34px;background:var(--burnt);color:#F3E3C3 !important;border-radius:999px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;transition:background 0.35s ease,box-shadow 0.35s ease;flex-shrink:0;border:0;line-height:1}
+			.nav-cta:hover{background:var(--burnt-deep);box-shadow:0 6px 18px rgba(193,121,67,0.32)}
+			.nav-cta-arrow{transition:transform 0.35s ease}
+			.nav-cta:hover .nav-cta-arrow{transform:translateX(3px)}
+
+			/* Hamburger trigger for mobile -- three thin bars morphing to X. */
+			.nav-menu{display:none;background:transparent;border:0;cursor:pointer;width:34px;height:34px;flex-direction:column;justify-content:center;align-items:center;gap:5px;flex-shrink:0;padding:0;margin-left:auto;position:relative}
+			.nav-menu-bar{display:block;width:18px;height:1.2px;background:var(--cocoa);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease,width 0.4s ease,background 0.35s ease}
+			/* nav-menu-bar background uses var(--cocoa) by default, which is
+			   already the light cream tone in Espresso mode, so no override
+			   is needed; the previous override mapped to var(--cream) which
+			   flipped DARK in Espresso and rendered the bars invisible. */
+			.nav-menu.active .nav-menu-bar:nth-child(1){transform:translateY(6.2px) rotate(45deg);width:18px}
+			.nav-menu.active .nav-menu-bar:nth-child(2){opacity:0;width:0}
+			.nav-menu.active .nav-menu-bar:nth-child(3){transform:translateY(-6.2px) rotate(-45deg);width:18px}
 
 			/* Luxe button language. One height (48), one weight, one accent
 			   stroke. Solid burnt fill on primary, copper hairline on the
 			   outline variants. The old logo-badge inside every CTA is gone,
 			   replaced by a single chevron that gently shifts on hover. */
-			.cta,.btn-primary{background:var(--burnt);color:var(--cream) !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;transition:background 0.4s ease,color 0.4s ease,border-color 0.4s ease,box-shadow 0.4s ease;border:1px solid var(--burnt);cursor:pointer;position:relative}
+			.cta,.btn-primary{background:var(--burnt);color:#F3E3C3 !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;transition:background 0.4s ease,color 0.4s ease,border-color 0.4s ease,box-shadow 0.4s ease;border:1px solid var(--burnt);cursor:pointer;position:relative}
 			.cta::after,.btn-primary::after{display:none !important}
-			.cta:hover,.btn-primary:hover{background:var(--burnt-deep);border-color:var(--burnt-deep);color:var(--cream) !important;box-shadow:0 8px 22px rgba(193,121,67,0.28)}
+			.cta:hover,.btn-primary:hover{background:var(--burnt-deep);border-color:var(--burnt-deep);color:#F3E3C3 !important;box-shadow:0 8px 22px rgba(193,121,67,0.28)}
 			/* Compact button modifier -- the only secondary height. */
 			.btn-compact{height:42px;padding:0 22px;font-size:10px}
 			/* Clean CTA glyph: a single-colour chevron, the only ornament. */
@@ -601,25 +652,25 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.cta-badge,.btn-badge{display:none !important}
 
 			.btn-outline-cocoa{background:transparent;color:var(--cocoa) !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;border:1px solid var(--copper-line);transition:all 0.4s ease;cursor:pointer}
-			.btn-outline-cocoa:hover{background:var(--burnt);color:var(--cream) !important;border-color:var(--burnt)}
+			.btn-outline-cocoa:hover{background:var(--burnt);color:#F3E3C3 !important;border-color:var(--burnt)}
 
-			.btn-outline-cream{background:transparent;color:var(--cream) !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;border:1px solid rgba(243,227,195,0.35);transition:all 0.4s ease}
-			.btn-outline-cream:hover{background:var(--burnt);color:var(--cream) !important;border-color:var(--burnt)}
+			.btn-outline-cream{background:transparent;color:#F3E3C3 !important;padding:0 26px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:600;text-transform:uppercase;display:inline-flex;align-items:center;gap:12px;height:48px;border:1px solid rgba(243,227,195,0.35);transition:all 0.4s ease}
+			.btn-outline-cream:hover{background:var(--burnt);color:#F3E3C3 !important;border-color:var(--burnt)}
 
-			.header-bottom-zigzag{height:1px;background:linear-gradient(90deg,transparent 0%,var(--copper-line) 50%,transparent 100%);opacity:0.85}
+			/* .header-bottom-zigzag retired with the new floating capsule. */
 
-			.faq-list{margin-top:50px;display:flex;flex-direction:column;gap:14px;max-width:760px;margin-left:auto;margin-right:auto}
-			.faq-item{background:rgba(255,255,255,0.4);border:1px solid rgba(140,90,58,0.18);border-left:3px solid var(--burnt);transition:background 0.3s ease,border-color 0.3s ease}
-			.faq-item:hover{background:rgba(255,255,255,0.65);border-left-color:var(--cocoa)}
-			.faq-item[open]{background:rgba(255,255,255,0.65);border-left-color:var(--cocoa)}
-			.faq-item summary{padding:20px 24px;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:18px}
+			.faq-list{margin-top:50px;display:flex;flex-direction:column;gap:12px;max-width:780px;margin-left:auto;margin-right:auto}
+			.faq-item{background:transparent;border:1px solid var(--copper-line);border-left:2px solid var(--burnt);transition:border-color 0.4s ease,background 0.4s ease}
+			.faq-item:hover{border-color:color-mix(in oklab,var(--burnt) 30%,var(--copper-line));background:color-mix(in oklab,var(--cream-soft) 40%,transparent)}
+			.faq-item[open]{border-color:color-mix(in oklab,var(--burnt) 30%,var(--copper-line));background:color-mix(in oklab,var(--cream-soft) 40%,transparent)}
+			.faq-item summary{padding:22px 26px;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:18px}
 			.faq-item summary::-webkit-details-marker{display:none}
 			.faq-item summary::marker{content:''}
-			.faq-q{font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:500;color:var(--cocoa);line-height:1.35;text-align:left}
-			.faq-icon{flex-shrink:0;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:24px;font-weight:300;color:var(--burnt);transition:transform 0.3s ease,color 0.3s ease;line-height:1}
+			.faq-q{font-family:'Red Rose',Georgia,serif;font-size:17px;font-weight:400;color:var(--cocoa);line-height:1.35;text-align:left;letter-spacing:0.01em}
+			.faq-icon{flex-shrink:0;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:22px;font-weight:300;color:var(--burnt);transition:transform 0.35s ease,color 0.35s ease;line-height:1}
 			.faq-item[open] .faq-icon{transform:rotate(45deg);color:var(--cocoa)}
-			.faq-a{padding:0 24px 22px;border-top:1px solid rgba(140,90,58,0.1)}
-			.faq-a p{padding-top:18px;font-size:15px;line-height:1.75;color:var(--text-soft);margin:0}
+			.faq-a{padding:0 26px 24px;border-top:1px solid var(--copper-line-soft)}
+			.faq-a p{padding-top:18px;font-size:16px;line-height:1.65;color:var(--text-soft);margin:0;font-family:'Cormorant Garamond',Georgia,serif}
 			.faq-a a{color:var(--burnt);font-weight:500;border-bottom:1px solid rgba(193,121,67,0.3);transition:color 0.3s ease,border-color 0.3s ease}
 			.faq-a a:hover{color:var(--burnt-deep);border-bottom-color:var(--burnt)}
 
@@ -644,53 +695,109 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				.faq-a p{padding-top:14px;font-size:14px;line-height:1.7}
 			}
 
-			.hamburger{display:none;background:transparent;border:none;cursor:pointer;width:44px;height:44px;justify-content:center;align-items:center;position:absolute;right:24px;top:50%;transform:translateY(-50%);padding:6px;z-index:200;color:var(--burnt)}
-			.hamburger svg{width:32px;height:32px;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);pointer-events:none}
-			.hamburger.active svg{transform:rotate(8deg)}
-			.site-header.scrolled .hamburger{color:var(--cocoa-deep)}
+			/* FUTURISTIC MOBILE MENU -- a full-screen overlay, not a slide-in
+			   panel. Numbered item rows, an editorial heading mark, a status
+			   pill mirroring the desktop capsule, a contact card, and a
+			   primary CTA pinned at the bottom. */
+			.mobile-menu{position:fixed;top:0;right:0;bottom:0;left:0;width:100%;max-width:none;background:var(--espresso-deep);opacity:0;visibility:hidden;transform:translateY(-12px);transition:opacity 0.4s ease,transform 0.5s cubic-bezier(0.4,0,0.2,1),visibility 0s linear 0.45s;z-index:140;overflow-y:auto;padding:84px 28px 48px;box-shadow:none}
+			body.menu-open .nav-capsule{opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.3s ease,transform 0.35s ease}
+			.mobile-menu::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,color-mix(in oklab,var(--burnt) 60%,var(--tan)) 50%,transparent);z-index:5;opacity:0.9}
+			.mobile-menu::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at top right,rgba(193,121,67,0.10),transparent 70%);pointer-events:none}
+			.mobile-menu.active{opacity:1;visibility:visible;transform:translateY(0);transition:opacity 0.45s ease,transform 0.5s cubic-bezier(0.4,0,0.2,1),visibility 0s}
 
-			.mobile-menu{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:380px;background:linear-gradient(180deg,var(--espresso-deep) 0%,var(--espresso) 50%,var(--cocoa-deep) 100%);transform:translateX(100%);transition:transform 0.4s ease;z-index:99;overflow-y:auto;padding:90px 32px 36px;box-shadow:-10px 0 40px rgba(0,0,0,0.5)}
-			.mobile-menu.active{transform:translateX(0)}
-			.mobile-menu-inner{display:flex;flex-direction:column;gap:2px}
-			.mobile-menu-logo{text-align:center;margin-bottom:16px;padding-bottom:9px;border-bottom:1px solid rgba(198,161,109,0.2)}
-			.mobile-menu-logo img{height:44px;width:auto;display:inline-block}
-			.mobile-menu-item{display:block;color:var(--cream);font-family:'Playfair Display',Georgia,serif;font-size:21px;font-weight:500;line-height:1.2;padding:11px 0;border-bottom:1px solid rgba(198,161,109,0.15);transition:color 0.3s,padding-left 0.3s}
-			.mobile-menu-item:hover{color:var(--burnt-light);padding-left:6px}
-			.mobile-menu-divider{height:1px;background:linear-gradient(90deg,transparent,var(--burnt),transparent);margin:20px 0 14px}
-			.mobile-menu-label{font-family:'Inter',sans-serif;font-size:13px;color:var(--burnt);letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
-			.mobile-menu-info{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.85);line-height:1.4;margin-bottom:8px}
-			.mobile-menu-cta{display:flex !important;justify-content:center;align-items:center;gap:10px;width:100%;background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%);color:var(--text-dark);padding:0 22px;height:44px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-top:12px;text-decoration:none;transition:all 0.4s ease}
-			.mobile-menu-cta:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(193,121,67,0.4)}
-			.mobile-menu-follow{display:inline-flex;flex-direction:row;align-items:center;gap:12px;padding:14px 0;align-self:center;text-decoration:none;transition:color 0.3s}
-			.mobile-menu-follow-badge{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border:1.5px solid var(--tan);border-radius:50%;color:var(--tan);transition:background 0.35s ease,border-color 0.35s ease,color 0.35s ease}
-			.mobile-menu-follow:hover .mobile-menu-follow-badge{background:var(--burnt);border-color:var(--burnt);color:var(--text-dark)}
-			.mobile-menu-follow-label{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15px;color:var(--tan);transition:color 0.3s ease}
-			.mobile-menu-follow:hover .mobile-menu-follow-label{color:var(--burnt-light)}
-			@media (max-width:900px){
-				body.menu-open .site-header{background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;min-height:64px;overflow:visible}
-				body.menu-open .site-header::before{display:none}
-				body.menu-open .site-header .logo{display:none}
-				body.menu-open .header-bottom-zigzag{display:none}
-				body.menu-open .hamburger{position:fixed !important;top:32px;right:24px;z-index:9999;transform:none !important;color:var(--burnt) !important}
+			.mm-close{position:absolute;top:22px;right:22px;width:44px;height:44px;border-radius:50%;background:rgba(243,227,195,0.06);border:1px solid rgba(243,227,195,0.20);color:#F3E3C3;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.35s ease,border-color 0.35s ease,transform 0.35s ease;z-index:200}
+			.mm-close:hover{background:rgba(193,121,67,0.30);border-color:var(--burnt);transform:rotate(90deg)}
+			.mm-close svg{pointer-events:none}
+
+			.mm-inner{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:0;position:relative;z-index:2}
+			.mm-eyebrow{display:flex;align-items:center;gap:14px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.26em;text-transform:uppercase;color:var(--burnt-light);margin-bottom:14px}
+			.mm-eyebrow-line{display:inline-block;width:32px;height:1px;background:var(--burnt-light);opacity:0.7;flex-shrink:0}
+			.mm-status{display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 12px;background:rgba(243,227,195,0.05);border:1px solid rgba(243,227,195,0.14);border-radius:999px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#F3E3C3;width:fit-content;margin-bottom:36px}
+
+			.mm-nav{display:flex;flex-direction:column;gap:0;margin-bottom:30px}
+			.mm-item{display:flex;align-items:baseline;gap:18px;padding:18px 4px;border-bottom:1px solid rgba(198,161,109,0.10);color:#F3E3C3;font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:400;line-height:1.1;transition:padding-left 0.35s ease,color 0.35s ease;position:relative}
+			.mm-item:first-child{border-top:1px solid rgba(198,161,109,0.10)}
+			.mm-num{font-family:'Inter',sans-serif;font-style:normal;font-size:10px;font-weight:600;letter-spacing:0.22em;color:var(--tan-soft);min-width:28px;line-height:1;letter-spacing:0.22em;text-transform:uppercase}
+			.mm-name{flex:1 1 auto}
+			.mm-arrow{font-family:'Inter',sans-serif;font-size:18px;font-weight:300;color:var(--burnt-light);opacity:0;transform:translateX(-8px);transition:opacity 0.35s ease,transform 0.35s ease}
+			.mm-item:hover{color:var(--burnt-light);padding-left:8px}
+			.mm-item:hover .mm-arrow{opacity:1;transform:translateX(0)}
+			.mm-item:hover .mm-num{color:var(--burnt-light)}
+
+			.mm-card{padding:22px 22px 20px;background:rgba(243,227,195,0.04);border:1px solid rgba(198,161,109,0.18);border-radius:14px;margin-bottom:24px;display:flex;flex-direction:column;gap:6px;position:relative}
+			.mm-card::before{content:'';position:absolute;top:0;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(193,121,67,0.40),transparent)}
+			.mm-card-label{font-family:'Inter',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:0.26em;text-transform:uppercase;color:var(--burnt-light);margin-bottom:10px}
+			.mm-card-line{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:rgba(243,227,195,0.92);line-height:1.4;margin:0}
+			.mm-card-tel{font-family:'Inter',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.04em;color:var(--burnt-light);margin-top:8px;transition:color 0.3s ease}
+			.mm-card-tel:hover{color:#F3E3C3}
+
+			.mm-actions{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+			.mm-icon{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 18px;height:44px;background:transparent;border:1px solid rgba(243,227,195,0.20);border-radius:999px;color:#F3E3C3;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.14em;text-decoration:none;transition:background 0.35s ease,border-color 0.35s ease}
+			.mm-icon:hover{background:rgba(243,227,195,0.06);border-color:rgba(243,227,195,0.36)}
+			.mm-cta{display:inline-flex !important;align-items:center;justify-content:center;gap:12px;height:50px;background:var(--burnt);color:#F3E3C3;border:1px solid var(--burnt);border-radius:999px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.20em;text-transform:uppercase;text-decoration:none;transition:background 0.4s ease,box-shadow 0.4s ease}
+			.mm-cta:hover{background:var(--burnt-deep);box-shadow:0 10px 26px rgba(193,121,67,0.32)}
+			.mm-cta svg{transition:transform 0.4s ease}
+			.mm-cta:hover svg{transform:translateX(4px)}
+			/* Mobile capsule -- chips and status collapse, only the brand
+			   mark, the order CTA, and the hamburger remain. The hamburger
+			   itself slides next to the order CTA inside the capsule. */
+			@media (max-width:960px){
+				.nav-chips{display:none}
+				.nav-status{display:none}
+				.nav-ig{display:none}
+				.nav-menu{display:flex}
+				.nav-cta{padding:0 14px;font-size:10px}
+				.nav-cta span{display:none}
+				.nav-cta-arrow{margin:0}
+			}
+			@media (max-width:480px){
+				.site-header{padding:14px 14px 10px}
+				.nav-capsule{padding:6px 6px 6px 12px;gap:4px}
+				.nav-mark img{height:30px}
 			}
 
-			.hero{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:70px 32px 50px;color:var(--cocoa);background:linear-gradient(180deg,var(--cream) 0%,var(--cream-soft) 100%);overflow:hidden;animation:fadeIn 1.2s ease}
-			.hero::before{content:'';position:absolute;top:60px;left:60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(193,121,67,0.18) 0%,transparent 70%);pointer-events:none}
-			.hero::after{content:'';position:absolute;bottom:60px;right:60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(140,90,58,0.15) 0%,transparent 70%);pointer-events:none}
-			.hero-content{position:relative;z-index:2;max-width:900px;width:100%}
-			.hero-logo{width:120px;height:auto;margin:0 auto 28px;display:block;animation:fadeUp 1s ease 0.1s both}
-			.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:60px;color:var(--cocoa);font-weight:400;line-height:1.1;margin-bottom:0;letter-spacing:-1px;animation:fadeUp 1.2s ease 0.3s both}
+			/* Inline body links on the warm-tan section. Pinned to a fixed
+			   deep red-brown so links read in every theme (the section is
+			   mode-stable above; same here). */
+			.section-tan a:not(.cta):not(.btn-primary):not(.btn-outline-cocoa):not(.btn-outline-cream):not(.family-btn):not(.nav-chip):not(.nav-ig):not(.nav-cta):not(.nav-mark){color:#5C2E14 !important;border-bottom:1px solid rgba(92,46,20,0.35) !important;transition:border-color 0.3s ease}
+			.section-tan a:not(.cta):not(.btn-primary):not(.btn-outline-cocoa):not(.btn-outline-cream):not(.family-btn):not(.nav-chip):not(.nav-ig):not(.nav-cta):not(.nav-mark):hover{border-bottom-color:#5C2E14 !important}
+
+			/* Default hero -- a centered editorial layout that works for any
+			   page with just .hero-content inside. Used by every page except
+			   the home, where the editorial split takes over via .is-split. */
+			.hero{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:108px 32px 86px;color:var(--cocoa);background:var(--cream);overflow:hidden;animation:fadeIn 1.2s ease}
+			.hero::before{content:'';position:absolute;top:80px;left:50%;transform:translateX(-50%);width:60px;height:1px;background:var(--burnt);opacity:0.7}
+			.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(193,121,67,0.08),transparent 60%);pointer-events:none}
+			.hero-content{position:relative;z-index:2;max-width:840px;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+			.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:64px;color:var(--cocoa);font-weight:400;line-height:1.06;margin:18px 0 0;letter-spacing:-1px;animation:fadeUp 1.2s ease 0.3s both;max-width:18ch}
 			.hero h1 em{color:var(--burnt);font-style:italic;font-weight:400}
-			.hero-tagline{font-size:17px;font-weight:400;max-width:620px;margin:24px auto 32px;line-height:1.65;color:var(--text-soft);animation:fadeUp 1.2s ease 0.6s both}
+			.hero-lede,.hero-tagline{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:400;max-width:46ch;margin:26px auto 36px;line-height:1.55;color:var(--text-soft);animation:fadeUp 1.2s ease 0.6s both}
 			.hero-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp 1.2s ease 0.9s both}
+			.hero-logo{display:none}
+			.hero-figure{display:none}
 
-			.hero-image-band{position:relative;height:480px;width:100%;overflow:hidden;background:linear-gradient(135deg,var(--cocoa-deep) 0%,var(--cocoa) 50%,var(--cocoa-deep) 100%)}
-			.hero-image-band img{width:100%;height:100%;object-fit:cover;display:block}
-			.hero-image-band::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(45,27,20,0.15) 0%,transparent 30%,transparent 70%,rgba(45,27,20,0.4) 100%);pointer-events:none}
+			/* Editorial split hero -- opt in with .hero.is-split. Photo
+			   full-bleed left, copy stacked right with a copper hairline. */
+			.hero.is-split{display:grid;grid-template-columns:1.05fr 1fr;align-items:stretch;min-height:640px;text-align:left;padding:0}
+			.hero.is-split::before,.hero.is-split::after{display:none}
+			.hero.is-split .hero-figure{display:block;position:relative;overflow:hidden;background:var(--cocoa-deep);min-height:480px}
+			.hero.is-split .hero-figure img{width:100%;height:100%;object-fit:cover;display:block;animation:heroZoom 18s ease-out both}
+			@keyframes heroZoom{from{transform:scale(1.06)}to{transform:scale(1)}}
+			.hero.is-split .hero-figure::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(45,27,20,0.18) 100%),linear-gradient(180deg,transparent 75%,rgba(45,27,20,0.22) 100%);pointer-events:none}
+			.hero.is-split .hero-figure::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(193,121,67,0.10),transparent 55%);pointer-events:none;z-index:2}
+			.hero.is-split .hero-content{padding:84px 64px 76px 80px;align-items:flex-start;justify-content:center;text-align:left;max-width:none}
+			.hero.is-split .hero-content::before{content:'';position:absolute;top:84px;left:80px;width:54px;height:1px;background:var(--burnt);opacity:0.7}
+			.hero.is-split h1{font-size:74px;letter-spacing:-1.2px;max-width:14ch;line-height:1.04;margin-top:14px}
+			.hero.is-split .hero-lede,.hero.is-split .hero-tagline{margin-left:0;margin-right:0;max-width:42ch}
+			.hero.is-split .hero-buttons{justify-content:flex-start}
 
-			.section{padding:70px 32px;position:relative;overflow:hidden}
-			.section-tight{padding:60px 32px}
-			.section-snug{padding:40px 32px}
+			/* Old hero-image-band is retired in the luxe pass; the hero figure
+			   itself does that job now. Kept as a no-op for legacy markup. */
+			.hero-image-band{display:none}
+
+			.section{padding:104px 32px;position:relative;overflow:hidden}
+			.section-tight{padding:80px 32px}
+			.section-snug{padding:56px 32px}
 			.container{max-width:1280px;margin:0 auto}
 			.container-narrow{max-width:980px;margin:0 auto}
 			.text-center{text-align:center}
@@ -701,155 +808,223 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			.section-cream-reverse{background:var(--cream-soft)}
 			.section-cream-deep{background:var(--cream-deep)}
 			.section-tan{background:var(--tan);color:var(--text-dark)}
-			.section-cocoa{background:var(--cocoa-deep);color:var(--cream)}
-			.section-espresso{background:linear-gradient(135deg,var(--espresso-deep) 0%,var(--espresso) 35%,var(--espresso-mid) 70%,var(--espresso) 100%);color:var(--cream);position:relative}
-			.section-espresso::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(193,121,67,0.18) 0%,transparent 60%);pointer-events:none}
+			.section-cocoa{background:var(--cocoa-deep);color:#F3E3C3}
+			.section-espresso{background:var(--espresso-deep);color:#F3E3C3;position:relative}
+			.section-espresso::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at center top,rgba(193,121,67,0.10) 0%,transparent 70%);pointer-events:none}
 			.section-espresso > *{position:relative;z-index:2}
 
-			.section-tan h1,.section-tan h2,.section-tan h3{color:var(--text-dark)}
-			.section-tan h1 em,.section-tan h2 em,.section-tan h3 em{color:var(--cocoa-deep)}
-			.section-tan p{color:var(--cocoa-deep)}
-			.section-cocoa h1,.section-cocoa h2,.section-cocoa h3{color:var(--cream)}
-			.section-cocoa h1 em,.section-cocoa h2 em,.section-cocoa h3 em{color:var(--burnt-light)}
-			.section-cocoa p{color:rgba(243,227,195,0.9)}
-			.section-espresso h1,.section-espresso h2,.section-espresso h3{color:var(--cream)}
-			.section-espresso h1 em,.section-espresso h2 em,.section-espresso h3 em{color:var(--burnt-light)}
-			.section-espresso p{color:rgba(243,227,195,0.85)}
+			/* Warm-band sections (tan + cocoa) carry their own visual identity
+			   independent of the theme inversion. The global dark-swap would
+			   otherwise flip the tan surface to light cream while keeping
+			   "dark" text resolving to cream, giving cream-on-cream. These
+			   sections are deliberately mode-stable: tan stays a warm light
+			   tan with deep ink text, cocoa stays a deep cocoa with cream
+			   text. The contrast is guaranteed in Daylight, Mocha and
+			   Espresso alike. */
+			.section-tan{background:#C6A16D;color:#1F140A}
+			.section-tan h1,.section-tan h2,.section-tan h3{color:#1F140A}
+			.section-tan h1 em,.section-tan h2 em,.section-tan h3 em{color:#5C2E14}
+			.section-tan p{color:#2D170A}
+			.section-tan .eyebrow,.section-tan .eyebrow-italic{color:#5C2E14}
+			.section-tan .sec-num{color:#5C2E14}
+			.section-tan .sec-num::after{background:#5C2E14;opacity:0.5}
+			.section-tan .tag,.section-tan .tag-cream{background:transparent;color:#1F140A;border-color:rgba(92,46,20,0.40)}
 
-			.intro-block{text-align:center;max-width:880px;margin:0 auto}
-			.intro-block h2{font-size:42px;font-weight:400;margin-bottom:20px;line-height:1.2}
-			.intro-block p{font-size:17px;line-height:1.85;font-weight:400;max-width:62ch;margin-left:auto;margin-right:auto}
+			.section-cocoa{background:#3F2310;color:#F3E3C3}
+			.section-cocoa h1,.section-cocoa h2,.section-cocoa h3{color:#F3E3C3}
+			.section-cocoa h1 em,.section-cocoa h2 em,.section-cocoa h3 em{color:#E08A4E}
+			.section-cocoa p{color:rgba(243,227,195,0.90)}
+			.section-cocoa .eyebrow,.section-cocoa .eyebrow-italic{color:#E08A4E}
+			.section-cocoa .sec-num{color:rgba(243,227,195,0.72)}
+			.section-cocoa .sec-num::after{background:rgba(243,227,195,0.72);opacity:0.5}
+			.section-espresso h1,.section-espresso h2,.section-espresso h3{color:#F3E3C3}
+			.section-espresso h1 em,.section-espresso h2 em,.section-espresso h3 em{color:var(--burnt-light)}
+			.section-espresso p{color:rgba(243,227,195,0.92)}
+			.section-espresso .eyebrow,.section-espresso .eyebrow-italic{color:var(--burnt-light)}
+			.section-espresso .sec-num{color:var(--tan-soft)}
+			.section-espresso .sec-num::after{background:var(--tan-soft);opacity:0.5}
+			.section-cream-deep .eyebrow,.section-cream-deep .eyebrow-italic{color:var(--burnt-deep)}
+			.section-cream-deep .sec-num{color:var(--cocoa-mid)}
+			.section-cream-deep .sec-num::after{background:var(--cocoa-mid);opacity:0.4}
+
+			.intro-block{text-align:center;max-width:900px;margin:0 auto}
+			.intro-block h2{font-size:44px;font-weight:400;margin-bottom:22px;line-height:1.14;letter-spacing:-0.4px}
+			.intro-block p{font-size:18px;line-height:1.62;font-weight:400;max-width:54ch;margin-left:auto;margin-right:auto;color:var(--text-soft)}
 
 			.section-divider{padding:30px 32px;text-align:center;background:linear-gradient(180deg,var(--cream-soft) 0%,var(--cream) 100%)}
 			.section-divider .premium-divider{margin:0}
 
 			.two-col{display:grid;grid-template-columns:1.05fr 1fr;gap:88px;align-items:center;max-width:1240px;margin:0 auto}
-			.two-col-img{height:560px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0;background:transparent;box-shadow:inset 0 0 0 1px var(--copper-line)}
-			.two-col-img.cocoa,.two-col-img.espresso{background:transparent}
-			.two-col-img img{width:100%;height:100%;object-fit:cover}
-			.two-col-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(45,27,20,0.12) 100%);pointer-events:none;z-index:3}
-			.two-col-img .pattern-overlay{display:none}
+			/* Patterned image mat -- a deep warm field around the photo with
+			   a soft cream pattern showing as a frame. Mat background is
+			   pinned to fixed dark cocoa values so it reads correctly in
+			   Daylight, Mocha and Espresso (the global token swap would
+			   otherwise flip --cocoa-deep to cream in Espresso and lose
+			   the dark mat entirely). */
+			.two-col-img{height:560px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0;background:#1F140A}
+			.two-col-img.cocoa{background:linear-gradient(135deg,#1F140A 0%,#3A2110 50%,#1F140A 100%)}
+			.two-col-img.espresso{background:linear-gradient(135deg,#14100C 0%,#1F140A 50%,#2D1B14 100%)}
+			.two-col-img .pattern-overlay{display:block;position:absolute;inset:0;z-index:2;pointer-events:none}
+			.two-col-img > img{position:relative;width:calc(100% - 56px);height:calc(100% - 56px);object-fit:cover;z-index:4;border:1px solid rgba(243,227,195,0.18)}
+			.two-col-img::after{content:'';position:absolute;inset:28px;border:1px solid rgba(243,227,195,0.08);pointer-events:none;z-index:3}
 			.two-col-img-frame{display:none}
 			.two-col-img-corner{display:none}
 			.two-col-img-corner.tl{top:30px;left:30px}
 			.two-col-img-corner.br{bottom:30px;right:30px}
-			.two-col-img > img{position:relative;width:100%;height:100%;object-fit:cover;z-index:4;border:none}
+			/* (.two-col-img > img sizing lives above with the patterned mat block) */
 			.two-col-content h2{font-size:46px;line-height:1.14;margin-bottom:22px;font-weight:400}
 			.two-col-content p{font-size:18px;line-height:1.65;margin-bottom:20px;font-weight:400;max-width:46ch;color:var(--text-soft)}
 
 			.pattern-overlay{position:absolute;inset:0;pointer-events:none;z-index:2}
-			.pattern-jaali{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M22 0 L44 22 L22 44 L0 22 Z' fill='none' stroke='%23F3E3C3' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='22' cy='22' r='2.4' fill='%23F3E3C3' opacity='0.7'/%3E%3C/svg%3E");opacity:0.4}
-			.pattern-block{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Crect x='6' y='6' width='24' height='24' fill='none' stroke='%23F3E3C3' stroke-width='1.3' opacity='0.7' transform='rotate(45 18 18)'/%3E%3Crect x='12' y='12' width='12' height='12' fill='none' stroke='%23F3E3C3' stroke-width='1' opacity='0.7' transform='rotate(45 18 18)'/%3E%3Ccircle cx='18' cy='18' r='2' fill='%23F3E3C3' opacity='0.85'/%3E%3C/svg%3E");opacity:0.45}
-			.pattern-star{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z' fill='none' stroke='%23F3E3C3' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='24' cy='24' r='2.4' fill='%23F3E3C3' opacity='0.8'/%3E%3C/svg%3E");opacity:0.45}
-			.pattern-wave{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 20 Q10 0 20 20 Q30 40 40 20' fill='none' stroke='%23F3E3C3' stroke-width='1.2' opacity='0.7'/%3E%3Cpath d='M0 20 Q10 40 20 20 Q30 0 40 20' fill='none' stroke='%23F3E3C3' stroke-width='1.2' opacity='0.7'/%3E%3Ccircle cx='20' cy='20' r='1.8' fill='%23F3E3C3' opacity='0.8'/%3E%3C/svg%3E");opacity:0.4}
+			.pattern-jaali{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M22 0 L44 22 L22 44 L0 22 Z' fill='none' stroke='%23F3E3C3' stroke-width='1.1' opacity='0.85'/%3E%3Ccircle cx='22' cy='22' r='2.2' fill='%23F3E3C3' opacity='0.7'/%3E%3C/svg%3E");opacity:0.26}
+			.pattern-block{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Crect x='6' y='6' width='24' height='24' fill='none' stroke='%23F3E3C3' stroke-width='1.1' opacity='0.85' transform='rotate(45 18 18)'/%3E%3Crect x='12' y='12' width='12' height='12' fill='none' stroke='%23F3E3C3' stroke-width='1' opacity='0.7' transform='rotate(45 18 18)'/%3E%3Ccircle cx='18' cy='18' r='1.8' fill='%23F3E3C3' opacity='0.85'/%3E%3C/svg%3E");opacity:0.28}
+			.pattern-star{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z' fill='none' stroke='%23F3E3C3' stroke-width='1.1' opacity='0.85'/%3E%3Ccircle cx='24' cy='24' r='2.2' fill='%23F3E3C3' opacity='0.8'/%3E%3C/svg%3E");opacity:0.28}
+			.pattern-wave{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 20 Q10 0 20 20 Q30 40 40 20' fill='none' stroke='%23F3E3C3' stroke-width='1.1' opacity='0.85'/%3E%3Cpath d='M0 20 Q10 40 20 20 Q30 0 40 20' fill='none' stroke='%23F3E3C3' stroke-width='1.1' opacity='0.85'/%3E%3Ccircle cx='20' cy='20' r='1.8' fill='%23F3E3C3' opacity='0.8'/%3E%3C/svg%3E");opacity:0.24}
 
-			.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
-			.tag{padding:7px 14px;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;font-weight:600;text-transform:uppercase;background:rgba(140,90,58,0.1);color:var(--cocoa)}
-			.tag-dark{background:rgba(193,121,67,0.2);color:var(--tan)}
-			.tag-cream{background:var(--espresso);color:var(--cream)}
+			.tag-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+			.tag{padding:7px 14px;font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.18em;font-weight:500;text-transform:uppercase;background:transparent;color:var(--cocoa);border:1px solid var(--copper-line)}
+			.tag-dark{background:transparent;color:var(--tan-soft);border-color:rgba(198,161,109,0.30)}
+			.tag-cream{background:transparent;color:#F3E3C3;border-color:rgba(243,227,195,0.30)}
 
 			.card-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto}
 			.card{background:linear-gradient(180deg,var(--cream) 0%,var(--cream-deep) 100%);border:1px solid rgba(140,90,58,0.25);overflow:hidden;position:relative;transition:transform 0.5s ease,box-shadow 0.5s ease}
 			.card::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 4 L24 16 L36 20 L24 24 L20 36 L16 24 L4 20 L16 16 Z' fill='none' stroke='%238C5A3A' stroke-width='0.6' opacity='0.08'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
 			.card > *{position:relative;z-index:1}
 
-			/* PHOTO CARD - dark brown with photo on top, info below */
-			.photo-card{background:linear-gradient(135deg,var(--cocoa-deep) 0%,var(--cocoa) 50%,var(--espresso-mid) 100%);overflow:hidden;position:relative;transition:transform 0.5s ease,box-shadow 0.5s ease;border:1px solid rgba(193,121,67,0.3)}
-			.photo-card:hover{transform:translateY(-8px);box-shadow:0 22px 50px rgba(45,27,20,0.35)}
-			.photo-card::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M22 0 L44 22 L22 44 L0 22 Z' fill='none' stroke='%23F3E3C3' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='22' cy='22' r='1.8' fill='%23F3E3C3' opacity='0.5'/%3E%3C/svg%3E");opacity:0.10;pointer-events:none;z-index:1}
+			/* PHOTO CARD - the 2026 luxe version. Cream surface with a copper
+			   hairline, a single photo full-bleed across the top, content
+			   stacked beneath. No top-stripe gradient, no diamond pattern,
+			   no dark cocoa fill. Hover is a calm copper border + subtle
+			   image scale, no translate or heavy shadow. */
+			.photo-card{background:var(--cream);overflow:hidden;position:relative;border:1px solid var(--copper-line);transition:border-color 0.5s ease,box-shadow 0.5s ease}
+			.photo-card:hover{border-color:color-mix(in oklab,var(--burnt) 50%,var(--copper-line));box-shadow:0 14px 36px rgba(45,27,20,0.10)}
+			.photo-card::before{display:none}
 			.photo-card > *{position:relative;z-index:2}
-			.photo-card-top-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--burnt) 0%,var(--tan) 50%,var(--burnt) 100%);z-index:5}
-			.photo-card-img{padding:0;position:relative}
-			.photo-card-img img{width:100%;height:240px;object-fit:cover;display:block;border:none}
+			.photo-card-top-stripe{display:none}
+			.photo-card-img{padding:0;position:relative;overflow:hidden}
+			.photo-card-img img{width:100%;height:260px;object-fit:cover;display:block;border:none;transition:transform 0.9s cubic-bezier(0.4,0,0.2,1)}
+			.photo-card:hover .photo-card-img img{transform:scale(1.04)}
 			.photo-card-img.portrait img{height:auto;aspect-ratio:2/3;object-fit:cover}
-			.photo-card-content{padding:20px 22px 24px;text-align:center}
-			.photo-card-content .eyebrow{color:var(--burnt-light);margin-bottom:10px}
-			.photo-card-content h3{font-size:22px;margin:0 0 10px;font-weight:500;line-height:1.3;color:var(--cream)}
-			.photo-card-content h3 em{color:var(--burnt-light)}
-			.photo-card-content p{font-size:14px;color:rgba(243,227,195,0.85);line-height:1.7;margin:0;font-weight:400}
+			.photo-card-content{padding:22px 24px 26px;text-align:left}
+			.photo-card-content .eyebrow{color:var(--burnt);margin-bottom:10px}
+			.photo-card-content h3{font-size:22px;margin:0 0 8px;font-weight:500;line-height:1.25;color:var(--cocoa)}
+			.photo-card-content h3 em{color:var(--burnt);font-style:italic;font-family:'Playfair Display',Georgia,serif}
+			.photo-card-content p{font-size:15px;color:var(--text-soft);line-height:1.55;margin:0;font-weight:400}
+
+			/* Bakery magazine spread. One wide image card on the left, two
+			   stacked on the right. Replaces the uniform 3-up grid where a
+			   more editorial rhythm is wanted. */
+			.bakery-spread{display:grid;grid-template-columns:1.35fr 1fr;grid-template-rows:1fr 1fr;gap:20px;max-width:1200px;margin:60px auto 0}
+			.bakery-spread .photo-card:first-child{grid-row:1 / span 2}
+			.bakery-spread .photo-card:first-child .photo-card-img img{height:560px}
+			.bakery-spread .photo-card:not(:first-child) .photo-card-img img{height:228px}
+			@media (max-width:900px){
+				.bakery-spread{grid-template-columns:1fr;grid-template-rows:auto;gap:18px;max-width:480px}
+				.bakery-spread .photo-card:first-child{grid-row:auto}
+				.bakery-spread .photo-card:first-child .photo-card-img img,
+				.bakery-spread .photo-card:not(:first-child) .photo-card-img img{height:240px}
+			}
 			.card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(45,27,20,0.18)}
 			.card-top-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--burnt) 0%,var(--cocoa) 50%,var(--burnt) 100%);z-index:5}
 			.card-img{height:220px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
 			.card-img.cocoa{background:linear-gradient(135deg,var(--burnt) 0%,var(--cocoa) 100%)}
 			.card-img.espresso{background:linear-gradient(135deg,var(--cocoa) 0%,var(--cocoa-deep) 100%)}
 			.card-img.tan{background:linear-gradient(135deg,var(--tan) 0%,var(--cocoa) 100%)}
-			.card-img-label{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:48px;color:var(--cream);opacity:0.95;position:relative;z-index:3}
+			.card-img-label{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:48px;color:#F3E3C3;opacity:0.95;position:relative;z-index:3}
 			.card-content{padding:30px 28px;position:relative;z-index:2}
 			.card-content .eyebrow{margin-bottom:10px}
 			.card-content h3{font-size:22px;margin:0 0 10px;font-weight:500;line-height:1.3}
 			.card-content p{font-size:14px;color:var(--text-soft);line-height:1.7;margin:0;font-weight:400}
 
-			.visit-info{display:flex;justify-content:center;gap:80px;flex-wrap:wrap;margin-top:30px}
-			.visit-info-item{text-align:center}
-			.visit-info-item .label{font-family:'Inter',sans-serif;font-size:10px;color:var(--burnt);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-weight:600}
-			.visit-info-item .value{font-family:'Playfair Display',Georgia,serif;font-size:20px;color:var(--cream);font-style:italic;font-weight:400}
+			.visit-info{display:flex;justify-content:center;gap:80px;flex-wrap:wrap;margin-top:40px}
+			.visit-info-item{text-align:center;position:relative;padding:0 6px}
+			.visit-info-item:not(:last-child)::after{content:'';position:absolute;right:-40px;top:50%;transform:translateY(-50%);width:1px;height:42px;background:rgba(198,161,109,0.20)}
+			.visit-info-item .label{font-family:'Inter',sans-serif;font-size:10px;color:var(--burnt);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:12px;font-weight:600}
+			.visit-info-item .value{font-family:'Playfair Display',Georgia,serif;font-size:22px;color:#F3E3C3;font-style:italic;font-weight:400;letter-spacing:-0.2px}
 
-			.site-footer{background:linear-gradient(135deg,#0a0503 0%,var(--espresso-deep) 25%,var(--espresso) 50%,var(--espresso-mid) 75%,var(--cocoa-deep) 100%);color:var(--cream);padding:0;position:relative;overflow:hidden}
-			.footer-pattern-overlay{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z' fill='none' stroke='%23C6A16D' stroke-width='1' opacity='0.5'/%3E%3Ccircle cx='24' cy='24' r='1.8' fill='%23C6A16D' opacity='0.5'/%3E%3C/svg%3E");opacity:0.10;pointer-events:none;z-index:1}
-			.site-footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 50%,transparent 100%);z-index:5}
-			.footer-top{padding:92px 32px 40px;position:relative;z-index:2}
-			.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:53px;align-items:start}
-			.footer-col{display:flex;flex-direction:column;align-items:flex-start}
-			.footer-brand{display:flex;flex-direction:column;gap:18px;align-items:flex-start}
-			.footer-logo-img{height:108px;width:auto;object-fit:contain;display:block}
-			.footer-tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:18px;color:var(--tan);line-height:1.5;text-align:center;max-width:280px;letter-spacing:0.06em;align-self:center}
-			.footer-tag-italic{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,227,195,0.65);line-height:1.6}
-			.footer-mini-divider{display:flex;align-items:center;gap:10px;margin:6px 0}
-			.footer-mini-divider .m-line{height:1px;width:30px;background:var(--burnt)}
-			.footer-mini-divider .m-diamond{width:6px;height:6px;background:var(--burnt);transform:rotate(45deg)}
-			.footer-col h4{font-family:'Inter',sans-serif;color:var(--burnt);font-size:14px;text-transform:uppercase;letter-spacing:0.22em;font-weight:500;margin-bottom:25px;position:relative;padding-bottom:14px}
-			.footer-col h4::after{content:'◆';position:absolute;left:0;bottom:0;color:var(--burnt);font-size:9px;line-height:1;opacity:0.85}
-			.footer-col > a:not(.family-btn){display:inline-block;color:var(--tan-soft);margin-bottom:16px;font-size:15px;font-weight:400;letter-spacing:0.3px;transition:color 0.3s;font-family:'Inter',sans-serif;position:relative;padding-bottom:2px}
-			.footer-col > a:not(.family-btn)::before{content:'›';color:var(--tan);opacity:0.6;margin-right:8px;font-weight:400}
-			.footer-col > a:not(.family-btn)::after{content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--burnt);transition:width 0.3s ease}
-			.footer-col > a:not(.family-btn):hover{color:var(--burnt)}
-			.footer-col > a:not(.family-btn):hover::after{width:100%}
-			.footer-col p{color:rgba(243,227,195,0.82);font-size:17px;font-family:'Inter',sans-serif;line-height:1.7;margin-bottom:14px}
-			.footer-col p a{display:inline;padding:0;margin:0;color:var(--burnt-light)}
-			.footer-col p a.footer-social{display:inline-flex;align-items:center;gap:6px}
-			.footer-col p a[href^="tel:"]{font-family:'Inter',sans-serif;font-style:normal;font-size:15px;color:var(--tan-soft);letter-spacing:0.3px;transition:color 0.3s}
-			.footer-col p a[href^="tel:"]:hover{color:var(--burnt)}
-			.footer-col p a[href^="mailto:"]{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:var(--burnt);position:relative;display:inline-block;transition:color 0.3s}
-			.footer-col p a[href^="mailto:"]::after{content:'';position:absolute;left:0;bottom:-1px;width:0;height:1px;background:var(--burnt);transition:width 0.3s ease}
-			.footer-col p a[href^="mailto:"]:hover::after{width:100%}
-			.footer-col p.footer-address{font-family:'Inter',sans-serif;font-style:normal;font-size:15px;color:var(--tan-soft);line-height:1.6;letter-spacing:0.3px;margin-bottom:14px}
+			/* FUTURISTIC FOOTER -- a 3-card editorial grid with an iridescent
+			   holo hairline at the top, ending in a tight sign-off strip.
+			   Each tile carries a copper tick mark + small caps label, then
+			   editorial content in italic Cormorant body / Inter caps for
+			   meta. Family chips are pill-shaped, the order chip flares as
+			   the primary CTA. */
+			.site-footer{background:var(--espresso-deep);color:#F3E3C3;padding:0;position:relative;overflow:hidden}
+			.footer-holo{position:relative;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(110,63,31,0.32) 18%,color-mix(in oklab,var(--burnt) 50%,var(--tan)) 50%,rgba(110,63,31,0.32) 82%,transparent 100%);overflow:hidden;z-index:5}
+			.footer-holo-sweep{position:absolute;inset:0;background:linear-gradient(90deg,transparent 30%,rgba(255,239,210,0.65) 50%,transparent 70%);opacity:0;animation:holoSweep 9s ease-in-out infinite}
+			@keyframes holoSweep{0%,15%{transform:translateX(-100%);opacity:0}40%{opacity:0.7}50%{transform:translateX(0);opacity:1}60%{opacity:0.7}85%,100%{transform:translateX(100%);opacity:0}}
+			.site-footer::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at top,rgba(193,121,67,0.08),transparent 70%);pointer-events:none;z-index:1}
+			.site-footer::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 12% 30%,rgba(193,121,67,0.04),transparent 30%),radial-gradient(circle at 88% 70%,rgba(232,200,170,0.05),transparent 35%);pointer-events:none;z-index:1}
 
-			.footer-family{display:flex;flex-direction:column}
-			.family-btn{display:flex !important;align-items:center;justify-content:space-between;gap:12px;background:rgba(193,121,67,0.08);border:1px solid rgba(193,121,67,0.35);color:var(--cream) !important;padding:14px 18px !important;margin-bottom:12px !important;font-family:'Playfair Display',Georgia,serif !important;font-size:14px !important;font-weight:500 !important;font-style:italic;letter-spacing:0.3px !important;text-transform:none !important;transition:all 0.4s ease}
-			.family-btn:hover{background:rgba(193,121,67,0.18);border-color:var(--burnt);padding-left:22px !important;color:var(--burnt-light) !important}
-			.family-btn-arrow{font-family:'Inter',sans-serif;font-size:18px;font-style:normal;font-weight:300;transition:transform 0.4s ease}
-			.family-btn:hover .family-btn-arrow{transform:translateX(4px)}
-			.family-btn-cta{background:linear-gradient(135deg,var(--burnt-deep) 0%,var(--burnt) 50%,var(--burnt-light) 100%) !important;border-color:var(--burnt) !important;color:var(--text-dark) !important;font-style:normal !important;font-family:'Inter',sans-serif !important;font-size:11px !important;text-transform:uppercase !important;letter-spacing:2px !important;font-weight:600 !important;margin-top:6px !important}
-			.family-btn-cta:hover{color:var(--text-dark) !important;transform:translateY(-2px);box-shadow:0 8px 20px rgba(193,121,67,0.4)}
+			.footer-grid{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:90px 32px 56px;display:grid;grid-template-columns:1.15fr 0.85fr 1.1fr;gap:54px;align-items:start}
+			.ft-tile{display:flex;flex-direction:column;gap:8px;position:relative}
+			.tile-label{display:inline-flex;align-items:center;gap:12px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:var(--burnt-light);margin-bottom:18px}
+			.tile-tick{display:inline-block;width:18px;height:1px;background:var(--burnt-light);opacity:0.85;flex-shrink:0}
 
-			.footer-divider-fancy{display:flex;align-items:center;justify-content:center;gap:14px;padding:0 32px 32px;position:relative;z-index:2}
-			.footer-divider-fancy .d-thin{height:1px;width:60px;background:linear-gradient(90deg,transparent 0%,var(--burnt) 100%);opacity:0.6}
-			.footer-divider-fancy .d-thin-r{height:1px;width:60px;background:linear-gradient(90deg,var(--burnt) 0%,transparent 100%);opacity:0.6}
-			.footer-divider-fancy .d-thick{height:2px;width:90px;background:var(--burnt)}
-			.footer-divider-fancy .d-diamond{width:9px;height:9px;background:linear-gradient(135deg,var(--burnt),var(--tan));transform:rotate(45deg)}
+			/* Visit tile */
+			.tile-headline{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:400;font-style:italic;color:#F3E3C3;line-height:1.18;letter-spacing:-0.3px;margin:0 0 4px}
+			.tile-meta{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:16px;color:rgba(243,227,195,0.75);line-height:1.4;margin:0}
+			.tile-hours{display:flex;flex-direction:column;gap:6px;margin:18px 0 12px;padding:14px 0;border-top:1px solid rgba(198,161,109,0.14);border-bottom:1px solid rgba(198,161,109,0.14)}
+			.tile-hours p{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:0;font-family:'Inter',sans-serif;font-size:12.5px;letter-spacing:0.04em;color:rgba(243,227,195,0.78)}
+			.tile-hours .day{font-size:10px;font-weight:600;letter-spacing:0.20em;text-transform:uppercase;color:var(--tan-soft)}
+			.tile-hours .hours{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15px;color:#F3E3C3}
+			.tile-contacts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+			.tile-tel{font-family:'Inter',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.06em;color:#F3E3C3;transition:color 0.3s ease}
+			.tile-tel:hover{color:var(--burnt-light)}
+			.tile-email{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15px;color:var(--burnt-light);position:relative;display:inline-block;transition:color 0.3s ease;width:fit-content}
+			.tile-email::after{content:'';position:absolute;left:0;bottom:-2px;width:0;height:1px;background:var(--burnt-light);transition:width 0.4s ease}
+			.tile-email:hover{color:#F3E3C3}
+			.tile-email:hover::after{width:100%}
 
-			.footer-bottom{border-top:1px solid rgba(198,161,109,0.15);padding:32px 32px;text-align:center;position:relative;z-index:2}
-			.footer-bottom p{color:rgba(243,227,195,0.55);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:400;margin-bottom:6px}
-			.footer-bottom-loc{font-style:italic !important;letter-spacing:1px !important;text-transform:none !important;font-family:'Cormorant Garamond',Georgia,serif !important}
+			/* Browse tile */
+			.ft-link{display:inline-block;color:var(--tan-soft) !important;margin-bottom:11px;font-size:16px;font-weight:400;letter-spacing:0.02em;transition:color 0.3s,padding-left 0.3s;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;width:fit-content}
+			.ft-link:hover{color:var(--burnt-light) !important;padding-left:6px}
+
+			/* Family tile chips */
+			.ft-chip{display:inline-flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px 11px 18px;background:rgba(243,227,195,0.03);border:1px solid rgba(198,161,109,0.20);border-radius:999px;color:#F3E3C3 !important;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:500;letter-spacing:0.06em;text-decoration:none;transition:background 0.4s ease,border-color 0.4s ease,padding-left 0.4s ease;margin-bottom:10px;width:fit-content;max-width:100%}
+			.ft-chip:hover{background:rgba(193,121,67,0.10);border-color:var(--burnt);padding-left:22px}
+			.ft-chip-label{flex:1 1 auto}
+			.ft-chip-arrow{font-family:'Inter',sans-serif;font-size:14px;font-weight:300;color:var(--burnt-light);transition:transform 0.4s ease;line-height:1}
+			.ft-chip:hover .ft-chip-arrow{transform:translate(3px,-3px)}
+			.ft-chip-cta{background:var(--burnt);border-color:var(--burnt);color:#F3E3C3 !important;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding:13px 18px 13px 20px;margin-top:6px}
+			.ft-chip-cta .ft-chip-arrow{color:#F3E3C3;font-size:15px}
+			.ft-chip-cta:hover{background:var(--burnt-deep);border-color:var(--burnt-deep);padding-left:24px;box-shadow:0 8px 22px rgba(193,121,67,0.30)}
+			.ft-chip-cta:hover .ft-chip-arrow{transform:translateX(4px)}
+
+			/* Signoff strip */
+			.footer-signoff{position:relative;z-index:2;border-top:1px solid rgba(198,161,109,0.12);padding:24px 32px 30px;max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+			.signoff-left{display:inline-flex;align-items:center;gap:14px}
+			.signoff-mark{display:inline-block;color:var(--burnt);font-size:10px;line-height:1;transform:rotate(0);text-shadow:0 0 10px rgba(193,121,67,0.45)}
+			.signoff-tag{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:15px;color:var(--tan-soft);margin:0;letter-spacing:0.02em}
+			.signoff-meta{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.24em;text-transform:uppercase;color:rgba(243,227,195,0.50);margin:0}
 
 			@media (max-width:900px){
-				.top-bar{padding:10px 0}
-				.top-bar-inner{flex-direction:column;gap:6px;text-align:center}
-				.top-bar-item{font-size:11px}
-				.logo-img{height:64px}
+				.logo-img{height:62px}
 				.desktop-nav{display:none}
 				.hamburger{display:flex}
-				.header-inner{padding-bottom:24px}
-				.hero{padding:60px 24px 50px}
-				.hero-logo{width:96px;margin-bottom:22px}
-				.hero h1{font-size:44px;line-height:1.15;letter-spacing:-0.5px}
-				.hero-tagline{font-size:15px;line-height:1.7;margin:24px auto 32px}
-				.hero-image-band{height:300px}
-				.intro-block h2{font-size:34px;line-height:1.2;letter-spacing:-0.4px}
+				.header-strip{font-size:11.5px;padding:5px 24px 0;letter-spacing:0.02em}
+				.header-inner{padding-bottom:22px}
+				/* Plain centered hero (every page except home) on mobile. */
+				.hero{padding:68px 24px 56px}
+				.hero::before{top:42px;width:48px}
+				.hero h1{font-size:44px;line-height:1.1;letter-spacing:-0.5px;margin-top:14px;max-width:18ch}
+				.hero-lede,.hero-tagline{font-size:17px;line-height:1.6;margin:20px auto 26px;text-align:center;max-width:46ch}
+				.hero-buttons{justify-content:center}
+
+				/* Split hero (home only) collapses to stacked on mobile. */
+				.hero.is-split{grid-template-columns:1fr;min-height:auto;padding:0}
+				.hero.is-split .hero-figure{min-height:360px;max-height:46vh}
+				.hero.is-split .hero-content{padding:48px 28px 56px 28px;text-align:center;align-items:center}
+				.hero.is-split .hero-content::before{left:50%;transform:translateX(-50%);top:48px}
+				.hero.is-split h1{font-size:44px;letter-spacing:-0.5px;margin-top:12px;max-width:none;text-align:center}
+				.hero.is-split .hero-lede,.hero.is-split .hero-tagline{margin:22px auto 28px;text-align:center;max-width:46ch}
+				.hero.is-split .hero-buttons{justify-content:center}
+				.intro-block h2{font-size:34px;line-height:1.18;letter-spacing:-0.3px}
 				.intro-block p{font-size:15px;line-height:1.75}
 				.two-col-content h2{font-size:34px;line-height:1.2;text-align:center}
 				.two-col{grid-template-columns:1fr;gap:40px}
-				.two-col-img{height:380px;padding:20px}
+				.two-col-img{height:380px;padding:0}
+				.two-col-img > img{width:calc(100% - 36px);height:calc(100% - 36px)}
+				.two-col-img::after{inset:18px}
 				.two-col-content,.two-col-content p{text-align:center}
 				.two-col-content .tag-row{justify-content:center}
 				.two-col-content .mini-divider{justify-content:center}
@@ -865,24 +1040,20 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				.card-content p{font-size:14px;line-height:1.7}
 				.visit-info{gap:30px;flex-direction:column;align-items:center}
 				.visit-info-item .value{font-size:18px}
-				.footer-top{padding:58px 24px 37px}
-				.footer-inner{grid-template-columns:1fr 1fr;gap:37px 22px;text-align:center;align-items:start}
-				.footer-brand{align-items:center;text-align:center;grid-column:1 / -1;gap:14px;padding-bottom:20px;border-bottom:1px solid rgba(193,121,67,0.15);margin-bottom:0}
-				.footer-brand .footer-tag{font-size:18px;line-height:1.55}
-				.footer-logo-img{height:97px}
-				.footer-family{grid-column:1 / -1;padding-top:24px;border-top:1px solid rgba(198,161,109,0.35);align-items:center;position:relative}
-				.footer-family::before{content:'◆';position:absolute;top:-7px;left:50%;transform:translateX(-50%);color:var(--burnt);font-size:9px;line-height:1;background:linear-gradient(180deg,rgba(45,27,20,0) 0%,rgba(45,27,20,0.55) 50%,rgba(45,27,20,0) 100%);padding:0 10px}
-				.footer-family .family-btn{margin-bottom:10px !important;width:100%;max-width:340px;font-size:15px !important;padding:14px 20px !important}
-				.footer-col{text-align:center;display:flex;flex-direction:column;align-items:center}
-				.footer-col h4{font-size:13px;letter-spacing:0.15em;margin-bottom:18px;padding-bottom:12px;text-align:center;max-width:100%}
-				.footer-col h4::after{left:50%;transform:translateX(-50%)}
-				.footer-col > a:not(.family-btn){font-size:16px;margin-bottom:14px;text-align:center}
-				.footer-col p{font-size:16px;line-height:1.6;margin-bottom:9px;text-align:center}
-				.family-btn{justify-content:center !important}
-				.cta,.btn-primary,.btn-outline-cocoa,.btn-outline-cream{font-size:11px;letter-spacing:2px;height:52px;padding:0 22px;gap:10px}
-				.btn-compact{height:44px}
-				.cta-badge,.btn-badge{width:32px;height:32px;padding:5px}
-				.cta-badge img,.btn-badge img{width:20px;height:20px}
+				/* Futuristic footer collapses to a single column on mobile. */
+				.footer-grid{padding:64px 24px 40px;grid-template-columns:1fr;gap:42px}
+				.ft-tile{align-items:center;text-align:center}
+				.tile-label{justify-content:center}
+				.ft-link{margin-bottom:10px}
+				.ft-link:hover{padding-left:0}
+				.ft-chip{width:auto;max-width:340px}
+				.ft-chip:hover{padding-left:24px}
+				.tile-hours p{justify-content:center;gap:14px}
+				.tile-contacts{align-items:center}
+				.footer-signoff{flex-direction:column;text-align:center;gap:14px;padding:22px 24px 28px}
+				.signoff-left{justify-content:center}
+				.cta,.btn-primary,.btn-outline-cocoa,.btn-outline-cream{font-size:10.5px;letter-spacing:0.18em;height:46px;padding:0 22px;gap:10px}
+				.btn-compact{height:40px;padding:0 20px}
 				.premium-divider{margin:24px auto;justify-content:center}
 				.premium-divider .pd-thin,.premium-divider .pd-thin-r{width:36px}
 				.premium-divider .pd-thick{width:64px}
@@ -915,6 +1086,7 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 
 			const hamburger = document.getElementById('hamburger-btn');
 			const mobileMenu = document.getElementById('mobile-menu');
+			const mobileMenuClose = document.getElementById('mobile-menu-close');
 			const body = document.body;
 			function isMenuOpen(){
 				return body.classList.contains('menu-open');
@@ -930,14 +1102,20 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 				e.stopPropagation();
 				setMenu(!isMenuOpen());
 			});
-			document.querySelectorAll('.mobile-menu-item, .mobile-menu-cta').forEach(link=>{
+			if (mobileMenuClose) {
+				mobileMenuClose.addEventListener('click', (e)=>{
+					e.stopPropagation();
+					setMenu(false);
+				});
+			}
+			document.querySelectorAll('.mm-item, .mm-cta, .mm-icon').forEach(link=>{
 				link.addEventListener('click', ()=>{ if(isMenuOpen()) setMenu(false); });
 			});
 
 			const siteHeader = document.querySelector('.site-header');
 			let isHeaderScrolled = false;
 			function handleHeaderScroll(){
-				const should = window.scrollY > 50;
+				const should = window.scrollY > 24;
 				if(should && !isHeaderScrolled){
 					siteHeader.classList.add('scrolled');
 					isHeaderScrolled = true;
@@ -950,22 +1128,65 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			document.addEventListener('keydown', (e)=>{
 				if(e.key === 'Escape' && isMenuOpen()) setMenu(false);
 			});
+
+			/* Active state on the desktop nav chips, based on the current path. */
+			(function paintActiveChip(){
+				const path = window.location.pathname.replace(/\/$/, '') || '/';
+				document.querySelectorAll('.nav-chip').forEach(chip => {
+					const target = (chip.getAttribute('data-path') || '').replace(/\/$/, '') || '/';
+					if (target === path) chip.classList.add('is-active');
+				});
+			})();
+
+			/* OPEN/CLOSED indicator, live in Vancouver time. Mon-Fri 8-5:30,
+			   Sat-Sun 9-5:30. The pill dot turns grey and the label flips when
+			   we're closed; same logic feeds the mobile menu's pill. */
+			(function paintStatus(){
+				const HOURS = {0:[9,17.5],6:[9,17.5],1:[8,17.5],2:[8,17.5],3:[8,17.5],4:[8,17.5],5:[8,17.5]};
+				function vanNow(){
+					try {
+						const s = new Date().toLocaleString('en-US', { timeZone: 'America/Vancouver' });
+						return new Date(s);
+					} catch(e){ return new Date(); }
+				}
+				function paint(){
+					const now = vanNow();
+					const day = now.getDay();
+					const t = now.getHours() + now.getMinutes()/60;
+					const range = HOURS[day];
+					const open = range && t >= range[0] && t < range[1];
+					const closeTime = range ? range[1] : 17.5;
+					const closeHour = Math.floor(closeTime);
+					const closeMin = Math.round((closeTime - closeHour) * 60);
+					const closeStr = (((closeHour + 11) % 12) + 1) + (closeMin ? (':' + String(closeMin).padStart(2,'0')) : '') + (closeHour >= 12 ? 'pm' : 'am');
+					const dStatus = document.getElementById('nav-status');
+					const dText = document.getElementById('status-text');
+					const mText = document.getElementById('mm-status-text');
+					if (dStatus) dStatus.classList.toggle('is-closed', !open);
+					if (dText) dText.textContent = open ? 'Open' : 'Closed';
+					if (mText) mText.textContent = open ? ('Open · until ' + closeStr) : 'Closed today';
+				}
+				paint();
+				setInterval(paint, 60 * 1000);
+			})();
 		</script>
 
-		<div class="theme-switch" role="group" aria-label="Colour mode: Morning, Saffron, Espresso">
-			<span class="theme-switch-label" id="theme-switch-label">Morning</span>
-			<button type="button" class="theme-seg" data-theme-mode="light" aria-label="Morning, light cream cafe">
+		<div class="theme-switch" role="group" aria-label="Colour mode: Daylight, Mocha, Espresso">
+			<span class="theme-switch-label" id="theme-switch-label">Daylight</span>
+			<button type="button" class="theme-seg" data-theme-mode="light" aria-label="Daylight, the bright linen cafe">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<circle cx="12" cy="12" r="4"/>
 					<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
 				</svg>
 			</button>
-			<button type="button" class="theme-seg" data-theme-mode="saffron" aria-label="Saffron, golden hour warm">
-				<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
-					<path d="M12 2.5 L13.7 10.3 L21.5 12 L13.7 13.7 L12 21.5 L10.3 13.7 L2.5 12 L10.3 10.3 Z"/>
+			<button type="button" class="theme-seg" data-theme-mode="mocha" aria-label="Mocha, warm cocoa midtone">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M5 9 h11 a3 3 0 0 1 0 6 h-1 v1.5 a3 3 0 0 1 -3 3 H8 a3 3 0 0 1 -3 -3 Z"/>
+					<path d="M16 11.5 a1.5 1.5 0 0 1 0 3"/>
+					<path d="M9 4.5 q1 1.4 0 2.6 M12 4 q1 1.4 0 2.6"/>
 				</svg>
 			</button>
-			<button type="button" class="theme-seg" data-theme-mode="dark" aria-label="Espresso, deep dark cafe">
+			<button type="button" class="theme-seg" data-theme-mode="dark" aria-label="Espresso, the deep dark cafe">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
 				</svg>
@@ -975,14 +1196,17 @@ const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0 ? {
 			(() => {
 				var sw = document.querySelector('.theme-switch');
 				if (!sw) return;
-				var THEMES = ['light', 'saffron', 'dark'];
-				var CHROME = { light: '#F3E3C3', saffron: '#F5DCAB', dark: '#14100C' };
-				var NAMES = { light: 'Morning', saffron: 'Saffron', dark: 'Espresso' };
+				var THEMES = ['light', 'mocha', 'dark'];
+				var LEGACY = { saffron: 'mocha' };
+				/* Address-bar tint per mode, aligned to the body surface. */
+				var CHROME = { light: '#FAF7EE', mocha: '#DDC8AA', dark: '#241712' };
+				var NAMES = { light: 'Daylight', mocha: 'Mocha', dark: 'Espresso' };
 				var labelEl = document.getElementById('theme-switch-label');
 				var segs = sw.querySelectorAll('[data-theme-mode]');
 				var root = document.documentElement;
 				function currentMode() {
 					var t = root.getAttribute('data-theme');
+					if (LEGACY[t]) t = LEGACY[t];
 					return THEMES.indexOf(t) !== -1 ? t : 'light';
 				}
 				function paint(mode) {
