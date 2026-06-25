@@ -1,0 +1,567 @@
+---
+/**
+ * /pos/catalog - manager-only catalog admin: products, modifier groups, store
+ * settings, and a menu re-import. Cafe-only, manager-gated. All mutations are
+ * client-side JSON POSTs to /api/pos-product (or /api/pos-import for re-import).
+ * Money is integer cents in the DB; we convert to/from dollars only at the edges.
+ */
+import PosLayout from '../../../layouts/PosLayout.astro';
+import { IS_CAFE, sessionFromCookies } from '../../../lib/access.ts';
+import { listProducts, listModifierGroups, listProductGroupLinks, getSettings } from '../../../lib/db.ts';
+import { POS_CATEGORIES, POS_PRICE_PLACEHOLDERS } from '../../../lib/pos-catalog.ts';
+
+export const prerender = false;
+
+if (!IS_CAFE) return Astro.redirect('/');
+const session = sessionFromCookies(Astro.cookies);
+if (!session) return Astro.redirect('/pos/login?next=/pos/catalog/');
+if (session.role !== 'manager') return Astro.redirect('/pos/');
+
+const products = await listProducts({ includeInactive: true });
+const groups = await listModifierGroups();
+const links = await listProductGroupLinks();
+const settings = await getSettings();
+
+const categories = [...POS_CATEGORIES] as string[];
+
+// Group products by category, preserving the canonical category order then any extras.
+const byCategory: { category: string; items: typeof products }[] = [];
+const seen = new Set<string>();
+for (const cat of categories) {
+  const items = products.filter((p) => p.category === cat);
+  if (items.length) { byCategory.push({ category: cat, items }); seen.add(cat); }
+}
+for (const p of products) {
+  if (seen.has(p.category)) continue;
+  seen.add(p.category);
+  byCategory.push({ category: p.category, items: products.filter((x) => x.category === p.category) });
+}
+
+const money = (cents: number) => (cents / 100).toFixed(2);
+const gstPct = (settings.gstBps / 100).toFixed(2);
+const placeholderCount = POS_PRICE_PLACEHOLDERS.length;
+---
+<PosLayout title="Catalog - Sula POS" session={session} active="/pos/catalog/">
+  <h1 class="pos-h1">Catalog</h1>
+  <p class="pos-sub">Products, modifiers, and store settings. Changes apply to the register right away.</p>
+
+  {placeholderCount > 0 && (
+    <div class="pos-banner reveal">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+      <div>
+        <strong>{placeholderCount} prices are placeholders pending Shar's confirmation.</strong>
+        <div class="cat-placeholders">{POS_PRICE_PLACEHOLDERS.join(', ')}</div>
+      </div>
+    </div>
+  )}
+
+  <!-- ============ PRODUCTS ============ -->
+  <section class="cat-section reveal">
+    <div class="cat-head">
+      <h2 class="cat-h2">Products</h2>
+      <button class="pos-btn" type="button" id="add-product">Add product</button>
+    </div>
+
+    {byCategory.map((grp) => (
+      <div class="cat-group">
+        <h3 class="cat-cat">{grp.category}</h3>
+        <div class="pos-tablewrap">
+          <table class="pos-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Taxable</th>
+                <th>Favorite</th>
+                <th>Active</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {grp.items.map((p) => (
+                <tr
+                  data-product
+                  data-id={String(p.id)}
+                  data-name={p.name}
+                  data-category={p.category}
+                  data-price={money(p.price_cents)}
+                  data-taxable={p.taxable ? '1' : '0'}
+                  data-favorite={p.is_favorite ? '1' : '0'}
+                  data-active={p.active ? '1' : '0'}
+                  data-sort={String(p.sort)}
+                  data-tags={(p.tags || []).join(', ')}
+                  data-groups={(links[p.id] || []).join(',')}
+                >
+                  <td>{p.name}</td>
+                  <td>{p.category}</td>
+                  <td>${money(p.price_cents)}</td>
+                  <td>{p.taxable ? <span class="pos-pill ok">GST</span> : <span class="pos-pill off">No</span>}</td>
+                  <td>{p.is_favorite ? <span class="pos-pill warn">Fav</span> : ''}</td>
+                  <td>{p.active ? <span class="pos-pill ok">Active</span> : <span class="pos-pill off">Off</span>}</td>
+                  <td>
+                    <div class="cat-rowbtns">
+                      <button class="pos-btn ghost cat-sm" type="button" data-edit>Edit</button>
+                      <button class="pos-btn ghost cat-sm" type="button" data-toggle-active>{p.active ? 'Deactivate' : 'Activate'}</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ))}
+    {products.length === 0 && <div class="pos-empty">No products yet. Re-import the menu below to get started.</div>}
+  </section>
+
+  <!-- ============ MODIFIER GROUPS ============ -->
+  <section class="cat-section reveal">
+    <div class="cat-head">
+      <h2 class="cat-h2">Modifier groups</h2>
+      <button class="pos-btn" type="button" id="add-group">Add group</button>
+    </div>
+    <div class="cat-grid">
+      {groups.map((g) => (
+        <div
+          class="pos-card cat-groupcard"
+          data-group
+          data-id={String(g.id)}
+          data-name={g.name}
+          data-required={g.required ? '1' : '0'}
+          data-min={String(g.min_select)}
+          data-max={String(g.max_select)}
+          data-mods={JSON.stringify(g.modifiers.map((m) => ({ name: m.name, delta: money(m.price_delta_cents) })))}
+        >
+          <div class="cat-groupcard-head">
+            <strong>{g.name}</strong>
+            {g.required && <span class="pos-pill warn">Required</span>}
+          </div>
+          <div class="cat-groupmeta">Choose {g.min_select} to {g.max_select}</div>
+          <ul class="cat-modlist">
+            {g.modifiers.map((m) => (
+              <li><span>{m.name}</span><span class="cat-delta">{m.price_delta_cents > 0 ? `+$${money(m.price_delta_cents)}` : 'no charge'}</span></li>
+            ))}
+            {g.modifiers.length === 0 && <li class="cat-groupmeta">No options yet</li>}
+          </ul>
+          <div class="cat-rowbtns">
+            <button class="pos-btn ghost cat-sm" type="button" data-edit-group>Edit</button>
+            <button class="pos-btn danger cat-sm" type="button" data-delete-group>Delete</button>
+          </div>
+        </div>
+      ))}
+      {groups.length === 0 && <div class="pos-empty">No modifier groups yet.</div>}
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section class="cat-section reveal">
+    <h2 class="cat-h2">Store settings</h2>
+    <div class="pos-card cat-settings">
+      <div class="cat-formgrid">
+        <div>
+          <label class="pos-label" for="set-gst">GST rate (percent)</label>
+          <input class="pos-input" id="set-gst" type="number" step="0.01" min="0" inputmode="decimal" value={gstPct} />
+        </div>
+        <div>
+          <label class="pos-label" for="set-name">Business name</label>
+          <input class="pos-input" id="set-name" type="text" value={settings.businessName} />
+        </div>
+        <div class="cat-span2">
+          <label class="pos-label" for="set-note">Receipt note</label>
+          <input class="pos-input" id="set-note" type="text" value={settings.receiptNote} />
+        </div>
+      </div>
+      <div class="cat-actions">
+        <button class="pos-btn" type="button" id="save-settings">Save settings</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IMPORT ============ -->
+  <section class="cat-section reveal">
+    <h2 class="cat-h2">Menu import</h2>
+    <div class="pos-card">
+      <p class="cat-importnote">Re-import the seed menu. Add missing items keeps every edit you have made and only inserts new names. Overwrite prices resets prices to the seed values.</p>
+      <div class="cat-rowbtns">
+        <button class="pos-btn ghost" type="button" id="import-add">Add missing items</button>
+        <button class="pos-btn danger" type="button" id="import-overwrite">Overwrite prices</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCT DIALOG ============ -->
+  <div class="cat-overlay" id="product-overlay" hidden>
+    <div class="cat-modal pos-card" role="dialog" aria-modal="true" aria-labelledby="product-title">
+      <h2 class="cat-h2" id="product-title">Add product</h2>
+      <form id="product-form">
+        <input type="hidden" id="pf-id" />
+        <div class="cat-formgrid">
+          <div class="cat-span2">
+            <label class="pos-label" for="pf-name">Name</label>
+            <input class="pos-input" id="pf-name" type="text" required autocomplete="off" />
+          </div>
+          <div>
+            <label class="pos-label" for="pf-category">Category</label>
+            <input class="pos-input" id="pf-category" type="text" list="cat-categories" autocomplete="off" />
+            <datalist id="cat-categories">
+              {categories.map((c) => <option value={c} />)}
+            </datalist>
+          </div>
+          <div>
+            <label class="pos-label" for="pf-price">Price (dollars)</label>
+            <input class="pos-input" id="pf-price" type="number" step="0.01" min="0" inputmode="decimal" />
+          </div>
+          <div>
+            <label class="pos-label" for="pf-sort">Sort</label>
+            <input class="pos-input" id="pf-sort" type="number" step="1" value="0" />
+          </div>
+          <div class="cat-span2">
+            <label class="pos-label" for="pf-tags">Tags (comma separated)</label>
+            <input class="pos-input" id="pf-tags" type="text" autocomplete="off" placeholder="vegetarian, signature" />
+          </div>
+        </div>
+
+        <div class="cat-checkrow">
+          <label class="cat-check"><input type="checkbox" id="pf-taxable" checked /> Taxable (GST)</label>
+          <label class="cat-check"><input type="checkbox" id="pf-favorite" /> Favorite</label>
+          <label class="cat-check"><input type="checkbox" id="pf-active" checked /> Active</label>
+        </div>
+
+        <div class="cat-modgroups">
+          <span class="pos-label">Modifier groups</span>
+          <div class="cat-checkgrid">
+            {groups.map((g) => (
+              <label class="cat-check"><input type="checkbox" class="pf-group" value={String(g.id)} /> {g.name}</label>
+            ))}
+            {groups.length === 0 && <span class="cat-groupmeta">No groups defined.</span>}
+          </div>
+        </div>
+
+        <p class="cat-error" id="pf-error" hidden></p>
+        <div class="cat-actions">
+          <button class="pos-btn ghost" type="button" data-close-product>Cancel</button>
+          <button class="pos-btn" type="submit" id="pf-submit">Save product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ GROUP DIALOG ============ -->
+  <div class="cat-overlay" id="group-overlay" hidden>
+    <div class="cat-modal pos-card" role="dialog" aria-modal="true" aria-labelledby="group-title">
+      <h2 class="cat-h2" id="group-title">Add modifier group</h2>
+      <form id="group-form">
+        <input type="hidden" id="gf-id" />
+        <div class="cat-formgrid">
+          <div class="cat-span2">
+            <label class="pos-label" for="gf-name">Group name</label>
+            <input class="pos-input" id="gf-name" type="text" required autocomplete="off" />
+          </div>
+          <div>
+            <label class="pos-label" for="gf-min">Min select</label>
+            <input class="pos-input" id="gf-min" type="number" step="1" min="0" value="0" />
+          </div>
+          <div>
+            <label class="pos-label" for="gf-max">Max select</label>
+            <input class="pos-input" id="gf-max" type="number" step="1" min="1" value="1" />
+          </div>
+        </div>
+        <div class="cat-checkrow">
+          <label class="cat-check"><input type="checkbox" id="gf-required" /> Required</label>
+        </div>
+
+        <span class="pos-label">Options</span>
+        <div id="gf-mods"></div>
+        <button class="pos-btn ghost cat-sm" type="button" id="gf-addmod">Add option</button>
+
+        <p class="cat-error" id="gf-error" hidden></p>
+        <div class="cat-actions">
+          <button class="pos-btn ghost" type="button" data-close-group>Cancel</button>
+          <button class="pos-btn" type="submit" id="gf-submit">Save group</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .cat-section{margin-top:26px}
+    .cat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+    .cat-h2{font-size:20px;margin-bottom:0}
+    .cat-cat{font-size:14px;color:var(--burnt);text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin:16px 0 8px}
+    .cat-group{margin-bottom:8px}
+    .cat-placeholders{margin-top:4px;font-size:12px;color:var(--text-soft)}
+    .cat-rowbtns{display:flex;gap:8px;flex-wrap:wrap}
+    .cat-sm{font-size:13px;padding:9px 14px;min-height:44px}
+    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+    .cat-groupcard{display:flex;flex-direction:column;gap:8px}
+    .cat-groupcard-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .cat-groupmeta{font-size:12px;color:var(--text-soft)}
+    .cat-modlist{list-style:none;display:flex;flex-direction:column;gap:5px;margin:2px 0}
+    .cat-modlist li{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--ink)}
+    .cat-delta{color:var(--burnt);font-weight:600;white-space:nowrap}
+    .cat-settings .cat-actions{margin-top:14px}
+    .cat-formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .cat-span2{grid-column:1 / -1}
+    .cat-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+    .cat-checkrow{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+    .cat-check{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--cocoa);
+      min-height:44px;cursor:pointer}
+    .cat-check input{width:20px;height:20px;accent-color:var(--burnt)}
+    .cat-modgroups{margin-top:16px}
+    .cat-checkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px 16px;margin-top:6px}
+    .cat-importnote{font-size:14px;color:var(--text-soft);margin-bottom:14px}
+    .cat-error{color:var(--danger);font-size:13px;font-weight:600;margin-top:12px}
+    .cat-overlay{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-start;justify-content:center;
+      padding:20px;overflow-y:auto;background:color-mix(in oklab,var(--espresso-deep) 55%,transparent)}
+    .cat-overlay[hidden]{display:none}
+    .cat-modal{width:100%;max-width:560px;margin:auto;box-shadow:0 24px 60px rgba(45,27,20,0.28)}
+    .cat-modrow{display:grid;grid-template-columns:1fr 120px auto;gap:8px;margin-top:8px;align-items:end}
+    .cat-modrow .pos-label{margin-bottom:4px}
+    .gf-del{min-height:44px}
+    @media(max-width:640px){
+      .cat-formgrid{grid-template-columns:1fr}
+      .cat-modrow{grid-template-columns:1fr;gap:6px}
+      .cat-h2{font-size:18px}
+    }
+  </style>
+
+  <script is:inline>
+    (() => {
+      var API = '/api/pos-product';
+      var IMPORT_API = '/api/pos-import';
+
+      function $(id){ return document.getElementById(id); }
+
+      async function postJson(url, body){
+        var res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        var data = {};
+        try { data = await res.json(); } catch (e) {}
+        if (!res.ok || (data && data.error)) {
+          throw new Error((data && data.error) || ('Request failed (' + res.status + ')'));
+        }
+        return data;
+      }
+
+      function dollarsToCents(v){
+        var n = parseFloat(v);
+        if (isNaN(n)) return 0;
+        return Math.round(n * 100);
+      }
+
+      // ---------- product dialog ----------
+      var pOverlay = $('product-overlay');
+      function openProduct(row){
+        $('pf-error').hidden = true;
+        $('product-title').textContent = row ? 'Edit product' : 'Add product';
+        $('pf-id').value = row ? row.getAttribute('data-id') : '';
+        $('pf-name').value = row ? row.getAttribute('data-name') : '';
+        $('pf-category').value = row ? row.getAttribute('data-category') : '';
+        $('pf-price').value = row ? row.getAttribute('data-price') : '';
+        $('pf-sort').value = row ? row.getAttribute('data-sort') : '0';
+        $('pf-tags').value = row ? row.getAttribute('data-tags') : '';
+        $('pf-taxable').checked = row ? row.getAttribute('data-taxable') === '1' : true;
+        $('pf-favorite').checked = row ? row.getAttribute('data-favorite') === '1' : false;
+        $('pf-active').checked = row ? row.getAttribute('data-active') === '1' : true;
+        var picked = row ? (row.getAttribute('data-groups') || '').split(',').filter(Boolean) : [];
+        document.querySelectorAll('.pf-group').forEach(function(cb){
+          cb.checked = picked.indexOf(cb.value) !== -1;
+        });
+        pOverlay.hidden = false;
+      }
+      function closeProduct(){ pOverlay.hidden = true; }
+
+      var addBtn = $('add-product');
+      if (addBtn) addBtn.addEventListener('click', function(){ openProduct(null); });
+
+      document.querySelectorAll('[data-close-product]').forEach(function(b){
+        b.addEventListener('click', closeProduct);
+      });
+      pOverlay.addEventListener('click', function(e){ if (e.target === pOverlay) closeProduct(); });
+
+      document.querySelectorAll('[data-product]').forEach(function(row){
+        var editBtn = row.querySelector('[data-edit]');
+        if (editBtn) editBtn.addEventListener('click', function(){ openProduct(row); });
+        var actBtn = row.querySelector('[data-toggle-active]');
+        if (actBtn) actBtn.addEventListener('click', async function(){
+          var id = parseInt(row.getAttribute('data-id'), 10);
+          var active = row.getAttribute('data-active') !== '1';
+          actBtn.disabled = true;
+          try {
+            await postJson(API, { action: 'set-active', id: id, active: active });
+            location.reload();
+          } catch (err) { actBtn.disabled = false; alert(err.message); }
+        });
+      });
+
+      $('product-form').addEventListener('submit', async function(e){
+        e.preventDefault();
+        var err = $('pf-error');
+        err.hidden = true;
+        var name = $('pf-name').value.trim();
+        var category = $('pf-category').value.trim();
+        if (!name){ err.textContent = 'Name is required.'; err.hidden = false; return; }
+        if (!category){ err.textContent = 'Category is required.'; err.hidden = false; return; }
+        var groupIds = [];
+        document.querySelectorAll('.pf-group').forEach(function(cb){
+          if (cb.checked) groupIds.push(parseInt(cb.value, 10));
+        });
+        var tags = $('pf-tags').value.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+        var idVal = $('pf-id').value;
+        var product = {
+          name: name,
+          category: category,
+          priceCents: dollarsToCents($('pf-price').value),
+          taxable: $('pf-taxable').checked,
+          active: $('pf-active').checked,
+          isFavorite: $('pf-favorite').checked,
+          sort: parseInt($('pf-sort').value, 10) || 0,
+          tags: tags,
+          modifierGroupIds: groupIds,
+        };
+        if (idVal) product.id = parseInt(idVal, 10);
+        var submit = $('pf-submit');
+        submit.disabled = true;
+        try {
+          await postJson(API, { action: 'save-product', product: product });
+          location.reload();
+        } catch (e2) {
+          submit.disabled = false;
+          err.textContent = e2.message;
+          err.hidden = false;
+        }
+      });
+
+      // ---------- group dialog ----------
+      var gOverlay = $('group-overlay');
+      var modsWrap = $('gf-mods');
+
+      function modRow(name, delta){
+        var div = document.createElement('div');
+        div.className = 'cat-modrow';
+        var c1 = document.createElement('div');
+        var l1 = document.createElement('label'); l1.className = 'pos-label'; l1.textContent = 'Option name';
+        var i1 = document.createElement('input'); i1.className = 'pos-input gf-mod-name'; i1.type = 'text'; i1.value = name || '';
+        c1.appendChild(l1); c1.appendChild(i1);
+        var c2 = document.createElement('div');
+        var l2 = document.createElement('label'); l2.className = 'pos-label'; l2.textContent = 'Add $';
+        var i2 = document.createElement('input'); i2.className = 'pos-input gf-mod-delta'; i2.type = 'number'; i2.step = '0.01'; i2.value = (delta === undefined || delta === null) ? '0.00' : delta;
+        c2.appendChild(l2); c2.appendChild(i2);
+        var del = document.createElement('button'); del.type = 'button'; del.className = 'pos-btn danger cat-sm gf-del'; del.textContent = 'Remove';
+        del.addEventListener('click', function(){ div.remove(); });
+        div.appendChild(c1); div.appendChild(c2); div.appendChild(del);
+        modsWrap.appendChild(div);
+      }
+
+      function openGroup(card){
+        $('gf-error').hidden = true;
+        modsWrap.innerHTML = '';
+        $('group-title').textContent = card ? 'Edit modifier group' : 'Add modifier group';
+        $('gf-id').value = card ? card.getAttribute('data-id') : '';
+        $('gf-name').value = card ? card.getAttribute('data-name') : '';
+        $('gf-required').checked = card ? card.getAttribute('data-required') === '1' : false;
+        $('gf-min').value = card ? card.getAttribute('data-min') : '0';
+        $('gf-max').value = card ? card.getAttribute('data-max') : '1';
+        var mods = [];
+        if (card) { try { mods = JSON.parse(card.getAttribute('data-mods') || '[]'); } catch (e) {} }
+        if (mods.length) mods.forEach(function(m){ modRow(m.name, m.delta); });
+        else modRow('', '0.00');
+        gOverlay.hidden = false;
+      }
+      function closeGroup(){ gOverlay.hidden = true; }
+
+      var addGroupBtn = $('add-group');
+      if (addGroupBtn) addGroupBtn.addEventListener('click', function(){ openGroup(null); });
+      $('gf-addmod').addEventListener('click', function(){ modRow('', '0.00'); });
+      document.querySelectorAll('[data-close-group]').forEach(function(b){ b.addEventListener('click', closeGroup); });
+      gOverlay.addEventListener('click', function(e){ if (e.target === gOverlay) closeGroup(); });
+
+      document.querySelectorAll('[data-group]').forEach(function(card){
+        var editBtn = card.querySelector('[data-edit-group]');
+        if (editBtn) editBtn.addEventListener('click', function(){ openGroup(card); });
+        var delBtn = card.querySelector('[data-delete-group]');
+        if (delBtn) delBtn.addEventListener('click', async function(){
+          if (!confirm('Delete this modifier group? This cannot be undone.')) return;
+          delBtn.disabled = true;
+          try {
+            await postJson(API, { action: 'delete-group', id: parseInt(card.getAttribute('data-id'), 10) });
+            location.reload();
+          } catch (err) { delBtn.disabled = false; alert(err.message); }
+        });
+      });
+
+      $('group-form').addEventListener('submit', async function(e){
+        e.preventDefault();
+        var err = $('gf-error');
+        err.hidden = true;
+        var name = $('gf-name').value.trim();
+        if (!name){ err.textContent = 'Group name is required.'; err.hidden = false; return; }
+        var modifiers = [];
+        document.querySelectorAll('#gf-mods .cat-modrow').forEach(function(div){
+          var mn = div.querySelector('.gf-mod-name').value.trim();
+          if (!mn) return;
+          var dv = parseFloat(div.querySelector('.gf-mod-delta').value);
+          modifiers.push({ name: mn, priceDeltaCents: isNaN(dv) ? 0 : Math.round(dv * 100) });
+        });
+        var group = {
+          name: name,
+          required: $('gf-required').checked,
+          minSelect: parseInt($('gf-min').value, 10) || 0,
+          maxSelect: parseInt($('gf-max').value, 10) || 1,
+          modifiers: modifiers,
+        };
+        var idVal = $('gf-id').value;
+        if (idVal) group.id = parseInt(idVal, 10);
+        var submit = $('gf-submit');
+        submit.disabled = true;
+        try {
+          await postJson(API, { action: 'save-group', group: group });
+          location.reload();
+        } catch (e2) {
+          submit.disabled = false;
+          err.textContent = e2.message;
+          err.hidden = false;
+        }
+      });
+
+      // ---------- settings ----------
+      $('save-settings').addEventListener('click', async function(){
+        var btn = this;
+        var pct = parseFloat($('set-gst').value);
+        btn.disabled = true;
+        try {
+          await postJson(API, {
+            action: 'save-settings',
+            gstBps: isNaN(pct) ? 0 : Math.round(pct * 100),
+            businessName: $('set-name').value.trim(),
+            receiptNote: $('set-note').value.trim(),
+          });
+          location.reload();
+        } catch (err) { btn.disabled = false; alert(err.message); }
+      });
+
+      // ---------- import ----------
+      $('import-add').addEventListener('click', async function(){
+        var btn = this;
+        btn.disabled = true;
+        try {
+          await postJson(IMPORT_API, { overwrite: false });
+          location.reload();
+        } catch (err) { btn.disabled = false; alert(err.message); }
+      });
+      $('import-overwrite').addEventListener('click', async function(){
+        if (!confirm('Overwrite all prices with the seed menu values? This replaces any price edits you have made.')) return;
+        var btn = this;
+        btn.disabled = true;
+        try {
+          await postJson(IMPORT_API, { overwrite: true });
+          location.reload();
+        } catch (err) { btn.disabled = false; alert(err.message); }
+      });
+    })();
+  </script>
+</PosLayout>

@@ -1,0 +1,289 @@
+---
+/**
+ * /pos/inventory - manager stock control. Lists every product (active and
+ * inactive), surfaces low-stock and out-of-stock alerts, shows the currently
+ * 86'd items, and lets a manager receive stock, set counts, set low-stock
+ * thresholds, and toggle 86 status. All writes go through /api/pos-inventory.
+ * Manager only; cafe tenant only.
+ */
+import PosLayout from '../../../layouts/PosLayout.astro';
+import { IS_CAFE, sessionFromCookies } from '../../../lib/access.ts';
+import { listProducts } from '../../../lib/db.ts';
+
+export const prerender = false;
+
+if (!IS_CAFE) return Astro.redirect('/');
+const session = sessionFromCookies(Astro.cookies);
+if (!session) return Astro.redirect('/pos/login?next=/pos/inventory/');
+if (session.role !== 'manager') return Astro.redirect('/pos/');
+
+const products = await listProducts({ includeInactive: true });
+
+type Tracked = typeof products[number] & { stock_count: number };
+const isTracked = (p: typeof products[number]): p is Tracked => p.stock_count !== null;
+
+const lowStock = products.filter(
+  (p) => isTracked(p) && p.low_stock_at !== null && p.stock_count <= p.low_stock_at,
+);
+const outOfStock = products.filter((p) => isTracked(p) && p.stock_count <= 0);
+const eightySixed = products.filter((p) => p.is_86);
+
+// Group products by category, preserving the DB ordering (category, sort, name).
+// Derived status (tracked/low/out) is computed here so the template never holds
+// a `<=` operator, which the Astro compiler mis-reads as a JSX tag.
+interface InvRow {
+  id: number; name: string; active: boolean; is_86: boolean;
+  stock_count: number | null; low_stock_at: number | null;
+  tracked: boolean; low: boolean; out: boolean;
+}
+const categories: string[] = [];
+const byCategory = new Map<string, InvRow[]>();
+for (const p of products) {
+  const tracked = p.stock_count !== null;
+  const out = tracked && (p.stock_count as number) <= 0;
+  const low = tracked && p.low_stock_at !== null && (p.stock_count as number) <= p.low_stock_at;
+  if (!byCategory.has(p.category)) {
+    byCategory.set(p.category, []);
+    categories.push(p.category);
+  }
+  byCategory.get(p.category)!.push({
+    id: p.id, name: p.name, active: p.active, is_86: p.is_86,
+    stock_count: p.stock_count, low_stock_at: p.low_stock_at, tracked, low, out,
+  });
+}
+---
+<PosLayout title="Inventory - Sula POS" session={session} active="/pos/inventory/">
+  <section class="reveal">
+    <h1 class="pos-h1">Inventory</h1>
+    <p class="pos-sub">Track stock, set low-stock alerts, and flag items as 86 when they run out.</p>
+  </section>
+
+  {lowStock.length > 0 && (
+    <div class="pos-banner reveal" role="status">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0">
+        <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>
+      </svg>
+      <div>
+        <strong>Low stock</strong>
+        <div class="inv-bannerlist">
+          {lowStock.map((p) => (
+            <span class="inv-bannerchip">{p.name} ({p.stock_count})</span>
+          ))}
+        </div>
+        {outOfStock.length > 0 && (
+          <p class="inv-note">Out of stock: {outOfStock.map((p) => p.name).join(', ')}</p>
+        )}
+      </div>
+    </div>
+  )}
+
+  <section class="inv-section reveal" aria-label="86'd items">
+    <span class="pos-label">86'd items</span>
+    {eightySixed.length > 0 ? (
+      <div class="inv-pillrow">
+        {eightySixed.map((p) => (
+          <span class="pos-pill off">{p.name}</span>
+        ))}
+      </div>
+    ) : (
+      <p class="inv-note">Nothing is 86'd. Everything is available on the register.</p>
+    )}
+  </section>
+
+  {categories.map((cat) => (
+    <section class="inv-section reveal" aria-label={cat}>
+      <h2 class="inv-cat">{cat}</h2>
+      <div class="pos-tablewrap">
+        <table class="pos-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Stock</th>
+              <th>Low at</th>
+              <th>Status</th>
+              <th>86</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {byCategory.get(cat)!.map((p) => (
+                <tr>
+                  <td>
+                    <span class="inv-name">{p.name}</span>
+                    {!p.active && <span class="pos-pill warn inv-tag">Inactive</span>}
+                  </td>
+                  <td>
+                    {p.tracked ? p.stock_count : <span class="inv-muted">Untracked</span>}
+                  </td>
+                  <td>
+                    <input
+                      class="pos-input inv-num inv-lowat"
+                      type="number"
+                      inputmode="numeric"
+                      min="0"
+                      step="1"
+                      value={p.low_stock_at ?? ''}
+                      placeholder="off"
+                      aria-label={`Low-stock threshold for ${p.name}`}
+                      data-id={p.id}
+                      data-stock={p.stock_count ?? ''}
+                    />
+                  </td>
+                  <td>
+                    {!p.tracked ? (
+                      <span class="inv-muted">-</span>
+                    ) : p.out ? (
+                      <span class="pos-pill off">Out</span>
+                    ) : p.low ? (
+                      <span class="pos-pill warn">Low</span>
+                    ) : (
+                      <span class="pos-pill ok">OK</span>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="inv-86btn"
+                      data-action="set-86"
+                      data-id={p.id}
+                      data-is86={p.is_86 ? '1' : '0'}
+                      aria-label={p.is_86 ? `Un-86 ${p.name}` : `86 ${p.name}`}
+                    >
+                      <span class={`pos-pill ${p.is_86 ? 'off' : 'ok'}`}>{p.is_86 ? '86' : 'On'}</span>
+                    </button>
+                  </td>
+                  <td>
+                    <div class="inv-actions">
+                      <div class="inv-receive">
+                        <button type="button" class="pos-btn ghost inv-mini" data-action="receive" data-id={p.id} data-delta="1">+1</button>
+                        <button type="button" class="pos-btn ghost inv-mini" data-action="receive" data-id={p.id} data-delta="5">+5</button>
+                        <button type="button" class="pos-btn ghost inv-mini" data-action="receive" data-id={p.id} data-delta="10">+10</button>
+                      </div>
+                      <div class="inv-set">
+                        <input
+                          class="pos-input inv-num inv-setnum"
+                          type="number"
+                          inputmode="numeric"
+                          min="0"
+                          step="1"
+                          value={p.stock_count ?? ''}
+                          placeholder="untracked"
+                          aria-label={`Set stock for ${p.name}`}
+                          data-id={p.id}
+                          data-lowat={p.low_stock_at ?? ''}
+                        />
+                        <button type="button" class="pos-btn ghost inv-mini" data-action="set-stock" data-id={p.id}>Set</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  ))}
+
+  {products.length === 0 && (
+    <div class="pos-empty reveal">No products yet. Add items in Catalog.</div>
+  )}
+
+  <style>
+    .inv-section{margin-top:22px}
+    .inv-cat{font-size:18px;margin-bottom:10px}
+    .inv-bannerlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .inv-bannerchip{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;
+      background:color-mix(in oklab,var(--warn) 22%,transparent);color:var(--warn)}
+    .inv-note{color:var(--text-soft);font-size:13px;margin-top:6px}
+    .inv-pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .inv-name{font-weight:600}
+    .inv-tag{margin-left:8px}
+    .inv-muted{color:var(--text-soft)}
+    .inv-num{width:88px;min-width:88px}
+    .inv-86btn{appearance:none;border:0;background:transparent;padding:6px;min-height:44px;min-width:44px;
+      cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+    .inv-86btn:active{transform:scale(.96)}
+    .inv-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .inv-receive{display:flex;gap:6px}
+    .inv-set{display:flex;gap:6px;align-items:center}
+    .inv-mini{font-size:14px;padding:0 14px;min-height:44px;min-width:44px}
+    @media(max-width:640px){
+      .inv-num{width:72px;min-width:72px}
+    }
+  </style>
+
+  <script is:inline>
+    (() => {
+      var busy = false;
+
+      async function post(body) {
+        if (busy) return;
+        busy = true;
+        try {
+          var res = await fetch('/api/pos-inventory', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          var data = await res.json().catch(function () { return {}; });
+          if (!res.ok || (data && data.error)) {
+            alert((data && data.error) || 'Could not save. Try again.');
+            busy = false;
+            return;
+          }
+          location.reload();
+        } catch (e) {
+          alert('Network error. Try again.');
+          busy = false;
+        }
+      }
+
+      function num(v) {
+        if (v === '' || v === null || v === undefined) return null;
+        var n = parseInt(v, 10);
+        return isNaN(n) ? null : n;
+      }
+
+      document.querySelectorAll('[data-action="receive"]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          post({ action: 'receive', id: Number(btn.getAttribute('data-id')), delta: Number(btn.getAttribute('data-delta')) });
+        });
+      });
+
+      document.querySelectorAll('[data-action="set-86"]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var cur = btn.getAttribute('data-is86') === '1';
+          post({ action: 'set-86', id: Number(btn.getAttribute('data-id')), is86: !cur });
+        });
+      });
+
+      // "Set" stock: send the typed count (null clears to untracked), keep the
+      // existing low-stock threshold so it is not lost.
+      document.querySelectorAll('[data-action="set-stock"]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var input = document.querySelector('.inv-setnum[data-id="' + btn.getAttribute('data-id') + '"]');
+          if (!input) return;
+          post({
+            action: 'set-stock',
+            id: Number(btn.getAttribute('data-id')),
+            stockCount: num(input.value),
+            lowStockAt: num(input.getAttribute('data-lowat')),
+          });
+        });
+      });
+
+      // "Low at": set the threshold without changing the count. We resend the
+      // current stock count so it is preserved.
+      document.querySelectorAll('.inv-lowat').forEach(function (input) {
+        input.addEventListener('change', function () {
+          post({
+            action: 'set-stock',
+            id: Number(input.getAttribute('data-id')),
+            stockCount: num(input.getAttribute('data-stock')),
+            lowStockAt: num(input.value),
+          });
+        });
+      });
+    })();
+  </script>
+</PosLayout>

@@ -1,0 +1,77 @@
+---
+/**
+ * /pos/login - staff PIN pad. Non-cafe tenants are sent home (POS is cafe-only).
+ * Already-authed staff bounce straight to the register.
+ */
+import PosLayout from '../../layouts/PosLayout.astro';
+import { IS_CAFE, sessionFromCookies } from '../../lib/access.ts';
+
+export const prerender = false;
+
+if (!IS_CAFE) return Astro.redirect('/');
+const session = sessionFromCookies(Astro.cookies);
+if (session) return Astro.redirect('/pos/');
+
+const err = Astro.url.searchParams.get('e');
+const next = Astro.url.searchParams.get('next') || '/pos/';
+---
+<PosLayout title="Sign in - Sula POS" showNav={false}>
+  <div class="login-wrap">
+    <div class="login-card reveal">
+      <h1 class="login-title">Sula Cafe</h1>
+      <p class="login-sub">Enter your staff PIN</p>
+      {err && <p class="login-err">That PIN was not recognised. Try again.</p>}
+      <form method="POST" action="/api/pos-auth" id="pinform">
+        <input type="hidden" name="next" value={next} />
+        <input class="pin-display" id="pin-display" name="pin" inputmode="numeric" autocomplete="off"
+               readonly aria-label="PIN" />
+        <div class="pad">
+          {[1,2,3,4,5,6,7,8,9].map((n) => <button type="button" class="key" data-k={n}>{n}</button>)}
+          <button type="button" class="key sub" data-act="clear">C</button>
+          <button type="button" class="key" data-k="0">0</button>
+          <button type="button" class="key sub" data-act="del">&larr;</button>
+        </div>
+        <button class="pos-btn block" type="submit" style="margin-top:14px">Sign in</button>
+      </form>
+      <p class="login-hint">No PIN? Ask a manager to add you in Catalog &rsaquo; Staff.</p>
+    </div>
+  </div>
+
+  <style>
+    .login-wrap{min-height:78vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .login-card{width:100%;max-width:340px;background:var(--surface);border:1px solid var(--copper-line);
+      border-radius:22px;padding:28px 24px;text-align:center;box-shadow:0 18px 50px rgba(45,27,20,0.14)}
+    .login-title{font-size:30px;margin-bottom:2px}
+    .login-sub{color:var(--text-soft);font-size:14px;margin-bottom:18px}
+    .login-err{color:var(--danger);font-size:13px;font-weight:600;margin-bottom:12px}
+    .pin-display{width:100%;text-align:center;font-size:30px;letter-spacing:.5em;font-weight:700;
+      padding:14px;border:1px solid var(--copper-line);border-radius:14px;background:var(--cream);
+      color:var(--cocoa);margin-bottom:16px;-webkit-text-security:disc}
+    .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .key{height:64px;font-size:24px;font-weight:600;font-family:inherit;border-radius:14px;
+      border:1px solid var(--copper-line);background:var(--cream);color:var(--cocoa);cursor:pointer}
+    .key:active{transform:scale(.96);background:color-mix(in oklab,var(--burnt) 14%,var(--cream))}
+    .key.sub{background:transparent;color:var(--burnt);font-size:18px}
+    .login-hint{margin-top:18px;font-size:12px;color:var(--text-soft)}
+  </style>
+
+  <script is:inline>
+    (() => {
+      var d = document.getElementById('pin-display');
+      var pin = '';
+      function render(){ d.value = pin; }
+      document.querySelectorAll('.key').forEach(function(k){
+        k.addEventListener('click', function(){
+          var act = k.getAttribute('data-act');
+          if (act === 'clear') pin = '';
+          else if (act === 'del') pin = pin.slice(0, -1);
+          else if (pin.length < 8) pin += k.getAttribute('data-k');
+          render();
+        });
+      });
+      document.getElementById('pinform').addEventListener('submit', function(e){
+        if (!pin) { e.preventDefault(); }
+      });
+    })();
+  </script>
+</PosLayout>

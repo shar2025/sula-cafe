@@ -1,0 +1,443 @@
+---
+/**
+ * /pos/sales - manager Reports / cash-drawer-close (Z-report).
+ *
+ * Server-rendered. The date range comes from query params (Orbit DateFilter
+ * pattern done as server links): ?range=today|7d|30d (default today), or an
+ * explicit ?from=YYYY-MM-DD&to=YYYY-MM-DD custom range. No client data fetch.
+ */
+import PosLayout from '../../../layouts/PosLayout.astro';
+import { IS_CAFE, sessionFromCookies } from '../../../lib/access.ts';
+import { salesSummary, listOrders, formatCents } from '../../../lib/db.ts';
+
+export const prerender = false;
+
+if (!IS_CAFE) return Astro.redirect('/');
+const session = sessionFromCookies(Astro.cookies);
+if (!session) return Astro.redirect('/pos/login?next=/pos/sales/');
+if (session.role !== 'manager') return Astro.redirect('/pos/');
+
+// ---- resolve date range (America/Vancouver local date parts) ----
+const ISO_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** today's date as YYYY-MM-DD in America/Vancouver */
+function vancouverToday(): string {
+  // en-CA gives YYYY-MM-DD; timeZone pins it to Vancouver regardless of host TZ.
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Vancouver',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
+}
+
+/** shift a YYYY-MM-DD string by `days` (negative = back) using UTC math. */
+function addDays(ymd: string, days: number): string {
+  const [y, m, d] = ymd.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  return dt.toISOString().slice(0, 10);
+}
+
+const params = Astro.url.searchParams;
+const qFrom = params.get('from');
+const qTo = params.get('to');
+const today = vancouverToday();
+
+let from: string;
+let to: string;
+let range: string; // 'today' | '7d' | '30d' | 'custom'
+
+if (qFrom && qTo && ISO_RE.test(qFrom) && ISO_RE.test(qTo)) {
+  // keep from <= to
+  from = qFrom <= qTo ? qFrom : qTo;
+  to = qFrom <= qTo ? qTo : qFrom;
+  range = 'custom';
+} else {
+  range = params.get('range') || 'today';
+  if (range === '7d') {
+    to = today;
+    from = addDays(today, -6);
+  } else if (range === '30d') {
+    to = today;
+    from = addDays(today, -29);
+  } else {
+    range = 'today';
+    from = today;
+    to = today;
+  }
+}
+
+const summary = await salesSummary(from, to);
+const orders = await listOrders({ from, to, limit: 200 });
+
+const rangeLabel =
+  range === 'today'
+    ? `Today, ${from}`
+    : range === '7d'
+      ? `Last 7 days (${from} to ${to})`
+      : range === '30d'
+        ? `Last 30 days (${from} to ${to})`
+        : `${from} to ${to}`;
+
+function itemCount(o: (typeof orders)[number]): number {
+  return (o.items || []).reduce((s, it) => s + (it.qty || 0), 0);
+}
+
+function timeLabel(iso: string): string {
+  try {
+    return new Date(iso).toLocaleTimeString('en-CA', {
+      timeZone: 'America/Vancouver',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  } catch {
+    return '';
+  }
+}
+
+const kpis = [
+  { label: 'Gross sales', value: formatCents(summary.grossCents) },
+  { label: 'Orders', value: String(summary.orderCount) },
+  { label: 'Subtotal', value: formatCents(summary.subtotalCents) },
+  { label: 'GST collected', value: formatCents(summary.taxCents) },
+  { label: 'Cash', value: formatCents(summary.cashCents) },
+  { label: 'Card', value: formatCents(summary.cardCents) },
+];
+---
+<PosLayout title="Reports - Sula POS" session={session} active="/pos/sales/">
+  <header class="rep-head reveal">
+    <h1 class="pos-h1">Reports</h1>
+    <p class="pos-sub">{rangeLabel}</p>
+  </header>
+
+  <!-- 1. DateFilter row -->
+  <section class="rep-filters reveal" aria-label="Date range">
+    <div class="rep-pills" role="tablist" aria-label="Quick ranges">
+      <a
+        href="?range=today"
+        class={`pos-tab${range === 'today' ? ' is-active' : ''}`}
+        aria-current={range === 'today' ? 'page' : undefined}>Today</a>
+      <a
+        href="?range=7d"
+        class={`pos-tab${range === '7d' ? ' is-active' : ''}`}
+        aria-current={range === '7d' ? 'page' : undefined}>Last 7 days</a>
+      <a
+        href="?range=30d"
+        class={`pos-tab${range === '30d' ? ' is-active' : ''}`}
+        aria-current={range === '30d' ? 'page' : undefined}>Last 30 days</a>
+    </div>
+    <form method="get" class="rep-custom">
+      <div class="rep-field">
+        <label class="pos-label" for="from">From</label>
+        <input class="pos-input" type="date" id="from" name="from" value={from} max={to} />
+      </div>
+      <div class="rep-field">
+        <label class="pos-label" for="to">To</label>
+        <input class="pos-input" type="date" id="to" name="to" value={to} max={today} />
+      </div>
+      <button class="pos-btn ghost rep-apply" type="submit">Apply</button>
+    </form>
+  </section>
+
+  <!-- 2. KPI cards -->
+  <section class="rep-kpis reveal" aria-label="Key figures">
+    {kpis.map((k) => (
+      <div class="pos-card kpi">
+        <span class="kpi-value">{k.value}</span>
+        <span class="kpi-label">{k.label}</span>
+      </div>
+    ))}
+  </section>
+
+  <!-- 3. Cash drawer / Z-report -->
+  <section class="rep-z pos-card reveal" id="zreport" aria-label="Cash drawer Z-report">
+    <div class="rep-z-head">
+      <div>
+        <h2 class="rep-z-title">Cash drawer close</h2>
+        <p class="rep-z-sub">{rangeLabel}</p>
+      </div>
+      <button class="pos-btn ghost" id="print-z" type="button">Print Z-report</button>
+    </div>
+    <div class="rep-z-grid">
+      <div class="rep-z-cell rep-z-major">
+        <span class="kpi-label">Expected cash in drawer</span>
+        <span class="kpi-value">{formatCents(summary.cashDrawer.expectedCashCents)}</span>
+      </div>
+      <div class="rep-z-cell">
+        <span class="kpi-label">Card total</span>
+        <span class="kpi-value">{formatCents(summary.cardCents)}</span>
+      </div>
+      <div class="rep-z-cell">
+        <span class="kpi-label">Voided</span>
+        <span class="kpi-value">{summary.voidedCount}</span>
+        <span class="rep-z-note">{formatCents(summary.voidedCents)}</span>
+      </div>
+    </div>
+  </section>
+
+  {summary.orderCount === 0 ? (
+    <section class="pos-card reveal rep-empty-wrap">
+      <p class="pos-empty">No completed sales in this range.</p>
+    </section>
+  ) : (
+    <>
+      <!-- 4. Sales by item -->
+      <section class="rep-block reveal" aria-label="Sales by item">
+        <h2 class="rep-block-title">Sales by item</h2>
+        <div class="pos-tablewrap">
+          <table class="pos-table">
+            <thead>
+              <tr><th>Item</th><th>Qty</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              {summary.byItem.map((row) => (
+                <tr>
+                  <td>{row.name}</td>
+                  <td>{row.qty}</td>
+                  <td>{formatCents(row.cents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. Sales by category -->
+      <section class="rep-block reveal" aria-label="Sales by category">
+        <h2 class="rep-block-title">Sales by category</h2>
+        <div class="pos-tablewrap">
+          <table class="pos-table">
+            <thead>
+              <tr><th>Category</th><th>Qty</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              {summary.byCategory.map((row) => (
+                <tr>
+                  <td>{row.category}</td>
+                  <td>{row.qty}</td>
+                  <td>{formatCents(row.cents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 6. By tender -->
+      <section class="rep-block reveal" aria-label="Sales by tender">
+        <h2 class="rep-block-title">By tender</h2>
+        <div class="pos-tablewrap">
+          <table class="pos-table">
+            <thead>
+              <tr><th>Tender</th><th>Count</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              {summary.byTender.map((row) => (
+                <tr>
+                  <td style="text-transform:capitalize">{row.tender}</td>
+                  <td>{row.count}</td>
+                  <td>{formatCents(row.cents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 7. Recent orders -->
+      <section class="rep-block reveal rep-noprint" aria-label="Recent orders">
+        <h2 class="rep-block-title">Recent orders</h2>
+        <div class="pos-tablewrap">
+          <table class="pos-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Time</th><th>Items</th><th>Tender</th>
+                <th>Total</th><th>Status</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((o) => (
+                <tr>
+                  <td>{o.number}</td>
+                  <td>{timeLabel(o.created_at)}</td>
+                  <td>{itemCount(o)}</td>
+                  <td style="text-transform:capitalize">{o.tender}</td>
+                  <td>{formatCents(o.total_cents)}</td>
+                  <td>
+                    {o.status === 'voided' ? (
+                      <span class="pos-pill off">Voided</span>
+                    ) : (
+                      <span class="pos-pill ok">Completed</span>
+                    )}
+                  </td>
+                  <td>
+                    {o.status === 'completed' && (
+                      <button
+                        class="pos-btn ghost rep-void"
+                        type="button"
+                        data-void={o.id}
+                        data-number={o.number}>Void</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </>
+  )}
+
+  <style>
+    .rep-head { margin-bottom: 14px; }
+
+    .rep-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .rep-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .rep-pills .pos-tab {
+      border: 1px solid var(--copper-line);
+      background: var(--surface);
+    }
+    .rep-custom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 10px;
+      margin-left: auto;
+    }
+    .rep-field { min-width: 140px; }
+    .rep-apply { min-height: 48px; }
+
+    .rep-kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .kpi {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .kpi-value {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--cocoa);
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--burnt);
+    }
+
+    .rep-z { margin-bottom: 18px; }
+    .rep-z-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .rep-z-title { font-size: 20px; }
+    .rep-z-sub {
+      color: var(--text-soft);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+    .rep-z-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+    .rep-z-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--cream);
+      border: 1px solid var(--copper-line-soft);
+    }
+    .rep-z-major {
+      background: color-mix(in oklab, var(--burnt) 12%, var(--cream));
+      border-color: color-mix(in oklab, var(--burnt) 28%, transparent);
+    }
+    .rep-z-major .kpi-value { font-size: 30px; }
+    .rep-z-note { font-size: 13px; color: var(--text-soft); font-weight: 600; }
+
+    .rep-block { margin-bottom: 18px; }
+    .rep-block-title { font-size: 18px; margin-bottom: 10px; }
+    .rep-empty-wrap { margin-bottom: 18px; }
+
+    @media (max-width: 640px) {
+      .rep-custom { margin-left: 0; width: 100%; }
+      .rep-field { flex: 1 1 120px; }
+    }
+
+    /* Z-report print: hide chrome + interactive bits, show a clean report. */
+    @media print {
+      :global(.pos-top),
+      .rep-filters,
+      .rep-noprint,
+      #print-z {
+        display: none !important;
+      }
+      .rep-z,
+      .rep-block,
+      .pos-card,
+      .pos-tablewrap {
+        border-color: var(--copper-line) !important;
+        box-shadow: none !important;
+      }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+
+  <script is:inline>
+    (() => {
+      var pb = document.getElementById('print-z');
+      if (pb) pb.addEventListener('click', function () { window.print(); });
+
+      document.querySelectorAll('.rep-void').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-void');
+          var num = btn.getAttribute('data-number') || id;
+          if (!id) return;
+          if (!confirm('Void order #' + num + '? This restocks items and cannot be undone.')) return;
+          btn.disabled = true;
+          fetch('/api/pos-sale', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'void', orderId: Number(id), reason: 'manager void' }),
+          })
+            .then(function (r) {
+              if (!r.ok) throw new Error('void failed');
+              location.reload();
+            })
+            .catch(function () {
+              btn.disabled = false;
+              alert('Could not void that order. Please try again.');
+            });
+        });
+      });
+    })();
+  </script>
+</PosLayout>
+</content>
+</invoke>

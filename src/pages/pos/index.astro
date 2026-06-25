@@ -1,0 +1,459 @@
+---
+/**
+ * /pos/ - the register. Category tabs + search + favorites, tap an item to pick
+ * modifiers, build a cart, take Cash (with change) or Card-recorded payment, then
+ * save + show a receipt. Open to any logged-in cafe staff. Cafe tenant only.
+ *
+ * The catalog is serialized into a JSON island and the whole register runs
+ * client-side; the sale is recorded server-side via /api/pos-sale (which
+ * recomputes every price + GST so client totals can never be trusted blindly).
+ */
+import PosLayout from '../../layouts/PosLayout.astro';
+import { IS_CAFE, sessionFromCookies } from '../../lib/access.ts';
+import { listProducts, listModifierGroups, listProductGroupLinks, getSettings } from '../../lib/db.ts';
+import { POS_CATEGORIES } from '../../lib/pos-catalog.ts';
+
+export const prerender = false;
+
+if (!IS_CAFE) return Astro.redirect('/');
+const session = sessionFromCookies(Astro.cookies);
+if (!session) return Astro.redirect('/pos/login?next=/pos/');
+
+const products = await listProducts();
+const groups = await listModifierGroups();
+const links = await listProductGroupLinks();
+const settings = await getSettings();
+
+const cat = (c: string) => products.some((p) => p.category === c);
+const orderedCats = [
+  ...POS_CATEGORIES.filter(cat),
+  ...[...new Set(products.map((p) => p.category))].filter((c) => !POS_CATEGORIES.includes(c as any)),
+];
+
+const data = {
+  gstBps: settings.gstBps,
+  groups,
+  products: products.map((p) => ({
+    id: p.id,
+    name: p.name,
+    category: p.category,
+    priceCents: p.price_cents,
+    taxable: p.taxable,
+    favorite: p.is_favorite,
+    soldOut: p.stock_count != null && p.stock_count <= 0,
+    stock: p.stock_count,
+    groupIds: links[p.id] || [],
+  })),
+};
+const gstPct = (settings.gstBps / 100).toFixed(settings.gstBps % 100 === 0 ? 0 : 2);
+---
+<PosLayout title="Register - Sula POS" session={session} active="/pos/">
+  <script id="pos-data" type="application/json" set:html={JSON.stringify(data)}></script>
+
+  <div class="reg reveal">
+    <!-- catalog -->
+    <section class="reg-catalog">
+      <div class="reg-search">
+        <input class="pos-input" id="reg-search" type="search" placeholder="Search the menu" autocomplete="off" aria-label="Search menu" />
+      </div>
+      <div class="reg-cats" id="reg-cats">
+        <button class="cat-pill is-active" data-cat="__fav">Favorites</button>
+        <button class="cat-pill" data-cat="__all">All</button>
+        {orderedCats.map((c) => <button class="cat-pill" data-cat={c}>{c}</button>)}
+      </div>
+      <div class="reg-grid" id="reg-grid" aria-live="polite"></div>
+      <p class="pos-empty" id="reg-empty" hidden>No items match.</p>
+    </section>
+
+    <!-- cart -->
+    <aside class="reg-cart">
+      <div class="cart-head">
+        <h2 class="cart-title">Current sale</h2>
+        <button class="cart-clear" id="cart-clear" type="button">Clear</button>
+      </div>
+      <div class="cart-lines" id="cart-lines">
+        <p class="cart-empty" id="cart-empty">Tap an item to start a sale.</p>
+      </div>
+      <div class="cart-foot">
+        <div class="cart-row"><span>Subtotal</span><span id="sum-subtotal">$0.00</span></div>
+        <div class="cart-row"><span>GST {gstPct}%</span><span id="sum-tax">$0.00</span></div>
+        <div class="cart-row total"><span>Total</span><span id="sum-total">$0.00</span></div>
+        <div class="cart-tenders">
+          <button class="pos-btn block" id="pay-cash" disabled>Cash</button>
+          <button class="pos-btn block ghost" id="pay-card" disabled>Card</button>
+        </div>
+        <button class="terminal-stub" type="button" disabled title="Phase 2: integrated card terminal">Card terminal (Phase 2)</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- modifier picker -->
+  <div class="modal" id="mod-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mod-title">
+      <div class="modal-head"><h3 id="mod-title">Options</h3><button class="modal-x" id="mod-x" aria-label="Close" type="button">&times;</button></div>
+      <div class="modal-body" id="mod-body"></div>
+      <div class="modal-foot">
+        <div class="qty">
+          <button class="qty-btn" id="mod-minus" type="button" aria-label="Less">-</button>
+          <span class="qty-n" id="mod-qty">1</span>
+          <button class="qty-btn" id="mod-plus" type="button" aria-label="More">+</button>
+        </div>
+        <button class="pos-btn" id="mod-add" type="button">Add <span id="mod-add-price"></span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- cash tender -->
+  <div class="modal" id="cash-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cash-title">
+      <div class="modal-head"><h3 id="cash-title">Cash payment</h3><button class="modal-x" id="cash-x" aria-label="Close" type="button">&times;</button></div>
+      <div class="modal-body">
+        <div class="cart-row total"><span>Total due</span><span id="cash-total">$0.00</span></div>
+        <label class="pos-label" for="cash-received" style="margin-top:14px">Cash received</label>
+        <input class="pos-input" id="cash-received" inputmode="decimal" placeholder="0.00" />
+        <div class="cash-quick" id="cash-quick"></div>
+        <div class="cart-row total" style="margin-top:12px"><span>Change</span><span id="cash-change">$0.00</span></div>
+      </div>
+      <div class="modal-foot">
+        <button class="pos-btn block" id="cash-complete" type="button">Complete sale</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- receipt -->
+  <div class="modal" id="rcpt-modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="rcpt-title">
+      <div class="modal-head"><h3 id="rcpt-title">Receipt</h3><button class="modal-x" id="rcpt-x" aria-label="Close" type="button">&times;</button></div>
+      <div class="modal-body" id="rcpt-body"></div>
+      <div class="modal-foot rcpt-actions">
+        <button class="pos-btn ghost" id="rcpt-print" type="button">Print</button>
+        <button class="pos-btn" id="rcpt-new" type="button">New sale</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .reg{display:flex;gap:16px;align-items:flex-start}
+    .reg-catalog{flex:1;min-width:0}
+    .reg-search{margin-bottom:12px}
+    .reg-cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:14px;scrollbar-width:none}
+    .reg-cats::-webkit-scrollbar{display:none}
+    .cat-pill{flex:0 0 auto;padding:11px 18px;border-radius:999px;border:1px solid var(--copper-line);
+      background:var(--surface);color:var(--cocoa);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;min-height:44px}
+    .cat-pill.is-active{background:var(--cocoa-deep);color:var(--cream);border-color:var(--cocoa-deep)}
+    :root[data-theme="dark"] .cat-pill.is-active{color:var(--espresso-deep)}
+    .reg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+    .tile{display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-height:104px;text-align:left;
+      padding:14px;border-radius:16px;border:1px solid var(--copper-line);background:var(--surface);
+      color:var(--cocoa);font-family:inherit;cursor:pointer;transition:transform .1s,border-color .2s}
+    .tile:active{transform:scale(.97)}
+    .tile:hover{border-color:var(--burnt)}
+    .tile .t-name{font-size:14px;font-weight:600;line-height:1.25}
+    .tile .t-price{font-size:14px;font-weight:700;color:var(--burnt)}
+    .tile .t-fav{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--tan);font-weight:700}
+    .tile.sold{opacity:.5;cursor:not-allowed}
+    .tile .t-sold{font-size:10px;font-weight:700;color:var(--danger);text-transform:uppercase;letter-spacing:.1em}
+
+    .reg-cart{width:350px;flex:0 0 350px;position:sticky;top:74px;background:var(--surface);
+      border:1px solid var(--copper-line);border-radius:18px;display:flex;flex-direction:column;max-height:calc(100vh - 90px)}
+    .cart-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}
+    .cart-title{font-size:18px}
+    .cart-clear{background:none;border:0;color:var(--burnt);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:6px}
+    .cart-lines{flex:1;overflow-y:auto;padding:4px 18px}
+    .cart-empty{color:var(--text-soft);font-size:14px;padding:20px 0;text-align:center}
+    .cline{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--copper-line-soft)}
+    .cline-main{flex:1;min-width:0}
+    .cline-name{font-size:14px;font-weight:600;color:var(--cocoa)}
+    .cline-mods{font-size:12px;color:var(--text-soft);margin-top:2px}
+    .cline-price{font-size:13px;font-weight:700;color:var(--burnt);margin-top:4px}
+    .cline-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+    .qty{display:inline-flex;align-items:center;gap:10px}
+    .qty-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--copper-line);background:var(--cream);
+      color:var(--cocoa);font-size:18px;font-weight:700;cursor:pointer;line-height:1}
+    .qty-n{min-width:20px;text-align:center;font-weight:700}
+    .cline-rm{background:none;border:0;color:var(--danger);font-size:12px;font-weight:600;cursor:pointer;padding:2px}
+    .cart-foot{padding:14px 18px 18px;border-top:1px solid var(--copper-line)}
+    .cart-row{display:flex;justify-content:space-between;font-size:14px;color:var(--text-soft);padding:4px 0}
+    .cart-row.total{font-size:19px;font-weight:700;color:var(--cocoa);padding-top:8px}
+    .cart-tenders{display:flex;gap:10px;margin-top:14px}
+    .terminal-stub{width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px dashed var(--copper-line);
+      background:transparent;color:var(--text-soft);font-family:inherit;font-size:12px;cursor:not-allowed}
+
+    .modal{position:fixed;inset:0;z-index:200;background:rgba(26,15,6,0.55);display:flex;align-items:flex-end;justify-content:center;padding:0}
+    .modal-card{background:var(--cream);width:100%;max-width:480px;border-radius:22px 22px 0 0;display:flex;flex-direction:column;max-height:92vh}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 10px}
+    .modal-head h3{font-size:20px}
+    .modal-x{background:none;border:0;font-size:30px;line-height:1;color:var(--cocoa);cursor:pointer;padding:0 6px}
+    .modal-body{padding:6px 20px;overflow-y:auto}
+    .modal-foot{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:16px 20px 22px;border-top:1px solid var(--copper-line)}
+    .rcpt-actions{justify-content:flex-end}
+    .mgroup{margin:14px 0}
+    .mgroup-name{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--burnt);margin-bottom:8px}
+    .mchips{display:flex;flex-wrap:wrap;gap:8px}
+    .mchip{padding:10px 14px;border-radius:12px;border:1px solid var(--copper-line);background:var(--surface);
+      color:var(--cocoa);font-family:inherit;font-size:14px;cursor:pointer;min-height:44px}
+    .mchip.on{background:var(--burnt);color:#F3E3C3;border-color:var(--burnt)}
+    .cash-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+    .cash-quick button{padding:12px 4px;border-radius:11px;border:1px solid var(--copper-line);background:var(--surface);
+      color:var(--cocoa);font-family:inherit;font-weight:600;cursor:pointer;min-height:44px}
+    .rcpt-line{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:4px 0}
+    .rcpt-sub{font-size:12px;color:var(--text-soft)}
+    .rcpt-rule{border:0;border-top:1px solid var(--copper-line);margin:10px 0}
+    .rcpt-big{font-size:22px;font-weight:700;color:var(--cocoa)}
+
+    @media(min-width:560px){.modal{align-items:center;padding:20px}.modal-card{border-radius:22px}}
+    @media(max-width:900px){
+      .reg{flex-direction:column}
+      .reg-cart{width:100%;flex:1 1 auto;position:static;max-height:none}
+      .cart-lines{max-height:none}
+    }
+  </style>
+
+  <script is:inline>
+    (() => {
+      var DATA = JSON.parse(document.getElementById('pos-data').textContent || '{}');
+      var GST = DATA.gstBps || 0;
+      var groupsById = {};
+      (DATA.groups || []).forEach(function (g) { groupsById[g.id] = g; });
+      var modById = {};
+      (DATA.groups || []).forEach(function (g) { (g.modifiers || []).forEach(function (m) { modById[m.id] = m; }); });
+
+      var cart = [];            // { key, productId, name, base, taxable, qty, mods:[{id,name,delta}] }
+      var curCat = '__fav';
+      var query = '';
+      var pending = null;       // product being configured
+      var pendingQty = 1;
+      var pendingSel = {};      // groupId -> [modId]
+
+      var fmt = function (c) { return '$' + (Math.round(c) / 100).toFixed(2); };
+      var $ = function (id) { return document.getElementById(id); };
+
+      // ----- catalog grid -----
+      function visible() {
+        return DATA.products.filter(function (p) {
+          if (query) return p.name.toLowerCase().indexOf(query) !== -1;
+          if (curCat === '__all') return true;
+          if (curCat === '__fav') return p.favorite;
+          return p.category === curCat;
+        });
+      }
+      function renderGrid() {
+        var grid = $('reg-grid');
+        var list = visible();
+        grid.innerHTML = '';
+        list.forEach(function (p) {
+          var b = document.createElement('button');
+          b.className = 'tile' + (p.soldOut ? ' sold' : '');
+          b.innerHTML =
+            (p.favorite ? '<span class="t-fav">Favorite</span>' : '') +
+            '<span class="t-name">' + esc(p.name) + '</span>' +
+            (p.soldOut ? '<span class="t-sold">Sold out</span>' : '<span class="t-price">' + fmt(p.priceCents) + '</span>');
+          if (!p.soldOut) b.addEventListener('click', function () { openProduct(p); });
+          grid.appendChild(b);
+        });
+        $('reg-empty').hidden = list.length > 0;
+      }
+      function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+      $('reg-cats').addEventListener('click', function (e) {
+        var btn = e.target.closest('.cat-pill'); if (!btn) return;
+        curCat = btn.getAttribute('data-cat'); query = ''; $('reg-search').value = '';
+        document.querySelectorAll('.cat-pill').forEach(function (p) { p.classList.toggle('is-active', p === btn); });
+        renderGrid();
+      });
+      $('reg-search').addEventListener('input', function (e) { query = e.target.value.trim().toLowerCase(); renderGrid(); });
+
+      // ----- modifier picker -----
+      function openProduct(p) {
+        if (!p.groupIds || !p.groupIds.length) { addToCart(p, 1, []); return; }
+        pending = p; pendingQty = 1; pendingSel = {};
+        $('mod-title').textContent = p.name;
+        var body = $('mod-body'); body.innerHTML = '';
+        p.groupIds.forEach(function (gid) {
+          var g = groupsById[gid]; if (!g) return;
+          pendingSel[gid] = [];
+          var wrap = document.createElement('div'); wrap.className = 'mgroup';
+          var multi = (g.max_select || 1) > 1;
+          wrap.innerHTML = '<div class="mgroup-name">' + esc(g.name) + (multi ? ' (choose any)' : '') + '</div>';
+          var chips = document.createElement('div'); chips.className = 'mchips';
+          (g.modifiers || []).forEach(function (m) {
+            var c = document.createElement('button'); c.type = 'button'; c.className = 'mchip';
+            c.textContent = m.name + (m.price_delta_cents ? '  +' + fmt(m.price_delta_cents) : '');
+            c.addEventListener('click', function () {
+              var sel = pendingSel[gid];
+              var i = sel.indexOf(m.id);
+              if (i !== -1) { sel.splice(i, 1); c.classList.remove('on'); }
+              else {
+                if (!multi) { sel.length = 0; chips.querySelectorAll('.mchip').forEach(function (x) { x.classList.remove('on'); }); }
+                sel.push(m.id); c.classList.add('on');
+              }
+              updateModPrice();
+            });
+            chips.appendChild(c);
+          });
+          wrap.appendChild(chips); body.appendChild(wrap);
+        });
+        $('mod-qty').textContent = '1';
+        updateModPrice();
+        show('mod-modal');
+      }
+      function pendingUnit() {
+        var c = pending.priceCents;
+        Object.keys(pendingSel).forEach(function (gid) {
+          pendingSel[gid].forEach(function (mid) { c += (modById[mid] ? modById[mid].price_delta_cents : 0); });
+        });
+        return c;
+      }
+      function updateModPrice() { $('mod-add-price').textContent = fmt(pendingUnit() * pendingQty); }
+      $('mod-minus').addEventListener('click', function () { pendingQty = Math.max(1, pendingQty - 1); $('mod-qty').textContent = pendingQty; updateModPrice(); });
+      $('mod-plus').addEventListener('click', function () { pendingQty = Math.min(99, pendingQty + 1); $('mod-qty').textContent = pendingQty; updateModPrice(); });
+      $('mod-add').addEventListener('click', function () {
+        var mods = [];
+        Object.keys(pendingSel).forEach(function (gid) {
+          pendingSel[gid].forEach(function (mid) { var m = modById[mid]; if (m) mods.push({ id: m.id, name: m.name, delta: m.price_delta_cents }); });
+        });
+        addToCart(pending, pendingQty, mods); hide('mod-modal');
+      });
+      $('mod-x').addEventListener('click', function () { hide('mod-modal'); });
+
+      // ----- cart -----
+      function addToCart(p, qty, mods) {
+        var key = p.id + ':' + mods.map(function (m) { return m.id; }).sort().join(',');
+        var line = cart.find(function (l) { return l.key === key; });
+        if (line) line.qty += qty;
+        else cart.push({ key: key, productId: p.id, name: p.name, base: p.priceCents, taxable: p.taxable, qty: qty, mods: mods });
+        renderCart();
+      }
+      function renderCart() {
+        var box = $('cart-lines');
+        if (!cart.length) {
+          box.innerHTML = '<p class="cart-empty" id="cart-empty">Tap an item to start a sale.</p>';
+        } else {
+          box.innerHTML = '';
+          cart.forEach(function (l, idx) {
+            var unit = l.base + l.mods.reduce(function (s, m) { return s + m.delta; }, 0);
+            var el = document.createElement('div'); el.className = 'cline';
+            el.innerHTML =
+              '<div class="cline-main"><div class="cline-name">' + esc(l.name) + '</div>' +
+              (l.mods.length ? '<div class="cline-mods">' + esc(l.mods.map(function (m) { return m.name; }).join(', ')) + '</div>' : '') +
+              '<div class="cline-price">' + fmt(unit * l.qty) + '</div></div>' +
+              '<div class="cline-side"><div class="qty">' +
+              '<button class="qty-btn" data-act="dec" data-i="' + idx + '" aria-label="Less">-</button>' +
+              '<span class="qty-n">' + l.qty + '</span>' +
+              '<button class="qty-btn" data-act="inc" data-i="' + idx + '" aria-label="More">+</button></div>' +
+              '<button class="cline-rm" data-act="rm" data-i="' + idx + '">Remove</button></div>';
+            box.appendChild(el);
+          });
+        }
+        var sub = 0, tax = 0;
+        cart.forEach(function (l) {
+          var unit = l.base + l.mods.reduce(function (s, m) { return s + m.delta; }, 0);
+          var lc = unit * l.qty; sub += lc;
+          if (l.taxable) tax += Math.round(lc * GST / 10000);
+        });
+        $('sum-subtotal').textContent = fmt(sub);
+        $('sum-tax').textContent = fmt(tax);
+        $('sum-total').textContent = fmt(sub + tax);
+        var has = cart.length > 0;
+        $('pay-cash').disabled = !has; $('pay-card').disabled = !has;
+        window.__total = sub + tax;
+      }
+      $('cart-lines').addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-act]'); if (!btn) return;
+        var i = +btn.getAttribute('data-i'), act = btn.getAttribute('data-act');
+        if (act === 'inc') cart[i].qty = Math.min(99, cart[i].qty + 1);
+        else if (act === 'dec') { cart[i].qty -= 1; if (cart[i].qty < 1) cart.splice(i, 1); }
+        else if (act === 'rm') cart.splice(i, 1);
+        renderCart();
+      });
+      $('cart-clear').addEventListener('click', function () { cart = []; renderCart(); });
+
+      // ----- tender -----
+      function payload(tender, cashReceivedCents) {
+        return {
+          tender: tender,
+          cashReceivedCents: cashReceivedCents,
+          lines: cart.map(function (l) { return { productId: l.productId, qty: l.qty, modifierIds: l.mods.map(function (m) { return m.id; }) }; }),
+        };
+      }
+      $('pay-card').addEventListener('click', function () {
+        if (!cart.length) return;
+        if (!confirm('Record a card payment of ' + fmt(window.__total) + ' on the external terminal?')) return;
+        complete(payload('card'));
+      });
+      $('pay-cash').addEventListener('click', function () {
+        if (!cart.length) return;
+        $('cash-total').textContent = fmt(window.__total);
+        $('cash-received').value = '';
+        $('cash-change').textContent = fmt(0);
+        var q = $('cash-quick'); q.innerHTML = '';
+        var total = window.__total;
+        var opts = [total, Math.ceil(total / 100) * 100, Math.ceil(total / 500) * 500, 2000, 5000];
+        var seen = {};
+        opts.forEach(function (v) {
+          if (seen[v]) return; seen[v] = 1;
+          var b = document.createElement('button'); b.type = 'button';
+          b.textContent = v === total ? 'Exact' : fmt(v);
+          b.addEventListener('click', function () { $('cash-received').value = (v / 100).toFixed(2); calcChange(); });
+          q.appendChild(b);
+        });
+        show('cash-modal'); setTimeout(function () { $('cash-received').focus(); }, 60);
+      });
+      function calcChange() {
+        var got = Math.round(parseFloat($('cash-received').value || '0') * 100);
+        $('cash-change').textContent = fmt(Math.max(0, got - window.__total));
+      }
+      $('cash-received').addEventListener('input', calcChange);
+      $('cash-x').addEventListener('click', function () { hide('cash-modal'); });
+      $('cash-complete').addEventListener('click', function () {
+        var got = Math.round(parseFloat($('cash-received').value || '0') * 100);
+        if (got < window.__total) { if (!confirm('Cash received is less than the total. Record anyway?')) return; got = window.__total; }
+        complete(payload('cash', got));
+      });
+
+      function complete(body) {
+        var btns = document.querySelectorAll('#cash-complete,#pay-card,#pay-cash');
+        btns.forEach(function (b) { b.disabled = true; });
+        fetch('/api/pos-sale', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+          .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+          .then(function (res) {
+            if (!res.ok || !res.j.ok) throw new Error(res.j.error || 'Sale failed');
+            hide('cash-modal'); showReceipt(res.j);
+            cart = []; renderCart();
+          })
+          .catch(function (err) { alert(err.message || 'Could not record the sale'); })
+          .then(function () { btns.forEach(function (b) { b.disabled = false; }); });
+      }
+
+      // ----- receipt -----
+      function showReceipt(res) {
+        var o = res.order, rc = res.receipt;
+        var body = $('rcpt-body');
+        var lines = (o.items || []).map(function (it) {
+          return '<div class="rcpt-line"><span>' + it.qty + ' x ' + esc(it.name) +
+            (it.modifiers && it.modifiers.length ? '<br><span class="rcpt-sub">' + esc(it.modifiers.map(function (m) { return m.name; }).join(', ')) + '</span>' : '') +
+            '</span><span>' + fmt(it.lineCents) + '</span></div>';
+        }).join('');
+        body.innerHTML =
+          '<div style="text-align:center;margin-bottom:8px"><div class="rcpt-big">' + esc(rc.businessName) + '</div>' +
+          '<div class="rcpt-sub">Order #' + rc.number + (rc.staff ? ' . ' + esc(rc.staff) : '') + '</div></div>' +
+          '<hr class="rcpt-rule">' + lines + '<hr class="rcpt-rule">' +
+          '<div class="rcpt-line"><span>Subtotal</span><span>' + rc.subtotal + '</span></div>' +
+          '<div class="rcpt-line"><span>GST</span><span>' + rc.tax + '</span></div>' +
+          '<div class="rcpt-line rcpt-big"><span>Total</span><span>' + rc.total + '</span></div>' +
+          (rc.change != null ? '<div class="rcpt-line"><span>Change</span><span>' + rc.change + '</span></div>' : '') +
+          '<div class="rcpt-line"><span>Tender</span><span>' + (o.tender === 'card' ? 'Card (recorded)' : 'Cash') + '</span></div>' +
+          '<p class="rcpt-sub" style="text-align:center;margin-top:12px">' + esc(rc.note) + '</p>';
+        show('rcpt-modal');
+      }
+      $('rcpt-x').addEventListener('click', function () { hide('rcpt-modal'); });
+      $('rcpt-new').addEventListener('click', function () { hide('rcpt-modal'); });
+      $('rcpt-print').addEventListener('click', function () { window.print(); });
+
+      function show(id) { $(id).hidden = false; }
+      function hide(id) { $(id).hidden = true; }
+
+      renderGrid(); renderCart();
+    })();
+  </script>
+</PosLayout>
